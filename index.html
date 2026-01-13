@@ -12,7 +12,7 @@
 <h1>Google C++ Style Guide</h1>
 <div class="horizontal_toc" id="tocDiv"></div>
 
-<h2 id="Background" class="ignoreLink">Background</h2>
+<h2 id="Background" class="ignoreLink">Background 背景</h2>
 
 <p>C++ is one of the main development languages  used by
 many of Google's open-source projects. As every C++
@@ -20,30 +20,41 @@ programmer knows, the language has many powerful features, but
 this power brings with it complexity, which in turn can make
 code more bug-prone and harder to read and maintain.</p>
 
+<p>C++是许多谷歌开源项目使用的主要开发语言之一。正如每位C++程序员所知，该语言拥有许多强大功能，但这种能力也带来了复杂性，反过来可能导致代码更容易产生错误，且难以阅读和维护。</p>
+
 <p>The goal of this guide is to manage this complexity by
 describing in detail the dos and don'ts of writing C++
 code. These rules exist to
 keep  the codebase manageable while still allowing
 coders to use C++ language features productively.</p>
 
+<p>本指南的目标是通过详细描述编写C++代码的注意事项来管理这种复杂性。制定这些规则旨在保持代码库的可维护性，同时仍允许开发者高效利用C++语言特性。</p>
+
 <p><em>Style</em>, also known as readability, is what we call
 the conventions that govern our C++ code. The term Style is a
 bit of a misnomer, since these conventions cover far more than
 just source file formatting.</p>
+
+<p><em>风格</em>，亦常被称为可读性，即我们所指的用于规范C++代码的约定准则。"风格"这一称谓或许略显片面，因为相关规范所涵盖的范围远不止源代码文件的格式化方式。</p>
 
 <p>
 Most open-source projects developed by
 Google conform to the requirements in this guide.
 </p>
 
+<p> 由谷歌开发的大多数开源项目均遵循本指南的要求。 </p>
 
 
 <p>Note that this guide is not a C++ tutorial: we assume that
 the reader is familiar with the language. </p>
 
-<h3 id="Goals">Goals of the Style Guide</h3>
+<p>需要说明的是，本指南并非C++教程：我们默认读者已熟悉该语言。</p>
+
+<h3 id="Goals">Goals of the Style Guide 风格指南的目标</h3>
 
 <p>Why do we have this document?</p>
+
+<p>我们为什么需要这份文档？</p>
 
 <p>There are a few core goals that we believe this guide should
 serve. These are the fundamental <b>why</b>s that
@@ -55,9 +66,13 @@ serving, it should be clearer to everyone when a rule may be waived
 (some can be), and what sort of argument or alternative would be
 necessary to change a rule in the guide.</p>
 
+<p>我们认为本指南应服务于若干核心目标。这些正是所有具体规则背后的根本<b>依据</b>。通过突出这些核心理念，我们希望让讨论有据可依，并使我们更广泛的社区更清楚地理解：规则为何存在、特定决策因何形成。若您能理解每条规则所服务的目标，那么当某条规则可能需要被放宽时（部分规则确实允许例外），每个人都会更清晰地认识到需要怎样的论证或替代方案才能推动指南中规则的修改。</p>
+
 <p>The goals of the style guide as we currently see them are as follows:</p>
+<p>我们认为当前风格指南的核心目标如下：</p>
 <dl>
 <dt>Style rules should pull their weight</dt>
+<dt>风格规则必须切实有效</dt>
 <dd>The benefit of a style rule
 must be large enough to justify asking all of our engineers to
 remember it. The benefit is measured relative to the codebase we would
@@ -67,8 +82,10 @@ anyway. This principle mostly explains the rules we don't have, rather
 than the rules we do: for example, <code>goto</code> contravenes many
 of the following principles, but is already vanishingly rare, so the Style
 Guide doesn't discuss it.</dd>
+<dd>每条风格规则带来的收益必须足够大，才能值得要求所有工程师牢记。收益的衡量是相对于没有该规则时的代码库状态而言的，因此，一项针对极有害做法的规则，如果人们反正也不太可能那样做，其收益可能仍然很小。这条原则主要解释了我们为何不设立某些规则，而非我们设立了哪些规则：例如，<code>goto</code> 违反后面多条原则，但它已极其罕见，因此本《风格指南》不予讨论。</dd>
 
 <dt>Optimize for the reader, not the writer</dt>
+<dt>优化阅读体验，而非编写体验</dt>
 <dd>Our codebase (and most individual components submitted to it) is
 expected to continue for quite some time. As a result, more time will
 be spent reading most of our code than writing it. We explicitly
@@ -81,8 +98,10 @@ transfer of pointer ownership), leaving textual hints for the reader
 at the point of use is valuable (<code>std::unique_ptr</code>
 demonstrates the ownership transfer unambiguously at the call
 site). </dd>
+<dd>我们的代码库（以及提交至其中的大多数独立组件）预期将持续运行相当长的时间。因此，花费在阅读我们大部分代码上的时间将超过编写它的时间。我们明确选择优化普通软件工程师在代码库中阅读、维护和调试代码的体验，而非追求编写这些代码时的便捷性。“为读者留下线索”是这一原则中特别常见的要点：当一段代码中发生令人惊讶或不寻常的情况时（例如，指针所有权的转移），在使用点为此处留下文本提示对读者很有价值（<code>std::unique_ptr</code> 就在调用点清晰表明了所有权转移）。</dd>
 
 <dt>Be consistent with existing code</dt>
+<dt>与现有代码保持一致</dt>
 <dd>Using one style consistently through our codebase lets us focus on
 other (more important) issues. Consistency also allows for automation:
 tools that format your code or adjust your <code>#include</code>s only
@@ -98,8 +117,10 @@ interfaces). Consistency should not generally be used as a
 justification to do things in an old style without considering the
 benefits of the new style, or the tendency of the codebase to converge
 on newer styles over time.</dd>
+<dd>在整个代码库中始终如一地使用同一种风格，能让我们专注于其他（更重要的）问题。一致性还为自动化提供了可能：格式化代码或调整 <code>#include</code> 的工具，只有当您的代码符合工具的预期时才能正常工作。在许多情况下，那些归结为“保持一致”的规则，本质上就是“只管选一种然后别再为此纠结”；在这些点上允许灵活性所带来的潜在价值，远远比不上让人们为此争论不休所付出的代价。然而，一致性也有其限度；当没有明确的技术论据或长期方向时，它是一个很好的决胜因素。一致性在局部（例如单个文件内，或一组紧密相关的接口中）应用得更为严格。通常不应以一致性为由，不加考虑地沿用旧风格，而忽略新风格的优点，或者无视代码库随时间推移而趋向新风格的趋势。</dd>
 
 <dt>Be consistent with the broader C++ community when appropriate</dt>
+<dt>在适当情况下与更广泛的C++社区保持一致</dt>
 <dd>Consistency with the way other organizations use C++ has value for
 the same reasons as consistency within our codebase. If a feature in
 the C++ standard solves a problem, or if some idiom is widely known
@@ -110,17 +131,21 @@ appropriate to constrain or ban standard features.  In some cases we
 prefer a homegrown or third-party library over a library defined in
 the C++ Standard, either out of perceived superiority or insufficient
 value to transition the codebase to the standard interface.</dd>
+<dd>与其他组织使用C++的方式保持一致，其价值与我们代码库内部保持一致的价值原因相同。如果C++标准中的某项特性解决了问题，或者某种惯用法广为人知并被普遍接受，这就是使用它的有力论据。然而，有时标准特性和惯用法存在缺陷，或者其设计并未充分考虑我们代码库的需求。在这些情况下（如下文所述），限制或禁止使用标准特性是合理的。在某些情况下，我们更倾向于使用自研或第三方库，而非C++标准中定义的库，这可能是出于对其优越性的判断，也可能是认为将代码库迁移到标准接口的价值不足。</dd>
 
 <dt>Avoid surprising or dangerous constructs</dt>
+<dt>避免意外或危险的构造</dt>
 <dd>C++ has features that are more surprising or dangerous than one
 might think at a glance. Some style guide restrictions are in place to
 prevent falling into these pitfalls. There is a high bar for style
 guide waivers on such restrictions, because waiving such rules often
 directly risks compromising program correctness.
 </dd>
+<dd>C++包含一些比初看起来更令人意外或更具危险性的特性。风格指南中的部分限制条款正是为了防止开发者落入这些陷阱。对此类限制的豁免标准定得非常高，因为豁免这些规则通常会直接危及程序的正确性。</dd>
 
 <dt>Avoid constructs that our average C++ programmer would find tricky
 or hard to maintain</dt>
+<dt>避免使用普通C++程序员认为费解或难以维护的构造</dt>
 <dd>C++ has features that may not be generally appropriate because of
 the complexity they introduce to the code. In widely used
 code, it may be more acceptable to use
@@ -134,8 +159,10 @@ important for our codebase because code ownership and team membership
 changes over time: even if everyone that works with some piece of code
 currently understands it, such understanding is not guaranteed to hold a
 few years from now.</dd>
+<dd>C++ 中的某些特性可能因其给代码带来的复杂性而不太适合普遍使用。但在广泛使用的代码中，使用更复杂的语言结构可能更为可行，因为更复杂实现所带来的益处会通过广泛使用而放大，且理解复杂性的成本在接触代码库的新部分时无需重复付出。如有疑问，可向项目负责人申请豁免此类规则。这对我们的代码库尤为重要，因为代码所有权和团队成员会随时间变化：即便当前所有相关开发人员都能理解某段代码，也不能保证几年后依然如此。</dd>
 
 <dt>Be mindful of our scale</dt>
+<dt>考量我们的规模因素</dt>
 <dd>With a codebase of 100+ million lines and thousands of engineers,
 some mistakes and simplifications for one engineer can become costly
 for many. For instance it's particularly important to
@@ -143,11 +170,14 @@ avoid polluting the global namespace: name collisions across a
 codebase of hundreds of millions of lines are difficult to work with
 and hard to avoid if everyone puts things into the global
 namespace.</dd>
+<dd>在拥有超过一亿行代码和数千名工程师的代码库中，个别工程师的某些错误或简化决策，可能会对众多其他人造成高昂代价。例如，尤其需要避免污染全局命名空间：在数亿行规模的代码库中，如果每个人都把内容放入全局命名空间，命名冲突将难以处理且不可避免。</dd>
 
 <dt>Concede to optimization when necessary</dt>
+<dt>必要时为优化让步</dt>
 <dd>Performance optimizations can sometimes be necessary and
 appropriate, even when they conflict with the other principles of this
 document.</dd>
+<dd>性能优化有时是必要且合理的，即使它们与本文件的其他原则相冲突。</dd>
 </dl>
 
 <p>The intent of this document is to provide maximal guidance with
@@ -159,7 +189,7 @@ clever or unusual constructs: the absence of a prohibition is not the
 same as a license to proceed.  Use your judgment, and if you are
 unsure, please don't hesitate to ask your project leads to get additional
 input.</p>
-
+<p>本文档旨在通过合理的限制提供最大程度的指导。一如既往，常识与良好的品味应占据主导。这里我们特指整个谷歌C++社区既定的惯例，而非您个人或所在团队的偏好。对于巧妙或特殊的构造应持审慎态度并谨慎使用：未加禁止并不等同于获得了实施的许可。请运用您的判断力，如有不确定之处，请务必咨询您的项目负责人以获取更多意见。</p>
 
 
 <h2 id="C++_Version">C++ Version</h2>
