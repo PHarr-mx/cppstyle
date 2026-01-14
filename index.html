@@ -192,47 +192,56 @@ input.</p>
 <p>本文档旨在通过合理的限制提供最大程度的指导。一如既往，常识与良好的品味应占据主导。这里我们特指整个谷歌C++社区既定的惯例，而非您个人或所在团队的偏好。对于巧妙或特殊的构造应持审慎态度并谨慎使用：未加禁止并不等同于获得了实施的许可。请运用您的判断力，如有不确定之处，请务必咨询您的项目负责人以获取更多意见。</p>
 
 
-<h2 id="C++_Version">C++ Version</h2>
+<h2 id="C++_Version">C++ Version C++版本</h2>
 
 <p>Currently, code should target C++20, i.e., should not use C++23
   features. The C++ version targeted by this guide will advance
   (aggressively) over time.</p>
 
+<p>目前，代码应针对C++20，即不应使用C++23的特性。本指南的目标C++版本将随时间推移（积极地）向前发展。</p>
 
 
 <p>Do not use
   <a href="#Nonstandard_Extensions">non-standard extensions</a>.</p>
 
+<p>不要使用<a href="#Nonstandard_Extensions">非标准扩展</a>。</p>
+
 <div>
 <p>Consider portability to other environments before using features
 from C++17 and C++20 in your project.</p>
+<p>在项目中使用 C++17 和 C++20 的特性之前，请先考虑其在其他环境中的可移植性。</p>
 </div>
 
-<h2 id="Header_Files">Header Files</h2>
+<h2 id="Header_Files">Header Files 头文件</h2>
 
 <p>In general, every <code>.cc</code> file should have an
 associated <code>.h</code> file. There are some common
 exceptions, such as unit tests and small <code>.cc</code> files containing
 just a <code>main()</code> function.</p>
+<p>一般来说，每个 <code>.cc</code> 文件都应有一个对应的 <code>.h</code> 文件。也有一些常见的例外情况，例如单元测试，以及仅包含一个 <code>main()</code> 函数的小型 <code>.cc</code> 文件。</p>
 
 <p>Correct use of header files can make a huge difference to
 the readability, size and performance of your code.</p>
+<p>正确使用头文件，能极大提升代码的可读性，并影响代码的体积和性能。</p>
 
 <p>The following rules will guide you through the various
 pitfalls of using header files.</p>
+<p>以下规则将引导你规避使用头文件时可能遇到的各种陷阱。</p>
 
 <a id="The_-inl.h_Files"></a>
-<h3 id="Self_contained_Headers">Self-contained Headers</h3>
+<h3 id="Self_contained_Headers">Self-contained Headers 自包含头文件</h3>
 
 <p>Header files should be self-contained (compile on their own) and
 end in <code>.h</code>.  Non-header files that are meant for inclusion
 should end in <code>.inc</code> and be used sparingly.</p>
+<p>头文件应当是自包含的（能够独立编译），并以 <code>.h</code> 结尾。用于被包含的非头文件应以 <code>.inc</code> 结尾，并应谨慎使用。</p>
 
 <p>All header files should be self-contained. Users and refactoring
 tools should not have to adhere to special conditions to include the
 header. Specifically, a header should
 have <a href="#The__define_Guard">header guards</a> and include all
 other headers it needs.</p>
+<p>所有头文件都应当是自包含的。用户和重构工具不应需要遵循特殊条件才能包含该头文件。具体来说，头文件应当有<a href="#The__define_Guard">头文件保护</a>，并包含其所需的所有其他头文件。</p>
 
 <p>When a header declares inline functions or templates that clients of the
 header will instantiate, the inline functions and templates must also have
@@ -243,6 +252,7 @@ instantiations of a template occur in one <code>.cc</code> file, either because
 they're <a href="https://en.cppreference.com/w/cpp/language/class_template#Explicit_instantiation">
 explicit</a> or because the definition is accessible to only
 the <code>.cc</code> file, the template definition can be kept in that file.</p>
+<p>当头文件声明了内联函数或模板，且该头文件的使用方会对它们进行实例化时，这些内联函数和模板也必须在头文件中提供定义，可以直接提供，也可以放在其所包含的文件中。不要把这些定义移动到单独被包含的头文件（<code>-inl.h</code>）中；这种做法过去很常见，但现在已不再允许。当某个模板的所有实例化都发生在同一个 <code>.cc</code> 文件中（要么因为它们是<a href="https://en.cppreference.com/w/cpp/language/class_template#Explicit_instantiation">显式</a>实例化的，要么因为定义只对该 <code>.cc</code> 文件可见）时，模板定义可以保留在该文件中。</p>
 
 <p>There are rare cases where a file designed to be included is not
 self-contained.  These are typically intended to be included at unusual
@@ -251,8 +261,9 @@ use <a href="#The__define_Guard">header guards</a>, and might not include
 their prerequisites.  Name such files with the <code>.inc</code>
 extension.  Use sparingly, and prefer self-contained headers when
 possible.</p>
+<p>在少数情况下，某个设计为被包含的文件并不是自包含的。这类文件通常是为了在不寻常的位置被包含，比如在另一个文件的中间。它们可能不会使用<a href="#The__define_Guard">头文件保护</a>，也可能不会包含其先决依赖。此类文件请使用 <code>.inc</code> 扩展名命名。应谨慎使用，并在可能的情况下优先选择自包含的头文件。</p>
 
-<h3 id="The__define_Guard">The #define Guard</h3>
+<h3 id="The__define_Guard">The #define Guard #define保护</h3>
 
 <p>All header files should have <code>#define</code> guards to
 prevent multiple inclusion. The format of the symbol name
@@ -260,7 +271,7 @@ should be
 
 <code><i>&lt;PROJECT&gt;</i>_<i>&lt;PATH&gt;</i>_<i>&lt;FILE&gt;</i>_H_</code>.</p>
 
-
+<p>所有头文件都应当有 <code>#define</code> 保护，以防止被重复包含。符号名的格式应为<code><i>&lt;PROJECT&gt;</i>_<i>&lt;PATH&gt;</i>_<i>&lt;FILE&gt;</i>_H_</code>。</p>
 
 <div>
 <p>To guarantee uniqueness, they should
@@ -268,6 +279,7 @@ be based on the full path in a project's source tree. For
 example, the file <code>foo/src/bar/baz.h</code> in
 project <code>foo</code> should have the following
 guard:</p>
+<p>为保证唯一性，它们应当基于项目源代码树中的完整路径来命名。例如，项目 <code>foo</code> 中的文件 <code>foo/src/bar/baz.h</code> 应当使用如下的保护：</p>
 </div>
 
 <pre class="goodcode">#ifndef FOO_BAR_BAZ_H_
@@ -287,6 +299,7 @@ the file should directly include a header file which properly intends
 to provide a declaration or definition of that symbol. It should not
 include header files for any other reason.
 </p>
+<p>如果某个源文件或头文件引用了在其他地方定义的符号，那么该文件应当直接包含一个明确用于提供该符号声明或定义的头文件。不应出于其他任何原因包含头文件。</p>
 
 <p>Do not rely on transitive inclusions. This allows people to remove
 no-longer-needed <code>#include</code> statements from their headers without
