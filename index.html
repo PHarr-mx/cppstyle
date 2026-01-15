@@ -307,17 +307,20 @@ breaking clients. This also applies to related headers
 - <code>foo.cc</code> should include <code>bar.h</code> if it uses a
 symbol from it even if <code>foo.h</code>
 includes <code>bar.h</code>.</p>
+<p>不要依赖传递性包含。这使得人们可以从其头文件中移除不再需要的 <code>#include</code> 语句，而不会破坏使用方。这同样适用于相关头文件——如果 <code>foo.cc</code> 使用了 <code>bar.h</code> 中的符号，那么它就应当包含 <code>bar.h</code>，即使 <code>foo.h</code> 已经包含了 <code>bar.h</code>。</p>
 
-<h3 id="Forward_Declarations">Forward Declarations</h3>
+<h3 id="Forward_Declarations">Forward Declarations 前向声明</h3>
 
 <p>Avoid using forward declarations where possible.
   Instead, <a href="#Include_What_You_Use">include the headers you need</a>.
 </p>
-
+<p>尽可能避免使用前置声明。相反，<a href="#Include_What_You_Use">请包含你所需的头文件</a>。
+</p>
 
 <p class="definition"></p>
 <p>A "forward declaration" is a declaration of an entity
   without an associated definition.</p>
+<p>“前置声明”是指对某个实体的声明，但没有与之对应的定义。</p>
 <pre class="neutralcode">// In a C++ source file:
 class B;
 void FuncInB();
@@ -330,11 +333,14 @@ ABSL_DECLARE_FLAG(flag_in_b);
   <li>Forward declarations can save compile time, as
   <code>#include</code>s force the compiler to open
   more files and process more input.</li>
+  <li>前置声明可以节省编译时间，因为
+    <code>#include</code> 会迫使编译器打开更多文件并处理更多输入。</li>
 
   <li>Forward declarations can save on unnecessary
   recompilation. <code>#include</code>s can force
   your code to be recompiled more often, due to unrelated
   changes in the header.</li>
+  <li>前置声明可以避免不必要的重新编译。由于头文件中无关的改动，<code>#include</code> 可能会迫使你的代码更频繁地被重新编译。</li>
 </ul>
 
 <p class="cons"></p>
@@ -342,10 +348,11 @@ ABSL_DECLARE_FLAG(flag_in_b);
   <li>Forward declarations can hide a dependency, allowing
   user code to skip necessary recompilation when headers
   change.</li>
-
+  <li>前置声明可以隐藏依赖关系，允许用户代码在头文件更改时跳过必要的重新编译。</li>
   <li>A forward declaration as opposed to an <code>#include</code> statement
     makes it difficult for automatic tooling to discover the module
     defining the symbol.</li>
+  <li>使用前置声明而不是 <code>#include</code> 语句，会使自动化工具难以发现定义该符号的模块。</li>
 
   <li>A forward declaration may be broken by subsequent
   changes to the library. Forward declarations of functions
@@ -353,10 +360,10 @@ ABSL_DECLARE_FLAG(flag_in_b);
   otherwise-compatible changes to their APIs, such as
   widening a parameter type, adding a template parameter
   with a default value, or migrating to a new namespace.</li>
-
+  <li>前置声明可能会被库的后续改动破坏。对函数和模板的前置声明，会阻止头文件所有者对其 API 进行原本兼容的修改，例如放宽参数类型、添加带默认值的模板参数，或迁移到新的命名空间。</li>  
   <li>Forward declaring symbols from namespace
   <code>std::</code> yields undefined behavior.</li>
-
+  <li>对命名空间 <code>std::</code> 中的符号进行前置声明会导致未定义行为。</li>
   <li>It can be difficult to determine whether a forward
   declaration or a full <code>#include</code> is needed.
   Replacing an <code>#include</code> with a forward
@@ -376,14 +383,33 @@ void test(D* x) { f(x); }  // Calls f(B*)
   decls for <code>B</code> and <code>D</code>,
   <code>test()</code> would call <code>f(void*)</code>.
   </li>
+  <li>有时很难判断是需要前置声明还是需要完整的 <code>#include</code>。
+    用前置声明替换 <code>#include</code> 可能会在不报错的情况下改变代码的含义：
+  <pre class="neutralcode">// b.h:
+  struct B {};
+  struct D : B {};
+  
+  // good_user.cc:
+  #include "b.h"
+  void f(B*);
+  void f(void*);
+  void test(D* x) { f(x); }  // Calls f(B*)
+  </pre>
+    如果把 <code>#include</code> 替换为对 <code>B</code> 和 <code>D</code> 的前置声明，
+    那么 <code>test()</code> 将会调用 <code>f(void*)</code>。
+    </li>
 
   <li>Forward declaring multiple symbols from a header
   can be more verbose than simply
   <code>#include</code>ing the header.</li>
+  <li>从同一个头文件中对多个符号进行前置声明，
+    可能会比直接 <code>#include</code> 该头文件更冗长。</li>
 
   <li>Structuring code to enable forward declarations
   (e.g., using pointer members instead of object members)
   can make the code slower and more complex.</li>
+  
+  <li>为了支持前置声明而调整代码结构（例如，用指针成员替代对象成员）可能会使代码更慢且更复杂。</li>
 
 
 </ul>
@@ -392,48 +418,67 @@ void test(D* x) { f(x); }  // Calls f(B*)
 <p>Try to avoid forward declarations of entities
 defined in another project.</p>
 
+<p>尽量避免对在其他项目中定义的实体进行前置声明。</p>
+
 <a id="Inline_Functions"></a>
-<h3 id="Defining_Functions_in_Header_Files">Defining Functions in Header Files</h3>
+<h3 id="Defining_Functions_in_Header_Files">Defining Functions in Header Files 在头文件中定义函数</h3>
 
 <p>Include the definition of a function at its point of declaration in a header file only
 when the definition is short. If the definition otherwise has a reason be in the header,
 put it in an internal part of the file. If necessary to make the definition ODR-safe, mark
 it with an <code>inline</code> specifier.</p>
 
+<p>只有当函数定义很短时，才在头文件中将函数定义放在其声明处。如果函数定义因其他原因需要放在头文件中，请将其放到文件的内部部分。如有必要，为使该定义满足 ODR 安全性，请使用 <code>inline</code> 说明符进行标记。</p>
+
 <p class="definition"></p>
 <p>Functions defined in header files are sometimes referred to as "inline functions",
 which is a somewhat overloaded term that refers to several distinct but overlapping
 situations:</p>
 
+<p>在头文件中定义的函数有时被称为“内联函数”。不过这是一个含义略有重叠的术语，可能指代几种不同但相互交叉的情况：</p>
+
 <ol>
   <li>A <em>textually inline</em> symbol's definition is exposed to the reader at
   the point of declaration.</li>
+  <li><em>文本内联（textually inline）</em>的符号，其定义在声明处对读者可见。</li>
+  
   <li>A function or variable defined in a header file is <em>expandable inline</em>
   since its definition is available for
   <a href="https://en.wikipedia.org/wiki/Inline_expansion">inline expansion</a>
   by the compiler, which can lead to more efficient object code.</li>
+  <li>在头文件中定义的函数或变量是<em>可展开内联（expandable inline）</em>的，因为其定义可供编译器进行
+    <a href="https://en.wikipedia.org/wiki/Inline_expansion">内联展开</a>，从而可能生成更高效的目标代码。</li>
+
   <li><em>ODR-safe</em> entities do not violate the
   <a href="https://en.cppreference.com/w/cpp/language/definition">"One Definition Rule"</a>,
   which often requires the <a href="https://en.cppreference.com/w/cpp/language/inline">inline</a>
   keyword for things defined in header files
   .</li>
+  <li><em>ODR 安全（ODR-safe）</em>的实体不会违反
+  <a href="https://en.cppreference.com/w/cpp/language/definition">“单一定义规则（One Definition Rule）”</a>，而对在头文件中定义的内容，往往需要使用
+  <a href="https://en.cppreference.com/w/cpp/language/inline">inline</a>
+  关键字。</li>
 </ol>
 
 <p>While functions tend to be a more common source of confusion, these definitions apply to
 variables as well, and so do the rules here.</p>
+<p>尽管函数往往是更常见的困惑来源，但这些定义同样适用于变量，因此这里的规则也同样适用。</p>
 
 <p class="pros"></p>
 
 <ul>
 <li>Defining a function textually in-line reduces boilerplate code for simple functions
 like accessors and mutators.</li>
+<li>将函数以文本内联的方式定义，可以减少诸如访问器、修改器等简单函数的样板代码。</li>
 
 <li> As noted above, function definitions in header files <i>can</i> lead to
 more efficient object code for small functions due to inline expansion by the
 compiler.</li>
+<li> 如上所述，头文件中的函数定义<i>可能</i>会因编译器的内联展开而为小函数生成更高效的目标代码。</li>
 
 <li>Function templates and <code>constexpr</code> functions generally need to
 be defined in the header file that declares them (but not necessarily the public part).</li>
+<li>函数模板和 <code>constexpr</code> 函数通常需要在声明它们的头文件中定义（但不一定在公开部分）。</li>
 </ul>
 
 <p class="cons"></p>
@@ -442,25 +487,31 @@ be defined in the header file that declares them (but not necessarily the public
 <li>Embedding a function definition in the public API makes the API harder to skim,
 and incurs cognitive overhead for readers of that API- the more complex the function
 the higher the cost.</li>
+<li>在公共 API 中嵌入函数定义会使 API 更难以快速浏览，并会给阅读该 API 的人带来认知负担——函数越复杂，成本越高。</li>
 
 <li>Public definitions expose implementation details that are at best harmless and
 often extraneous.</li>
+<li>公共定义会暴露实现细节，这些细节往好了说无害，但往往多余。</li>
 </ul>
 
 <p class="decision"></p>
 <p>Only define a function at its public declaration if it is short, say, 10 lines or fewer. Put
 longer function bodies in the <code>.cc</code> file unless they must be in the header for
 performance or technical reasons.</p>
+<p>只有当函数很短时（比如说，10行或更少），才在函数的公开声明处定义它。将较长的函数体放在 <code>.cc</code> 文件中，除非出于性能或技术原因必须放在头文件中。</p>
 
 <p>Even if a definition must be in the header, this is not a sufficient reason to put it within
 the public part. Instead, the definition can be in an internal part of the header, such as the
 <a href="#Access_Control">private</a> section of a class, within a namespace that includes the word
 <code>internal</code>, or below a comment like <code>// Implementation details only
 below here</code>.</p>
+<p>即使定义必须放在头文件中，这也不是将其放在公开部分中的充分理由。相反，定义可以放在头文件的内部部分，例如类的 <a href="#Access_Control">private</a> 部分、包含 <code>internal</code> 一词的命名空间中，或在类似 <code>// Implementation details only below here</code> 这样的注释下方。</p>
 
 <p>Once a definition is in a header file, it must be ODR-safe by having the <code>inline</code>
 specifier or being implicitly specified inline by being a function template or defined in a class
 body when first declared.</p>
+<p>一旦定义放在头文件中，它必须通过具有 <code>inline</code> 说明符或者通过作为函数模板或在首次声明时在类体内定义而隐式指定为内联来确保 ODR 安全性。</p>
+
 
 <pre class="goodcode">template &lt;typename T&gt;
 class Foo {
@@ -481,12 +532,13 @@ void Foo&lt;T&gt;::MethodWithHugeBody() {
 }
 </pre>
 
-<h3 id="Names_and_Order_of_Includes">Names and Order of Includes</h3>
+<h3 id="Names_and_Order_of_Includes">Names and Order of Includes 头文件名称和包含顺序</h3>
 
 <p>Include headers in the following order: Related header, C system headers,
 C++ standard library headers,
 other libraries' headers, your project's
 headers.</p>
+<p>按以下顺序包含头文件：相关头文件、C 系统头文件、C++ 标准库头文件、其他库的头文件、项目的头文件。</p>
 
 <p>
 All of a project's header files should be
@@ -497,6 +549,8 @@ directory without use of UNIX directory aliases
 
 <code>google-awesome-project/src/base/logging.h</code>
 should be included as:</p>
+<p>
+项目的所有头文件都应列为项目源目录的子项，且不得使用UNIX目录别名 <code>.</code>（当前目录）或 <code>..</code>（上级目录）。例如，<code>google-awesome-project/src/base/logging.h</code>应被包含为：</p>
 
 <pre class="goodcode">#include "base/logging.h"
 </pre>
@@ -504,13 +558,19 @@ should be included as:</p>
 <p>Headers should only be included using an angle-bracketed path if the library
 requires you to do so. In particular, the following headers require angle
 brackets:</p>
+<p>只有当库要求这样做时，才应该使用尖括号路径包含头文件。特别是，以下头文件需要使用尖括号：</p>
 
 <ul>
 <li>C and C++ standard library headers (e.g., <code>&lt;stdlib.h&gt;</code>
   and <code>&lt;string&gt;</code>).</li>
+<li>C 和 C++ 标准库头文件（例如，<code>&lt;stdlib.h&gt;</code> 和 <code>&lt;string&gt;</code>）。</li>
+
 <li>POSIX, Linux, and Windows system headers (e.g., <code>&lt;unistd.h&gt;</code>
   and <code>&lt;windows.h&gt;</code>).</li>
+<li>POSIX、Linux 和 Windows 系统头文件（例如，<code>&lt;unistd.h&gt;</code> 和 <code>&lt;windows.h&gt;</code>）。</li>
+
 <li>In rare cases, third_party libraries (e.g., <code>&lt;Python.h&gt;</code>).</li>
+<li>在极少数情况下，第三方库（例如，<code>&lt;Python.h&gt;</code>）。</li>
 </ul>
 
 <p>In <code><var>dir/foo</var>.cc</code> or
@@ -545,8 +605,42 @@ as follows:</p>
   Your project's <code>.h</code>
   files.</li>
 </ol>
+<p>在 <code><var>dir/foo</var>.cc</code> 或
+  <code><var>dir/foo_test</var>.cc</code> 中，其主要
+  目的是实现或测试
+  <code><var>dir2/foo2</var>.h</code> 中的内容，按以下顺序包含
+  头文件：</p>
+  
+  <ol>
+    <li><code><var>dir2/foo2</var>.h</code>。</li>
+  
+    <li>空行</li>
+  
+    <li>C 系统头文件，以及其他带
+      <code>.h</code> 扩展名且使用尖括号的头文件，例如，<code>&lt;unistd.h&gt;</code>、
+      <code>&lt;stdlib.h&gt;</code>、<code>&lt;Python.h&gt;</code>。</li>
+  
+    <li>空行</li>
+  
+    <li>C++ 标准库头文件（无文件扩展名），例如，
+      <code>&lt;algorithm&gt;</code>、<code>&lt;cstddef&gt;</code>。</li>
+  
+    <li>空行</li>
+  
+    <div>
+    <li>其他库的 <code>.h</code> 文件。</li>
+  
+    <li>空行</li>
+    </div>
+  
+    <li>
+    项目的 <code>.h</code>
+    文件。</li>
+</ol>
+
 
 <p>Separate each non-empty group with one blank line.</p>
+<p>用一个空行分隔每个非空组。</p>
 
 <p>With the preferred ordering, if the related header
 <code><var>dir2/foo2</var>.h</code> omits any necessary
@@ -555,12 +649,24 @@ or <code><var>dir/foo</var>_test.cc</code> will break.
 Thus, this rule ensures that build breaks show up first
 for the people working on these files, not for innocent
 people in other packages.</p>
+<p>通过这种首选的排序方式，如果相关头文件
+  <code><var>dir2/foo2</var>.h</code> 遗漏了任何必要的
+  包含，<code><var>dir/foo</var>.cc</code>
+  或 <code><var>dir/foo</var>_test.cc</code> 的构建将会失败。
+  因此，这条规则确保构建失败首先出现在
+  处理这些文件的人员那里，而不是其他
+  包中的无辜人员那里。</p>
 
 <p><code><var>dir/foo</var>.cc</code> and
 <code><var>dir2/foo2</var>.h</code> are usually in the same
 directory (e.g., <code>base/basictypes_test.cc</code> and
 <code>base/basictypes.h</code>), but may sometimes be in different
 directories too.</p>
+<p><code><var>dir/foo</var>.cc</code> 和
+  <code><var>dir2/foo2</var>.h</code> 通常在同一个
+  目录中（例如，<code>base/basictypes_test.cc</code> 和
+  <code>base/basictypes.h</code>），但有时也可能在不同
+  的目录中。</p>
 
 
 
@@ -568,15 +674,27 @@ directories too.</p>
 are essentially interchangeable with their C++ counterparts
 (<code>cstddef</code>).
 Either style is acceptable, but prefer consistency with existing code.</p>
+<p>注意，诸如 <code>stddef.h</code> 这样的
+  C头文件基本上可以与其C++对应版本
+  （<code>cstddef</code>）互换使用。
+  两种风格都可以接受，但最好与现有代码保持一致。</p>
 
 <p>Within each section the includes should be ordered
 alphabetically. Note that older code might not conform to
 this rule and should be fixed when convenient.</p>
+<p>在每个部分中，包含的头文件应该按
+  字母顺序排列。注意旧代码可能不符合
+  这条规则，应该在方便时修复。</p>
+
 
 <p>For example, the includes in
 
 <code>google-awesome-project/src/foo/internal/fooserver.cc</code>
 might look like this:</p>
+<p>例如，
+
+  <code>google-awesome-project/src/foo/internal/fooserver.cc</code>
+  中的包含可能看起来像这样：</p>
 
 <pre class="goodcode">#include "foo/server/fooserver.h"
 
@@ -592,11 +710,13 @@ might look like this:</p>
 </pre>
 
 <p><b>Exception:</b></p>
+<p><b>例外：</b></p>
 
 <p>Sometimes, system-specific code needs
 conditional includes. Such code can put conditional
 includes after other includes. Of course, keep your
 system-specific code small and localized. Example:</p>
+<p>有时，系统特定的代码需要条件包含。这样的代码可以将条件包含放在其他包含之后。当然，要保持系统特定代码小而局部化。例如：</p>
 
 <pre class="goodcode">#include "foo/public/fooserver.h"
 
