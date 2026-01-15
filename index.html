@@ -5163,14 +5163,17 @@ const DecimalNumber product =
     CalculateProduct(values, options, /*completion_callback=*/nullptr);
 </pre>
 
-<h4 id="Implementation_Comment_Donts">Don'ts</h4>
+<h4 id="Implementation_Comment_Donts">Don'ts 禁止事项</h4>
 
 <p>Do not state the obvious. In particular, don't literally describe what
 code does, unless the behavior is nonobvious to a reader who understands
 C++ well. Instead, provide higher-level comments that describe <i>why</i>
 the code does what it does, or make the code self-describing.</p>
 
+<p>不要陈述显而易见的内容。尤其是，除非某段行为对于理解良好的 C++ 读者来说并不明显，否则不要逐字描述代码在做什么。相反，应提供更高层次的注释，说明代码<i>为何</i>这样做，或者让代码本身具备自解释性。</p>
+
 Compare this:
+对比如下：
 
 <pre class="badcode">// Find the element in the vector.  &lt;-- Bad: obvious!
 if (std::find(v.begin(), v.end(), element) != v.end()) {
@@ -5179,6 +5182,7 @@ if (std::find(v.begin(), v.end(), element) != v.end()) {
 </pre>
 
 To this:
+再对比如下：
 
 <pre class="goodcode">// Process "element" unless it was already processed.
 if (std::find(v.begin(), v.end(), element) != v.end()) {
@@ -5189,17 +5193,21 @@ if (std::find(v.begin(), v.end(), element) != v.end()) {
 <p>Self-describing code doesn't need a comment. The comment from
 the example above would be obvious:</p>
 
+<p>自解释的代码不需要注释。上面示例中的注释如果写在这里，就会显得显而易见：</p>
+
 <pre class="goodcode">if (!IsAlreadyProcessed(element)) {
   Process(element);
 }
 </pre>
 
 <a id="Punctuation,_Spelling_and_Grammar"></a>
-<h3 id="Punctuation_Spelling_and_Grammar">Punctuation, Spelling, and Grammar</h3>
+<h3 id="Punctuation_Spelling_and_Grammar">Punctuation, Spelling, and Grammar 标点、拼写与语法</h3>
 
 <p>Pay attention to punctuation, spelling, and grammar; it is
 easier to read well-written comments than badly written
 ones.</p>
+
+<p>注意标点、拼写与语法；写得好的注释比写得差的注释更易阅读。</p>
 
 <p>Comments should be as readable as narrative text, with
 proper capitalization and punctuation. In many cases,
@@ -5208,6 +5216,8 @@ fragments. Shorter comments, such as comments at the end
 of a line of code, can sometimes be less formal, but you
 should be consistent with your style.</p>
 
+<p>注释应像叙述性文本一样易读，具备正确的大小写与标点。在许多情况下，完整句子比句子片段更易读。较短的注释（例如代码行尾的注释）有时可以不那么正式，但你应当在风格上保持一致。</p>
+
 <p>Although it can be frustrating to have a code reviewer
 point out that you are using a comma when you should be
 using a semicolon, it is very important that source code
@@ -5215,10 +5225,14 @@ maintain a high level of clarity and readability. Proper
 punctuation, spelling, and grammar help with that
 goal.</p>
 
-<h3 id="TODO_Comments">TODO Comments</h3>
+<p>尽管代码审查者指出你该用分号却用了逗号可能令人沮丧，但让源代码保持高度清晰与可读性非常重要。正确的标点、拼写与语法有助于实现这一目标。</p>
+
+<h3 id="TODO_Comments">TODO Comments TODO 注释</h3>
 
 <p>Use <code>TODO</code> comments for code that is temporary,
 a short-term solution, or good-enough but not perfect.</p>
+
+<p>对临时性的代码、短期解决方案，或“够用但不完美”的实现使用 <code>TODO</code> 注释。</p>
 
 <div>
 
@@ -5227,6 +5241,9 @@ a short-term solution, or good-enough but not perfect.</p>
 of the person or issue with the best context
 about the problem referenced by the <code>TODO</code>.</p>
 <p>Recommended styles are (in order of preference):</p>
+
+<p><code>TODO</code> 应包含全大写字符串 <code>TODO</code>，后接 bug ID、姓名、电子邮件地址，或其他可标识具有最佳上下文的人员或问题的标识符，以说明该 <code>TODO</code> 所指问题。</p>
+<p>推荐样式如下（按偏好顺序）：</p>
 
 <pre class="goodcode">// TODO: bug 12345678 - Remove this after the 2047q4 compatibility window expires.
 // TODO: example.com/my-design-doc - Manually fix up this code the next time it's touched.
@@ -5240,9 +5257,11 @@ very specific date ("Fix by November 2005") or a very
 specific event ("Remove this code when all clients can
 handle XML responses.").</p>
 
+<p>如果你的 <code>TODO</code> 形如“将来某个时间做某事”，请确保要么包含非常明确的日期（“在 2005 年 11 月前修复”），要么包含非常明确的事件（“当所有客户端都能处理 XML 响应时删除这段代码。”）。</p>
+
 </div>
 
-<h2 id="Formatting">Formatting</h2>
+<h2 id="Formatting">Formatting 格式</h2>
 
 <p>Coding style and formatting are pretty arbitrary, but a
 
@@ -5256,18 +5275,25 @@ style rules so that
 they can all read and understand
 everyone's code easily.</p>
 
+<p>编码风格与格式化在很大程度上是任意的，但如果每个人都使用同一种风格，项目就会更容易理解。个人未必认同每一条格式规则，某些规则也可能需要时间适应，但所有项目贡献者都遵循这些风格规则非常重要，这样大家才能轻松阅读并理解彼此的代码。</p>
+
 
 
 <div>
 <p>To help you format code correctly, we've created a
 <a href="https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el">
 settings file for emacs</a>.</p>
+<p>为帮助你正确格式化代码，我们提供了一个用于 emacs 的
+<a href="https://raw.githubusercontent.com/google/styleguide/gh-pages/google-c-style.el">
+配置文件</a>。</p>
 </div>
 
-<h3 id="Line_Length">Line Length</h3>
+<h3 id="Line_Length">Line Length 行长度</h3>
 
 <p>Each line of text in your code should be at most 80
 characters long.</p>
+
+<p>代码中的每一行文本最长应为 80 个字符。</p>
 
 
 
@@ -5275,6 +5301,7 @@ characters long.</p>
 <p>We recognize that this rule is
 controversial, but so much existing code already adheres
 to it, and we feel that consistency is important.</p>
+<p>我们知道这条规则存在争议，但已有大量现存代码遵循它，我们认为一致性很重要。</p>
 </div>
 
 <p class="pros"></p>
@@ -5288,16 +5315,23 @@ assuming a particular maximum window width, and 80
 columns has been the traditional standard. Why change
 it?</p>
 
+<p>支持这条规则的人认为，强迫他们调整窗口大小是不礼貌的，而且没有必要写得更长。有些人习惯把多个代码窗口并排放置，因此无论如何也没有空间把窗口加宽。人们在设置工作环境时会假定一个特定的最大窗口宽度，而 80 列一直是传统标准。为什么要改变它？</p>
+
 <p class="cons"></p>
 <p>Proponents of change argue that a wider line can make
 code more readable. The 80-column limit is an hidebound
 throwback to 1960s mainframes;  modern equipment has wide screens that
 can easily show longer lines.</p>
 
+<p>支持改变的人认为，更宽的行可以让代码更易读。80 列限制是对 1960 年代大型机时代的保守沿袭；现代设备的宽屏很容易显示更长的行。</p>
+
 <p class="decision"></p>
 <p> 80 characters is the maximum.</p>
 
+<p>最多 80 个字符。</p>
+
 <p>A line may exceed 80 characters if it is</p>
+<p>以下情况允许一行超过 80 个字符：</p>
 
 <ul>
   <li>a comment line which is not feasible to split without harming
