@@ -725,9 +725,9 @@ system-specific code small and localized. Example:</p>
 #endif  // _WIN32
 </pre>
 
-<h2 id="Scoping">Scoping</h2>
+<h2 id="Scoping">Scoping 作用域</h2>
 
-<h3 id="Namespaces">Namespaces</h3>
+<h3 id="Namespaces">Namespaces 命名空间</h3>
 
 <p>With few exceptions, place code in a namespace. Namespaces
 should have unique names based on the project name, and possibly
@@ -736,16 +736,21 @@ its path. Do not use <i>using-directives</i> (e.g.,
 inline namespaces. For unnamed namespaces, see
 <a href="#Internal_Linkage">Internal Linkage</a>.
 
-</p><p class="definition"></p>
+</p>
+<p>除了少数例外情况，请将代码放在命名空间中。命名空间应具有基于项目名称及其路径的唯一名称。不要使用 <i>using 指令</i>（例如，<code>using namespace foo</code>）。不要使用内联命名空间。对于未命名的命名空间，请参见 <a href="#Internal_Linkage">内部链接</a>。</p>
+
+<p class="definition"></p>
 <p>Namespaces subdivide the global scope
 into distinct, named scopes, and so are useful for preventing
 name collisions in the global scope.</p>
+<p>命名空间将全局作用域细分为不同的、命名的作用域，因此对于防止全局作用域中的名称冲突非常有用。</p>
 
 <p class="pros"></p>
 
 <p>Namespaces provide a method for preventing name conflicts
 in large programs while allowing most code to use reasonably
 short names.</p>
+<p>命名空间提供了一种防止大型程序中名称冲突的方法，同时允许大多数代码使用合理的短名称。</p>
 
 <p>For example, if two different projects have a class
 <code>Foo</code> in the global scope, these symbols may
@@ -754,10 +759,12 @@ places their code in a namespace, <code>project1::Foo</code>
 and <code>project2::Foo</code> are now distinct symbols that
 do not collide, and code within each project's namespace
 can continue to refer to <code>Foo</code> without the prefix.</p>
+<p>例如，如果两个不同的项目在全局作用域中都有一个类 <code>Foo</code>，这些符号可能会在编译时或运行时发生冲突。如果每个项目都将其代码放在命名空间中，<code>project1::Foo</code> 和 <code>project2::Foo</code> 现在就是互不冲突的不同符号，并且每个项目命名空间内的代码可以继续在不加前缀的情况下引用 <code>Foo</code>。</p>
 
 <p>Inline namespaces automatically place their names in
 the enclosing scope. Consider the following snippet, for
 example:</p>
+<p>内联命名空间会自动将其名称放入外层作用域中。例如，考虑以下片段：</p>
 
 <pre class="neutralcode">namespace outer {
 inline namespace inner {
@@ -770,36 +777,48 @@ inline namespace inner {
 <code>outer::foo()</code> are interchangeable. Inline
 namespaces are primarily intended for ABI compatibility
 across versions.</p>
+<p>表达式 <code>outer::inner::foo()</code> 和 <code>outer::foo()</code> 是可以互换的。内联命名空间主要用于跨版本的 ABI 兼容性。</p>
 
 <p class="cons"></p>
 
 <p>Namespaces can be confusing, because they complicate
 the mechanics of figuring out what definition a name refers
 to.</p>
+<p>命名空间可能会令人困惑，因为它们使确定名称引用哪个定义的机制变得复杂。</p>
 
 <p>Inline namespaces, in particular, can be confusing
 because names aren't actually restricted to the namespace
 where they are declared. They are only useful as part of
 some larger versioning policy.</p>
+<p>特别是内联命名空间可能会令人困惑，因为名称实际上并不局限于声明它们的命名空间。它们仅作为某种更大的版本控制策略的一部分才有用。</p>
 
 <p>In some contexts, it's necessary to repeatedly refer to
 symbols by their fully-qualified names. For deeply-nested
 namespaces, this can add a lot of clutter.</p>
+<p>在某些上下文中，有必要重复使用全限定名称来引用符号。对于深层嵌套的命名空间，这可能会增加很多混乱。</p>
 
 <p class="decision"></p>
 
 <p>Namespaces should be used as follows:</p>
+<p>命名空间的使用应遵循以下原则：</p>
 
 <ul>
   <li>Follow the rules on <a href="#Namespace_Names">Namespace Names</a>.
-  </li><li>Terminate multi-line namespaces with comments as shown in the given examples.
-  </li><li>
+  </li>
+  <li>遵循 <a href="#Namespace_Names">命名空间名称</a> 的规则。</li>
+
+  <li>Terminate multi-line namespaces with comments as shown in the given examples.
+  </li>
+  <li>如示例所示，用注释结束多行命名空间。</li>
+
+  <li>
 
   <p>Namespaces wrap the entire source file after
   includes,
   <a href="https://gflags.github.io/gflags/">
   gflags</a> definitions/declarations
   and forward declarations of classes from other namespaces.</p>
+  <p>命名空间包裹包含文件之后的整个源文件、<a href="https://gflags.github.io/gflags/">gflags</a> 定义/声明以及来自其他命名空间的类的前置声明。</p>
 
 <pre class="goodcode">// In the .h file
 namespace mynamespace {
@@ -828,6 +847,7 @@ void MyClass::Foo() {
 
   <p>More complex <code>.cc</code> files might have additional details,
   like flags or using-declarations.</p>
+  <p>更复杂的 <code>.cc</code> 文件可能包含更多细节，如标志或 using 声明。</p>
 
 <pre class="goodcode">#include "a.h"
 
@@ -852,6 +872,7 @@ using ::foo::Bar;
   <a href="https://protobuf.dev/reference/cpp/cpp-generated/#package">
   Protocol Buffer Packages</a>
   for details.</li>
+  <li>要将生成的 protocol message 代码放入命名空间中，请在 <code>.proto</code> 文件中使用 <code>package</code> 说明符。详情请参阅 <a href="https://protobuf.dev/reference/cpp/cpp-generated/#package">Protocol Buffer Packages</a>。</li>
 
   <li>Do not declare anything in namespace
   <code>std</code>, including forward declarations of
@@ -859,9 +880,11 @@ using ::foo::Bar;
   namespace <code>std</code> is undefined behavior, i.e.,
   not portable. To declare entities from the standard
   library, include the appropriate header file.</li>
+  <li>不要在 <code>std</code> 命名空间中声明任何内容，包括标准库类的前置声明。在 <code>std</code> 命名空间中声明实体是未定义行为，即不可移植。要声明标准库中的实体，请包含相应的头文件。</li>
 
   <li><p>You may not use a <i>using-directive</i>
   to make all names from a namespace available.</p>
+  <p>不得使用 <i>using 指令</i> 使命名空间中的所有名称可用。</p>
 
 <pre class="badcode">// Forbidden -- This pollutes the namespace.
 using namespace foo;
@@ -874,6 +897,7 @@ using namespace foo;
   in a header file becomes part of the public API exported by that file.
   Namespace aliases can be used when those conditions don't apply, but
   they must have <a href="#Naming_Aliases">appropriate names</a>.</p>
+  <p>不要在头文件的命名空间作用域中使用<i>命名空间别名</i>，除非是在明确标记为仅内部使用的命名空间中，因为在头文件中导入命名空间的任何内容都会成为该文件导出的公共 API 的一部分。当这些条件不适用时，可以使用命名空间别名，但它们必须具有 <a href="#Naming_Aliases">适当的名称</a>。</p>
 
 <pre class="goodcode">// In a .h file, an alias must not be a separate API, or must be hidden in an
 // implementation detail.
@@ -897,10 +921,12 @@ namespace sidetable = ::pipeline_diagnostics::sidetable;
 </pre>
 
   </li><li>Do not use inline namespaces.</li>
+  <li>不要使用内联命名空间。</li>
 
   <li><p>Use namespaces with "internal" in the name to document parts of an API that
     should not be mentioned by users of the API.
     </p>
+    <p>使用名称中包含 "internal" 的命名空间来记录 API 中不应由 API 用户提及的部分。</p>
 
 <pre class="badcode">// We shouldn't use this internal name in non-absl code.
 using ::absl::container_internal::ImplementationDetail;
@@ -912,11 +938,13 @@ using ::absl::container_internal::ImplementationDetail;
     filename. For example, <code>gshoe/widget.h</code> would use
     <code>gshoe::internal_widget</code> as opposed to just
     <code>gshoe::internal</code>.</p>
+    <p>请注意，嵌套的 <code>internal</code> 命名空间内的库之间仍然存在冲突风险，因此通过添加库的文件名，为命名空间内的每个库提供一个唯一的内部命名空间。例如，<code>gshoe/widget.h</code> 将使用 <code>gshoe::internal_widget</code>，而不是仅仅使用 <code>gshoe::internal</code>。</p>
   </li>
 
   <li><p>Single-line nested namespace declarations
 
     are preferred in new code, but are not required.</p>
+    <p>在编写新代码时，首选单行嵌套命名空间声明，但并非强制要求。</p>
 <pre class="goodcode">namespace my_project::my_component {
 
   ...
@@ -927,51 +955,60 @@ using ::absl::container_internal::ImplementationDetail;
 </ul>
 
 <a id="Unnamed_Namespaces_and_Static_Variables"></a>
-<h3 id="Internal_Linkage">Internal Linkage</h3>
+<h3 id="Internal_Linkage">Internal Linkage 内部链接</h3>
 
 <p>When definitions in a <code>.cc</code> file do not need to be
 referenced outside that file, give them internal linkage by placing
 them in an unnamed namespace or declaring them <code>static</code>.
 Do not use either of these constructs in <code>.h</code> files.
 
-</p><p class="definition"></p>
+</p>
+<p>当 <code>.cc</code> 文件中的定义不需要在该文件之外被引用时，请通过将其放入未命名的命名空间或将其声明为 <code>static</code> 来赋予其内部链接属性。不要在 <code>.h</code> 文件中使用这两种构造。</p>
+
+<p class="definition"></p>
 <p>All declarations can be given internal linkage by placing them in unnamed
 namespaces. Functions and variables can also be given internal linkage by
 declaring them <code>static</code>. This means that anything you're declaring
 can't be accessed from another file. If a different file declares something with
 the same name, then the two entities are completely independent.</p>
+<p>所有的声明都可以通过放入未命名的命名空间来获得内部链接属性。函数和变量也可以通过声明为 <code>static</code> 来获得内部链接属性。这意味着你声明的任何内容都不能从另一个文件访问。如果另一个文件声明了同名的内容，那么这两个实体是完全独立的。</p>
 
 <p class="decision"></p>
 
 <p>Use of internal linkage in <code>.cc</code> files is encouraged
 for all code that does not need to be referenced elsewhere.
 Do not use internal linkage in <code>.h</code> files.</p>
+<p>对于所有不需要在其他地方引用的代码，鼓励在 <code>.cc</code> 文件中使用内部链接。不要在 <code>.h</code> 文件中使用内部链接。</p>
 
 <p>Format unnamed namespaces like named namespaces. In the
   terminating comment, leave the namespace name empty:</p>
+<p>像格式化命名命名空间一样格式化未命名的命名空间。在结束注释中，将命名空间名称留空：</p>
 
 <pre class="goodcode">namespace {
 ...
 }  // namespace
 </pre>
 
-<h3 id="Nonmember,_Static_Member,_and_Global_Functions">Nonmember, Static Member, and Global Functions</h3>
+<h3 id="Nonmember,_Static_Member,_and_Global_Functions">Nonmember, Static Member, and Global Functions 非成员函数、静态成员函数和全局函数</h3>
 
 <p>Prefer placing nonmember functions in a namespace; use completely global
 functions rarely. Do not use a class simply to group static members. Static
 methods of a class should generally be closely related to instances of the
 class or the class's static data.</p>
+<p>优先将非成员函数放在命名空间中；尽量少使用完全全局函数。不要仅仅为了给静态成员分组而使用类。类的静态方法通常应该与类的实例或类的静态数据紧密相关。</p>
 
 
 <p class="pros"></p>
 <p>Nonmember and static member functions can be useful in
 some situations. Putting nonmember functions in a
 namespace avoids polluting the global namespace.</p>
+<p>非成员函数和静态成员函数在某些情况下很有用。将非成员函数放在命名空间中可以避免污染全局命名空间。</p>
 
 <p class="cons"></p>
 <p>Nonmember and static member functions may make more sense
 as members of a new class, especially if they access
 external resources or have significant dependencies.</p>
+<p>非成员函数和静态成员函数作为新类的成员可能更有意义，特别是当它们访问外部资源或有重要依赖时。</p>
 
 <p class="decision"></p>
 <p>Sometimes it is useful to define a
@@ -982,16 +1019,19 @@ variables, and should nearly always exist in a namespace.
 Do not create classes only to group static members;
 this is no different than just giving the names a
 common prefix, and such grouping is usually unnecessary anyway.</p>
+<p>有时定义一个不绑定到类实例的函数是很有用的。这样的函数可以是静态成员函数，也可以是非成员函数。非成员函数不应依赖于外部变量，并且几乎总是应该存在于命名空间中。不要仅为了对静态成员进行分组而创建类；这与仅给名称加上公共前缀没有什么不同，而且这种分组通常也是不必要的。</p>
 
 <p>If you define a nonmember function and it is only
 needed in its <code>.cc</code> file, use
 <a href="#Internal_Linkage">internal linkage</a> to limit
 its scope.</p>
+<p>如果你定义了一个非成员函数，并且它只需要在它的 <code>.cc</code> 文件中使用，请使用 <a href="#Internal_Linkage">内部链接</a> 来限制其作用域。</p>
 
-<h3 id="Local_Variables">Local Variables</h3>
+<h3 id="Local_Variables">Local Variables 局部变量</h3>
 
 <p>Place a function's variables in the narrowest scope
 possible, and initialize variables in the declaration.</p>
+<p>将函数的变量置于尽可能小的作用域内，并在声明时初始化变量。</p>
 
 <p>C++ allows you to declare variables anywhere in a function.
 We encourage you to declare them in a scope as local as
@@ -1000,6 +1040,7 @@ This makes it easier for the reader to find the
 declaration and see what type the variable is and what it
 was initialized to. In particular, initialization should
 be used instead of declaration and assignment, e.g.,:</p>
+<p>C++ 允许你在函数中的任何位置声明变量。我们鼓励你在尽可能局部的作用域中声明它们，并尽可能靠近第一次使用的地方。这使得读者更容易找到声明，查看变量是什么类型以及它被初始化为什么。特别是，应该使用初始化而不是声明和赋值，例如：</p>
 
 <pre class="badcode">int i;
 i = f();      // Bad -- initialization separate from declaration.
@@ -1030,6 +1071,7 @@ v.push_back(2);
 and <code>for</code> statements should normally be declared
 within those statements, so that such variables are confined
 to those scopes. For example:</p>
+<p><code>if</code>、<code>while</code> 和 <code>for</code> 语句所需的变量通常应在这些语句中声明，以便这些变量被限制在这些作用域内。例如：</p>
 
 <pre class="goodcode">while (const char* p = strchr(str, '/')) str = p + 1;
 </pre>
@@ -1038,6 +1080,7 @@ to those scopes. For example:</p>
 constructor is invoked every time it enters scope and is
 created, and its destructor is invoked every time it goes
 out of scope.</p>
+<p>有一个注意事项：如果变量是一个对象，那么每次进入作用域并创建它时都会调用其构造函数，每次离开作用域时都会调用其析构函数。</p>
 
 <pre class="badcode">// Inefficient implementation:
 for (int i = 0; i &lt; 1000000; ++i) {
@@ -1048,6 +1091,7 @@ for (int i = 0; i &lt; 1000000; ++i) {
 
 <p>It may be more efficient to declare such a variable
 used in a loop outside that loop:</p>
+<p>将循环中使用的此类变量声明在循环之外可能会更高效：</p>
 
 <pre class="goodcode">Foo f;  // My ctor and dtor get called once each.
 for (int i = 0; i &lt; 1000000; ++i) {
@@ -1055,7 +1099,7 @@ for (int i = 0; i &lt; 1000000; ++i) {
 }
 </pre>
 
-<h3 id="Static_and_Global_Variables">Static and Global Variables</h3>
+<h3 id="Static_and_Global_Variables">Static and Global Variables 静态和全局变量</h3>
 
 <p>Objects with
 <a href="http://en.cppreference.com/w/cpp/language/storage_duration#Storage_duration">
@@ -1069,9 +1113,11 @@ Static function-local variables may use dynamic initialization.
 Use of dynamic initialization for static class member variables or variables at
 namespace scope is discouraged, but allowed in limited circumstances; see below
 for details.</p>
+<p>除非是 <a href="http://en.cppreference.com/w/cpp/types/is_destructible">可平凡析构（trivially destructible）</a> 的对象，否则禁止使用具有 <a href="http://en.cppreference.com/w/cpp/language/storage_duration#Storage_duration">静态存储期（static storage duration）</a> 的对象。通俗地说，这意味着析构函数不做任何事情，即使考虑到成员和基类的析构函数也是如此。更正式地说，这意味着该类型没有用户定义的或虚析构函数，并且所有基类和非静态成员都是可平凡析构的。函数内的静态变量可以使用动态初始化。对于静态类成员变量或命名空间作用域内的变量，不鼓励使用动态初始化，但在有限的情况下是允许的；详情见下文。</p>
 
 <p>As a rule of thumb: a global variable satisfies these requirements if its
 declaration, considered in isolation, could be <code>constexpr</code>.</p>
+<p>作为一个经验法则：如果一个全局变量的声明在孤立状态下可以是 <code>constexpr</code>，那么它就满足这些要求。</p>
 
 <p class="definition"></p>
 <p>Every object has a <dfn>storage duration</dfn>, which correlates with its
@@ -1084,6 +1130,7 @@ passes through their declaration; all other objects with static storage duration
 are initialized as part of program start-up. All objects with static storage
 duration are destroyed at program exit (which happens before unjoined threads
 are terminated).</p>
+<p>每个对象都有一个 <dfn>存储期</dfn>，它与对象的生命周期相关。具有静态存储期的对象从其初始化点一直存活到程序结束。此类对象表现为命名空间作用域下的变量（“全局变量”）、类的静态数据成员，或者是声明带有 <code>static</code> 说明符的函数局部变量。函数局部静态变量在控制流首次经过其声明时初始化；所有其他具有静态存储期的对象在程序启动时初始化。所有具有静态存储期的对象在程序退出时销毁（发生在未合并的线程终止之前）。</p>
 
 <p>Initialization may be <dfn>dynamic</dfn>, which means that something
 non-trivial happens during initialization. (For example, consider a constructor
@@ -1094,12 +1141,14 @@ initialization <em>always</em> happens to objects with static storage duration
 (initializing the object either to a given constant or to a representation
 consisting of all bytes set to zero), whereas dynamic initialization happens
 after that, if required.</p>
+<p>初始化可以是 <dfn>动态的</dfn>，这意味着在初始化期间会发生一些非平凡的操作。（例如，考虑一个分配内存的构造函数，或者一个用当前进程 ID 初始化的变量。）另一种初始化是 <dfn>静态</dfn> 初始化。不过这两者并不完全对立：静态初始化 <em>总是</em> 发生在具有静态存储期的对象上（将对象初始化为给定的常量或全零的表示），而动态初始化在此之后发生（如果需要的话）。</p>
 
 <p class="pros"></p>
 <p>Global and static variables are very useful for a large number of
 applications: named constants, auxiliary data structures internal to some
 translation unit, command-line flags, logging, registration mechanisms,
 background infrastructure, etc.</p>
+<p>全局和静态变量在许多应用中非常有用：命名常量、某些翻译单元内部的辅助数据结构、命令行标志、日志记录、注册机制、后台基础设施等。</p>
 
 <p class="cons"></p>
 <p>Global and static variables that use dynamic initialization or have
@@ -1112,9 +1161,10 @@ an object to be accessed before its lifetime has begun (or after its lifetime
 has ended). Moreover, when a program starts threads that are not joined at exit,
 those threads may attempt to access objects after their lifetime has ended if
 their destructor has already run.</p>
+<p>使用动态初始化或具有非平凡析构函数的全局和静态变量会产生复杂性，容易导致难以发现的错误。动态初始化在翻译单元之间没有顺序，析构也没有（除了析构按初始化的相反顺序发生）。当一个初始化引用另一个具有静态存储期的变量时，可能会导致对象在其生命周期开始之前（或结束之后）被访问。此外，当程序启动未在退出时合并的线程时，如果对象的析构函数已经运行，这些线程可能会尝试在对象生命周期结束后访问它们。</p>
 
 <p class="decision"></p>
-<h4>Decision on destruction</h4>
+<h4>Decision on destruction 关于析构的决定</h4>
 
 <p>When destructors are trivial, their execution is not subject to ordering at
 all (they are effectively not "run"); otherwise we are exposed to the risk of
@@ -1123,6 +1173,7 @@ objects with static storage duration if they are trivially destructible.
 Fundamental types (like pointers and <code>int</code>) are trivially
 destructible, as are arrays of trivially destructible types. Note that
 variables marked with <code>constexpr</code> are trivially destructible.</p>
+<p>当析构函数是平凡的时，它们的执行完全不受顺序的限制（它们实际上没有“运行”）；否则，我们将面临在对象生命周期结束后访问对象的风险。因此，我们只允许具有静态存储期的对象是可平凡析构的。基本类型（如指针和 <code>int</code>）是可平凡析构的，可平凡析构类型的数组也是如此。请注意，标记为 <code>constexpr</code> 的变量是可平凡析构的。</p>
 <pre class="goodcode">const int kNum = 10;  // Allowed
 
 struct X { int n; };
@@ -1150,12 +1201,14 @@ void bar() {
 constraints on destructibility. The constraint on dynamic initialization still
 applies, though. In particular, a function-local static reference of the form
 <code>static T&amp; t = *new T;</code> is allowed.</p>
+<p>请注意，引用不是对象，因此它们不受可析构性约束的限制。但是，动态初始化的约束仍然适用。特别是，允许形式为 <code>static T&amp; t = *new T;</code> 的函数局部静态引用。</p>
 
-<h4>Decision on initialization</h4>
+<h4>Decision on initialization 关于初始化的决定</h4>
 
 <p>Initialization is a more complex topic. This is because we must not only
 consider whether class constructors execute, but we must also consider the
 evaluation of the initializer:</p>
+<p>初始化是一个更复杂的话题。这是因为我们不仅必须考虑类构造函数是否执行，还必须考虑初始化器的求值：</p>
 <pre class="neutralcode">int n = 5;    // Fine
 int m = f();  // ? (Depends on f)
 Foo x;        // ? (Depends on Foo::Foo)
@@ -1164,12 +1217,14 @@ Bar y = g();  // ? (Depends on g and on Bar::Bar)
 
 <p>All but the first statement expose us to indeterminate initialization
 ordering.</p>
+<p>除第一条语句外，所有语句都使我们面临不确定的初始化顺序。</p>
 
 <p>The concept we are looking for is called <em>constant initialization</em> in
 the formal language of the C++ standard. It means that the initializing
 expression is a constant expression, and if the object is initialized by a
 constructor call, then the constructor must be specified as
 <code>constexpr</code>, too:</p>
+<p>我们正在寻找的概念在 C++ 标准的正式语言中称为 <em>常量初始化（constant initialization）</em>。这意味着初始化表达式是一个常量表达式，如果对象是通过构造函数调用初始化的，那么该构造函数也必须指定为 <code>constexpr</code>：</p>
 <pre class="goodcode">struct Foo { constexpr Foo(int) {} };
 
 int n = 5;  // Fine, 5 is a constant expression.
@@ -1182,8 +1237,10 @@ or <code>constinit</code>.
 Any non-local static storage
 duration variable that is not so marked should be presumed to have
 dynamic initialization, and reviewed very carefully.</p>
+<p>常量初始化总是被允许的。静态存储期变量的常量初始化应标记为 <code>constexpr</code> 或 <code>constinit</code>。任何未被如此标记的非局部静态存储期变量都应被假定为具有动态初始化，并需仔细审查。</p>
 
 <p>By contrast, the following initializations are problematic:</p>
+<p>相比之下，以下初始化是有问题的：</p>
 
 <pre class="badcode">// Some declarations used below.
 time_t time(time_t*);      // Not constexpr!
@@ -1200,14 +1257,14 @@ it is forbidden. However, we do permit it if no aspect of the program depends
 on the sequencing of this initialization with respect to all other
 initializations. Under those restrictions, the ordering of the initialization
 does not make an observable difference. For example:</p>
+<p>非局部变量的动态初始化是不鼓励的，通常也是被禁止的。但是，如果程序的任何方面都不依赖于该初始化相对于所有其他初始化的顺序，我们允许这样做。在这些限制下，初始化的顺序不会产生可观察到的差异。例如：</p>
 <pre class="goodcode">int p = getpid();  // Allowed, as long as no other static variable
                    // uses p in its own initialization.</pre>
 
 <p>Dynamic initialization of static local variables is allowed (and common).</p>
+<p>静态局部变量的动态初始化是允许的（也很常见）。</p>
 
-
-
-<h4>Common patterns</h4>
+<h4>Common patterns 常见模式</h4>
 
 <ul>
   <li>Global strings: if you require a named global or static string constant,
@@ -1216,6 +1273,8 @@ does not make an observable difference. For example:</p>
     to a string literal. String literals have static storage duration already
     and are usually sufficient.
     See <a href="https://abseil.io/tips/140">TotW #140</a>.</li>
+  <li>全局字符串：如果你需要一个命名的全局或静态字符串常量，请考虑使用指向字符串字面量的 <code>string_view</code>、字符数组或字符指针的 <code>constexpr</code> 变量。字符串字面量已经具有静态存储期，通常就足够了。参见 <a href="https://abseil.io/tips/140">TotW #140</a>。</li>
+
   <li>Maps, sets, and other dynamic containers: if you require a static, fixed
     collection, such as a set to search against or a lookup table, you cannot
     use the dynamic containers from the standard library as a static variable,
@@ -1233,20 +1292,27 @@ does not make an observable difference. For example:</p>
     If you do really prefer a dynamic container from the standard library, consider using
     a function-local static pointer, as described below
     .</li>
+  <li>Map、Set 和其他动态容器：如果你需要一个静态的、固定的集合，例如用于搜索的 Set 或查找表，你不能将标准库中的动态容器用作静态变量，因为它们具有非平凡的析构函数。相反，请考虑使用简单类型的数组，例如 int 数组的数组（用于“从 int 到 int 的映射”），或 pair 的数组（例如，<code>int</code> 和 <code>const char*</code> 的 pair）。对于小型集合，线性搜索完全足够（并且由于内存局部性而高效）；考虑使用 <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/algorithm/container.h">absl/algorithm/container.h</a> 中的设施进行标准操作。如有必要，保持集合有序并使用二分搜索算法。如果你确实更喜欢标准库中的动态容器，请考虑使用函数局部的静态指针，如下所述。</li>
+
   <li>Smart pointers (<code>std::unique_ptr</code>, <code>std::shared_ptr</code>): smart
     pointers execute cleanup during destruction and are therefore forbidden.
     Consider whether your use case fits into one of the other patterns described
     in this section. One simple solution is to use a plain pointer to a
     dynamically allocated object and never delete it (see last item).</li>
+  <li>智能指针（<code>std::unique_ptr</code>, <code>std::shared_ptr</code>）：智能指针在析构期间执行清理，因此是被禁止的。考虑你的用例是否符合本节中描述的其他模式之一。一个简单的解决方案是使用指向动态分配对象的普通指针，并且永远不删除它（见最后一条）。</li>
+
   <li>Static variables of custom types: if you require static, constant data of
     a type that you need to define yourself, give the type a trivial destructor
     and a <code>constexpr</code> constructor.</li>
+  <li>自定义类型的静态变量：如果你需要自定义类型的静态常量数据，请为该类型提供一个平凡的析构函数和一个 <code>constexpr</code> 构造函数。</li>
+
   <li>If all else fails, you can create an object dynamically and never delete
     it by using a function-local static pointer or reference (e.g.,
     <code>static const auto&amp; impl = *new T(args...);</code>).</li>
+  <li>如果其他方法都失败了，你可以通过使用函数局部的静态指针或引用（例如，<code>static const auto&amp; impl = *new T(args...);</code>）来动态创建对象，并且永远不删除它。</li>
 </ul>
 
-<h3 id="thread_local">thread_local Variables</h3>
+<h3 id="thread_local">thread_local Variables 线程局部变量</h3>
 
 <p><code>thread_local</code> variables that aren't declared inside a function
 must be initialized with a true compile-time constant,
@@ -1255,12 +1321,16 @@ and this must be enforced by using the
   <code>constinit</code></a>
 attribute. Prefer
 <code>thread_local</code> over other ways of defining thread-local data.</p>
+<p>未在函数内部声明的 <code>thread_local</code> 变量必须使用真正的编译时常量进行初始化，并且必须使用 <a href="https://en.cppreference.com/w/cpp/language/constinit"><code>constinit</code></a> 属性强制执行此操作。优先使用 <code>thread_local</code> 而不是其他定义线程局部数据的方法。</p>
 
 <p class="definition"></p>
 <p>Variables can be declared with the
 <code>thread_local</code> specifier:</p>
+<p>可以使用 <code>thread_local</code> 说明符声明变量：</p>
+
 <pre class="neutralcode">thread_local Foo foo = ...;
 </pre>
+
 <p>Such a variable is actually a collection of objects, so that when different
 threads access it, they are actually accessing different objects.
 <code>thread_local</code> variables are much like
@@ -1268,6 +1338,7 @@ threads access it, they are actually accessing different objects.
 in many respects. For instance, they can be declared at namespace scope,
 inside functions, or as static class members, but not as ordinary class
 members.</p>
+<p>这样的变量实际上是对象的集合，因此当不同的线程访问它时，它们实际上是在访问不同的对象。<code>thread_local</code> 变量在许多方面非常像 <a href="#Static_and_Global_Variables">静态存储期变量</a>。例如，它们可以在命名空间作用域、函数内部或作为静态类成员声明，但不能作为普通类成员声明。</p>
 
 <p><code>thread_local</code> variable instances are initialized much like
 static variables, except that they must be initialized separately for each
@@ -1275,6 +1346,7 @@ thread, rather than once at program startup. This means that
 <code>thread_local</code> variables declared within a function are safe, but
 other <code>thread_local</code> variables are subject to the same
 initialization-order issues as static variables (and more besides).</p>
+<p><code>thread_local</code> 变量实例的初始化非常像静态变量，不同之处在于它们必须为每个线程单独初始化，而不是在程序启动时初始化一次。这意味着在函数内声明的 <code>thread_local</code> 变量是安全的，但其他 <code>thread_local</code> 变量受制于与静态变量相同的初始化顺序问题（以及其他问题）。</p>
 
 <p><code>thread_local</code> variables have a subtle destruction-order issue:
 during thread shutdown, <code>thread_local</code> variables will be destroyed
@@ -1282,14 +1354,18 @@ in the opposite order of their initialization (as is generally true in C++).
 If code triggered by the destructor of any <code>thread_local</code> variable
 refers to any already-destroyed <code>thread_local</code> on that thread, we will
 get a particularly hard to diagnose use-after-free.</p>
+<p><code>thread_local</code> 变量有一个微妙的销毁顺序问题：在线程关闭期间，<code>thread_local</code> 变量将按其初始化的相反顺序销毁（这在 C++ 中通常如此）。如果任何 <code>thread_local</code> 变量的析构函数触发的代码引用了该线程上任何已销毁的 <code>thread_local</code>，我们将遇到特别难以诊断的 use-after-free 问题。</p>
 
 <p class="pros"></p>
 <ul>
   <li>Thread-local data is inherently safe from races (because only one thread
     can ordinarily access it), which makes <code>thread_local</code> useful for
     concurrent programming.</li>
+  <li>线程局部数据本质上是免受竞争影响的（因为通常只有一个线程可以访问它），这使得 <code>thread_local</code> 对并发编程很有用。</li>
+
   <li><code>thread_local</code> is the only standard-supported way of creating
     thread-local data.</li>
+  <li><code>thread_local</code> 是唯一受标准支持的创建线程局部数据的方法。</li>
 </ul>
 
 <p class="cons"></p>
@@ -1297,18 +1373,27 @@ get a particularly hard to diagnose use-after-free.</p>
   <li>Accessing a <code>thread_local</code> variable may trigger execution of
     an unpredictable and uncontrollable amount of other code during thread-start or
     first use on a given thread.</li>
+  <li>访问 <code>thread_local</code> 变量可能会在线程启动或给定线程首次使用期间触发执行不可预测且不可控的大量其他代码。</li>
+
   <li><code>thread_local</code> variables are effectively global variables,
     and have all the drawbacks of global variables other than lack of
     thread-safety.</li>
+  <li><code>thread_local</code> 变量实际上是全局变量，并且具有全局变量的所有缺点，除了缺乏线程安全性。</li>
+
   <li>The memory consumed by a <code>thread_local</code> variable scales with
     the number of running threads (in the worst case), which can be quite large
     in a  program.</li>
+  <li><code>thread_local</code> 变量消耗的内存随运行线程的数量（在最坏情况下）成比例增加，这在程序中可能会非常大。</li>
+
   <li>Data members cannot be <code>thread_local</code> unless they are also
     <code>static</code>.</li>
+  <li>数据成员不能是 <code>thread_local</code>，除非它们也是 <code>static</code>。</li>
+
   <li>We may suffer from use-after-free bugs if <code>thread_local</code> variables
     have complex destructors. In particular, the destructor of any such variable must not
     call any code (transitively) that refers to any potentially-destroyed
     <code>thread_local</code>. This property is hard to enforce.</li>
+  <li>如果 <code>thread_local</code> 变量具有复杂的析构函数，我们可能会遇到 use-after-free 错误。特别是，任何此类变量的析构函数不得调用（传递地）任何引用任何可能已销毁的 <code>thread_local</code> 的代码。这个属性很难强制执行。</li>
 
   <li>Approaches for avoiding use-after-free in global/static contexts do not work for
     <code>thread_local</code>s. Specifically, skipping destructors for globals and static
@@ -1317,6 +1402,7 @@ get a particularly hard to diagnose use-after-free.</p>
     contrast, skipping destructors for <code>thread_local</code> variables leads to resource
     leaks proportional to the total number of threads that terminate during the lifetime of
     the program.</li>
+  <li>避免在全局/静态上下文中出现 use-after-free 的方法不适用于 <code>thread_local</code>。具体来说，跳过全局变量和静态变量的析构函数是允许的，因为它们的生命周期在程序关闭时结束。因此，任何“泄漏”都由操作系统立即清理我们的内存和其他资源来管理。相比之下，跳过 <code>thread_local</code> 变量的析构函数会导致资源泄漏，其泄漏量与程序生命周期内终止的线程总数成正比。</li>
 
 </ul>
 
@@ -1328,6 +1414,7 @@ get a particularly hard to diagnose use-after-free.</p>
   <a href="https://en.cppreference.com/w/cpp/language/constinit">
     <code>constinit</code></a>
   (or <code>constexpr</code>, but that should be rare):</p>
+  <p>类或命名空间作用域的 <code>thread_local</code> 变量必须使用真正的编译时常量进行初始化（即，它们必须没有动态初始化）。为了强制执行这一点，类或命名空间作用域的 <code>thread_local</code> 变量必须使用 <a href="https://en.cppreference.com/w/cpp/language/constinit"><code>constinit</code></a>（或 <code>constexpr</code>，但这应该很少见）进行注释：</p>
 
   <pre class="goodcode">   constinit thread_local Foo foo = ...;
   </pre>
@@ -1337,6 +1424,7 @@ get a particularly hard to diagnose use-after-free.</p>
     a function-scope <code>thread_local</code> to simulate a class- or
     namespace-scope <code>thread_local</code> by defining a function or
     static method that exposes it:</p>
+  <p>函数内部的 <code>thread_local</code> 变量没有初始化问题，但在线程退出期间仍有 use-after-free 的风险。请注意，你可以通过定义一个暴露它的函数或静态方法，使用函数作用域的 <code>thread_local</code> 来模拟类或命名空间作用域的 <code>thread_local</code>：</p>
 
 <pre class="goodcode">Foo&amp; MyThreadLocalFoo() {
   thread_local Foo result = ComplicatedInitialization();
@@ -1350,33 +1438,40 @@ get a particularly hard to diagnose use-after-free.</p>
     Prefer trivial types, or types that provably run no user-provided code at destruction to
     minimize the potential of accessing any other <code>thread_local</code>.
   </p>
+  <p>请注意，只要线程退出，<code>thread_local</code> 变量就会被销毁。如果任何此类变量的析构函数引用任何其他（可能已销毁的）<code>thread_local</code>，我们将遇到难以诊断的 use-after-free 错误。优先使用平凡类型，或证明在销毁时不运行用户提供的代码的类型，以最大程度地减少访问任何其他 <code>thread_local</code> 的可能性。</p>
 
 <p><code>thread_local</code> should be preferred over other mechanisms for
 defining thread-local data.</p>
+<p>应优先使用 <code>thread_local</code> 而不是其他定义线程局部数据的机制。</p>
 
-<h2 id="Classes">Classes</h2>
+<h2 id="Classes">Classes 类</h2>
 
 <p>Classes are the fundamental unit of code in C++. Naturally,
 we use them extensively. This section lists the main dos and
 don'ts you should follow when writing a class.</p>
+<p>类是 C++ 中代码的基本单位。自然地，我们会广泛使用它们。本节列出了编写类时应遵循的主要注意事项。</p>
 
-<h3 id="Doing_Work_in_Constructors">Doing Work in Constructors</h3>
+<h3 id="Doing_Work_in_Constructors">Doing Work in Constructors 构造函数中的工作</h3>
 
 <p>Avoid virtual method calls in constructors, and avoid
 initialization that can fail if you can't signal an error.</p>
+<p>避免在构造函数中调用虚方法，如果在无法发出错误信号的情况下初始化可能失败，也要避免这种初始化。</p>
 
 <p class="definition"></p>
 <p>It is possible to perform arbitrary initialization in the body
 of the constructor.</p>
+<p>可以在构造函数体中执行任意初始化。</p>
 
 <p class="pros"></p>
 <ul>
   <li>No need to worry about whether the class has been initialized or
   not.</li>
+  <li>无需担心类是否已初始化。</li>
 
   <li>Objects that are fully initialized by constructor call can
   be <code>const</code> and may also be easier to use with standard containers
   or algorithms.</li>
+  <li>通过构造函数调用完全初始化的对象可以是 <code>const</code>，并且可能更容易与标准容器或算法一起使用。</li>
 </ul>
 
 <p class="cons"></p>
@@ -1386,19 +1481,23 @@ of the constructor.</p>
   implementations. Future modification to your class can
   quietly introduce this problem even if your class is
   not currently subclassed, causing much confusion.</li>
+  <li>如果工作调用了虚函数，这些调用将不会分发到子类的实现。即使你的类目前没有子类，未来对类的修改也可能悄悄地引入这个问题，从而导致很多困惑。</li>
 
   <li>There is no easy way for constructors to signal errors, short of
   crashing the program (not always appropriate) or using exceptions
   (which are <a href="#Exceptions">forbidden</a>).</li>
+  <li>除了使程序崩溃（并不总是合适）或使用异常（这是 <a href="#Exceptions">被禁止的</a>）之外，构造函数没有简单的方法来发出错误信号。</li>
 
   <li>If the work fails, we now have an object whose initialization
   code failed, so it may be an unusual state requiring a <code>bool
   IsValid()</code> state checking mechanism (or similar) which is easy
   to forget to call.</li>
+  <li>如果工作失败，我们现在就有一个初始化代码失败的对象，因此它可能处于一种不寻常的状态，需要一个 <code>bool IsValid()</code> 状态检查机制（或类似的机制），而这种机制很容易忘记调用。</li>
 
   <li>You cannot take the address of a constructor, so whatever work
   is done in the constructor cannot easily be handed off to, for
   example, another thread.</li>
+  <li>你不能获取构造函数的地址，因此构造函数中所做的任何工作都不能轻易地移交给例如另一个线程。</li>
 </ul>
 
 <p class="decision"></p>
@@ -1413,13 +1512,15 @@ Avoid <code>Init()</code> methods on objects with
 no other states that affect which public methods may be called
 (semi-constructed objects of this form are particularly hard to work
 with correctly).</p>
+<p>构造函数绝不应调用虚函数。如果适合你的代码，终止程序可能是一种合适的错误处理响应。否则，请考虑使用工厂函数或 <a href="https://abseil.io/tips/42">TotW #42</a> 中描述的 <code>Init()</code> 方法。避免在没有其他状态影响哪些公共方法可以被调用的对象上使用 <code>Init()</code> 方法（这种形式的半构造对象特别难以正确使用）。</p>
 
 <a id="Explicit_Constructors"></a>
-<h3 id="Implicit_Conversions">Implicit Conversions</h3>
+<h3 id="Implicit_Conversions">Implicit Conversions 隐式转换</h3>
 
 <p>Do not define implicit conversions. Use the <code>explicit</code>
 keyword for conversion operators and single-argument
 constructors.</p>
+<p>不要定义隐式转换。对转换运算符和单参数构造函数使用 <code>explicit</code> 关键字。</p>
 
 <p class="definition"></p>
 <p>Implicit conversions allow an
@@ -1428,6 +1529,7 @@ be used where a different type (called the <dfn>destination
 type</dfn>) is expected, such as when passing an
 <code>int</code> argument to a function that takes a
 <code>double</code> parameter.</p>
+<p>隐式转换允许在需要不同类型（称为<dfn>目标类型</dfn>）的地方使用一种类型（称为<dfn>源类型</dfn>）的对象，例如将 <code>int</code> 参数传递给接受 <code>double</code> 参数的函数。</p>
 
 <p>In addition to the implicit conversions defined by the language,
 users can define their own, by adding appropriate members to the
@@ -1437,12 +1539,14 @@ named after the destination type (e.g., <code>operator
 bool()</code>). An implicit conversion in the destination
 type is defined by a constructor that can take the source type as
 its only argument (or only argument with no default value).</p>
+<p>除了语言定义的隐式转换外，用户还可以通过向源类型或目标类型的类定义中添加适当的成员来定义自己的隐式转换。源类型中的隐式转换由以目标类型命名的类型转换运算符（例如 <code>operator bool()</code>）定义。目标类型中的隐式转换由可以接受源类型作为其唯一参数（或唯一没有默认值的参数）的构造函数定义。</p>
 
 <p>The <code>explicit</code> keyword can be applied to a constructor
 or a conversion operator, to ensure that it can only be
 used when the destination type is explicit at the point of use,
 e.g., with a cast. This applies not only to implicit conversions, but to
 list initialization syntax:</p>
+<p><code>explicit</code> 关键字可以应用于构造函数或转换运算符，以确保它只能在目标类型在代码中明确指定时使用，例如使用强制转换。这不仅适用于隐式转换，也适用于列表初始化语法：</p>
 <pre class="neutralcode">class Foo {
   explicit Foo(int x, double y);
   ...
@@ -1454,19 +1558,25 @@ void Func(Foo f);
 </pre>
 <p>This kind of code isn't technically an implicit conversion, but the
 language treats it as one as far as <code>explicit</code> is concerned.</p>
+<p>从技术上讲，这种代码不是隐式转换，但就 <code>explicit</code> 而言，语言将其视为隐式转换。</p>
 
 <p class="pros"></p>
 <ul>
 <li>Implicit conversions can make a type more usable and
     expressive by eliminating the need to explicitly name a type
     when it's obvious.</li>
+<li>隐式转换可以消除在类型显而易见时显式命名类型的需要，从而使类型更易用、更具表达力。</li>
+
 <li>Implicit conversions can be a simpler alternative to
     overloading, such as when a single
     function with a <code>string_view</code> parameter takes the
     place of separate overloads for <code>std::string</code> and
     <code>const char*</code>.</li>
+<li>隐式转换可以是重载的更简单替代方案，例如，单个具有 <code>string_view</code> 参数的函数可以替代 <code>std::string</code> 和 <code>const char*</code> 的单独重载。</li>
+
 <li>List initialization syntax is a concise and expressive
     way of initializing objects.</li>
+<li>列表初始化语法是一种简洁且富有表现力的对象初始化方式。</li>
 </ul>
 
 <p class="cons"></p>
@@ -1474,29 +1584,35 @@ language treats it as one as far as <code>explicit</code> is concerned.</p>
 <li>Implicit conversions can hide type-mismatch bugs, where the
     destination type does not match the user's expectation, or
     the user is unaware that any conversion will take place.</li>
+<li>隐式转换可能会隐藏类型不匹配的错误，即目标类型不符合用户预期，或者用户不知道会发生任何转换。</li>
 
 <li>Implicit conversions can make code harder to read, particularly
     in the presence of overloading, by making it less obvious what
     code is actually getting called.</li>
+<li>隐式转换会使代码更难阅读，尤其是在存在重载的情况下，因为很难看出实际上调用了什么代码。</li>
 
 <li>Constructors that take a single argument may accidentally
     be usable as implicit type conversions, even if they are not
     intended to do so.</li>
+<li>接受单个参数的构造函数可能会意外地用作隐式类型转换，即使本意并非如此。</li>
 
 <li>When a single-argument constructor is not marked
     <code>explicit</code>, there's no reliable way to tell whether
     it's intended to define an implicit conversion, or the author
     simply forgot to mark it.</li>
+<li>当单参数构造函数未标记为 <code>explicit</code> 时，没有可靠的方法来判断它是旨在定义隐式转换，还是作者仅仅忘记了标记它。</li>
 
 <li>Implicit conversions can lead to call-site ambiguities, especially
     when there are bidirectional implicit conversions. This can be caused
     either by having two types that both provide an implicit conversion,
     or by a single type that has both an implicit constructor and an
     implicit type conversion operator.</li>
+<li>隐式转换可能会导致调用点歧义，尤其是在存在双向隐式转换时。这可能是由于两种类型都提供隐式转换，或者单一类型既有隐式构造函数又有隐式类型转换运算符引起的。</li>
 
 <li>List initialization can suffer from the same problems if
     the destination type is implicit, particularly if the
     list has only a single element.</li>
+<li>如果目标类型是隐式的，列表初始化也会遇到同样的问题，特别是如果列表只有一个元素。</li>
 </ul>
 
 <p class="decision"></p>
@@ -1506,6 +1622,7 @@ callable with a single argument, must be marked
 exception, copy and move constructors should not be
 <code>explicit</code>, since they do not perform type
 conversion.</p>
+<p>类型转换运算符和可以用单个参数调用的构造函数必须在类定义中标记为 <code>explicit</code>。作为例外，复制和移动构造函数不应是 <code>explicit</code> 的，因为它们不执行类型转换。</p>
 
 <p>Implicit conversions can sometimes be necessary and appropriate for
 types that are designed to be interchangeable, for example when objects
@@ -1514,23 +1631,27 @@ value. In that case, contact
 your project leads to request a waiver
 of this rule.
 </p>
+<p>对于设计为可互换的类型，隐式转换有时是必要且适当的，例如当两种类型的对象只是同一底层值的不同表示形式时。在这种情况下，请联系你的项目负责人以申请豁免此规则。</p>
 
 <p>Constructors that cannot be called with a single argument
 may omit <code>explicit</code>. Constructors that
 take a single <code>std::initializer_list</code> parameter should
 also omit <code>explicit</code>, in order to support copy-initialization
 (e.g., <code>MyType m = {1, 2};</code>).</p>
+<p>无法用单个参数调用的构造函数可以省略 <code>explicit</code>。接受单个 <code>std::initializer_list</code> 参数的构造函数也应省略 <code>explicit</code>，以支持复制初始化（例如 <code>MyType m = {1, 2};</code>）。</p>
 
-<h3 id="Copyable_Movable_Types">Copyable and Movable Types</h3>
+<h3 id="Copyable_Movable_Types">Copyable and Movable Types 可拷贝和可移动类型</h3>
 <a id="Copy_Constructors"></a>
 
 <p>A class's public API must make clear whether the class is copyable,
 move-only, or neither copyable nor movable. Support copying and/or
 moving if these operations are clear and meaningful for your type.</p>
+<p>类的公共 API 必须明确该类是可拷贝的、仅可移动的，还是既不可拷贝也不可移动的。如果拷贝和/或移动操作对你的类型清晰且有意义，请支持这些操作。</p>
 
 <p class="definition"></p>
 <p>A movable type is one that can be initialized and assigned
 from temporaries.</p>
+<p>可移动类型是指可以从临时对象初始化和赋值的类型。</p>
 
 <p>A copyable type is one that can be initialized or assigned from
 any other object of the same type (so is also movable by definition), with the
@@ -1542,14 +1663,17 @@ the destination). <code>int</code> and <code>std::string</code> are examples of
 movable types that are also copyable. (For <code>int</code>, the move and copy
 operations are the same; for <code>std::string</code>, there exists a move operation
 that is less expensive than a copy.)</p>
+<p>可拷贝类型是指可以从同一类型的任何其他对象初始化或赋值的类型（因此根据定义也是可移动的），并规定源对象的值不会改变。<code>std::unique_ptr&lt;int&gt;</code> 是一个可移动但不可拷贝类型的示例（因为在赋值给目标时，源 <code>std::unique_ptr&lt;int&gt;</code> 的值必须被修改）。<code>int</code> 和 <code>std::string</code> 是既可移动又可拷贝类型的示例。（对于 <code>int</code>，移动和拷贝操作是相同的；对于 <code>std::string</code>，存在比拷贝代价更小的移动操作。）</p>
 
 <p>For user-defined types, the copy behavior is defined by the copy
 constructor and the copy-assignment operator. Move behavior is defined by the
 move constructor and the move-assignment operator, if they exist, or by the
 copy constructor and the copy-assignment operator otherwise.</p>
+<p>对于用户定义的类型，拷贝行为由拷贝构造函数和拷贝赋值运算符定义。移动行为由移动构造函数和移动赋值运算符（如果存在）定义，否则由拷贝构造函数和拷贝赋值运算符定义。</p>
 
 <p>The copy/move constructors can be implicitly invoked by the compiler
 in some situations, e.g., when passing objects by value.</p>
+<p>在某些情况下（例如按值传递对象时），编译器可以隐式调用拷贝/移动构造函数。</p>
 
 <p class="pros"></p>
 <p>Objects of copyable and movable types can be passed and returned by value,
@@ -1561,6 +1685,7 @@ implementation, which makes them easier to understand, maintain, and optimize by
 the compiler. Further, such objects can be used with generic APIs that
 require pass-by-value, such as most containers, and they allow for additional
 flexibility in e.g., type composition.</p>
+<p>可拷贝和可移动类型的对象可以按值传递和返回，这使得 API 更简单、更安全且更通用。与按指针或引用传递对象不同，不存在所有权、生命周期、可变性等问题的混淆风险，也不需要在契约中指定它们。它还可以防止客户端和实现之间的非局部交互，这使得它们更容易理解、维护，并且更容易被编译器优化。此外，此类对象可以与需要按值传递的通用 API（如大多数容器）一起使用，并且它们允许在例如类型组合方面具有额外的灵活性。</p>
 
 <p>Copy/move constructors and assignment operators are usually
 easier to define correctly than alternatives
@@ -1595,6 +1720,7 @@ resulting bugs can be confusing and difficult to diagnose.</p>
 invocation easy to miss. This may cause confusion for programmers used to
 languages where pass-by-reference is conventional or mandatory. It may also
 encourage excessive copying, which can cause performance problems.</p>
+<p>拷贝构造函数是隐式调用的，这使得调用很容易被忽略。这可能会让习惯于按引用传递是常规或强制性做法的语言的程序员感到困惑。这也可能鼓励过多的拷贝，从而导致性能问题。</p>
 
 <p class="decision"></p>
 
@@ -1602,6 +1728,7 @@ encourage excessive copying, which can cause performance problems.</p>
 operations the class supports. This should usually take the form of explicitly
 declaring and/or deleting the appropriate operations in the <code>public</code>
 section of the declaration.</p>
+<p>每个类的公共接口必须明确该类支持哪些拷贝和移动操作。这通常应采用在声明的 <code>public</code> 部分显式声明和/或删除适当操作的形式。</p>
 
 <p>Specifically, a copyable class should explicitly declare the copy
 operations, a move-only class should explicitly declare the move operations, and
@@ -1610,6 +1737,7 @@ copyable class may also declare move operations in order to support efficient
 moves. Explicitly declaring or deleting all four copy/move operations is
 permitted, but not required. If you provide a copy or move assignment operator,
 you must also provide the corresponding constructor.</p>
+<p>具体来说，可拷贝类应显式声明拷贝操作，仅可移动类应显式声明移动操作，不可拷贝/移动类应显式删除拷贝操作。可拷贝类也可以声明移动操作以支持高效移动。允许但不强制要求显式声明或删除所有四个拷贝/移动操作。如果你提供了拷贝或移动赋值运算符，你也必须提供相应的构造函数。</p>
 
 <pre class="goodcode">class Copyable {
  public:
@@ -1647,18 +1775,28 @@ class NotCopyableOrMovable {
 </pre>
 
 <p>These declarations/deletions can be omitted only if they are obvious:</p>
+<p>只有当这些声明/删除显而易见时，才可以省略：</p>
+
 <ul>
 <li>If the class has no <code>private</code> section, like a
     <a href="#Structs_vs._Classes">struct</a> or an interface-only base class,
     then the copyability/movability can be determined by the
     copyability/movability of any public data members.
-</li><li>If a base class clearly isn't copyable or movable, derived classes
+</li>
+<li>如果类没有 <code>private</code> 部分，例如 <a href="#Structs_vs._Classes">struct</a> 或仅有接口的基类，那么其可拷贝性/可移动性可以由任何公共数据成员的可拷贝性/可移动性决定。</li>
+
+<li>If a base class clearly isn't copyable or movable, derived classes
     naturally won't be either.  An interface-only base class that leaves these
     operations implicit is not sufficient to make concrete subclasses clear.
-</li><li>Note that if you explicitly declare or delete either the constructor or
+</li>
+<li>如果基类显然不可拷贝或不可移动，派生类自然也不会是。仅保留这些操作为隐式的接口基类不足以明确具体的子类。</li>
+
+<li>Note that if you explicitly declare or delete either the constructor or
     assignment operation for copy, the other copy operation is not obvious and
     must be declared or deleted.  Likewise for move operations.
-</li></ul>
+</li>
+<li>请注意，如果你显式声明或删除拷贝构造函数或拷贝赋值操作符中的一个，另一个拷贝操作就不再显而易见，必须显式声明或删除。移动操作同理。</li>
+</ul>
 
 <p>A type should not be copyable/movable if the meaning of
 copying/moving is unclear to a casual user, or if it incurs unexpected
@@ -1669,22 +1807,26 @@ the corresponding copy operations.  If your type provides copy operations, it is
 recommended that you design your class so that the default implementation of
 those operations is correct. Remember to review the correctness of any
 defaulted operations as you would any other code.</p>
+<p>如果拷贝/移动的含义对普通用户来说不清楚，或者会产生意想不到的成本，那么该类型就不应该是可拷贝/可移动的。对于可拷贝类型，移动操作严格来说是一种性能优化，也是潜在的错误和复杂性来源，因此除非它们比相应的拷贝操作效率高得多，否则应避免定义它们。如果你的类型提供拷贝操作，建议你设计你的类，使得这些操作的默认实现是正确的。请记住，像审查任何其他代码一样审查任何默认操作的正确性。</p>
 
 <p>To eliminate the risk of slicing, prefer to make base classes abstract,
 by making their constructors protected, by declaring their destructors protected,
 or by giving them one or more pure virtual member functions. Prefer to avoid
 deriving from concrete classes.</p>
+<p>为了消除切片的风险，最好通过将其构造函数设为 protected，将其析构函数声明为 protected，或赋予其一个或多个纯虚成员函数，使基类成为抽象类。尽量避免从具体类派生。</p>
 
-<h3 id="Structs_vs._Classes">Structs vs. Classes</h3>
+<h3 id="Structs_vs._Classes">Structs vs. Classes 结构体 vs. 类</h3>
 
 <p>Use a <code>struct</code> only for passive objects that
       carry data; everything else is a <code>class</code>.</p>
+<p>仅将 <code>struct</code> 用于承载数据的被动对象；其他所有情况都使用 <code>class</code>。</p>
 
 <p>The <code>struct</code> and <code>class</code>
 keywords behave almost identically in C++. We add our own
 semantic meanings to each keyword, so you should use the
 appropriate keyword for the data-type you're
 defining.</p>
+<p><code>struct</code> 和 <code>class</code> 关键字在 C++ 中的行为几乎相同。我们为每个关键字赋予了自己的语义含义，因此你应该为你定义的类型使用适当的关键字。</p>
 
 <p><code>structs</code> should be used for passive objects that carry
 data, and may have associated constants. All fields must be public. The
@@ -1694,24 +1836,29 @@ break those invariants, but users of a struct may have requirements and
 guarantees on particular uses of it. Constructors, destructors, and helper
 methods may be present; however, these methods must not require or enforce
 any invariants.</p>
+<p><code>struct</code> 应被用于承载数据的被动对象，并可能包含关联的常量。所有字段必须是 public 的。Struct 类型本身不得具有暗示不同字段之间关系的不变式，因为用户直接访问这些字段可能会破坏这些不变式，但 struct 的用户可能对其特定用途有要求和保证。可以存在构造函数、析构函数和辅助方法；但是，这些方法不得要求或强制执行任何不变式。</p>
 
 <p>If more functionality or invariants are required, or struct has wide visibility and expected to
 evolve, then a <code>class</code> is more appropriate. If in doubt, make it a <code>class</code>.
 </p>
+<p>如果需要更多功能或不变式，或者 struct 具有广泛的可见性并预期会演变，那么 <code>class</code> 更合适。如果有疑问，请将其设为 <code>class</code>。</p>
 
 <p>For consistency with STL, you can use
 <code>struct</code> instead of <code>class</code> for
 stateless types, such as traits,
 <a href="#Template_metaprogramming">template metafunctions</a>,
 and some functors.</p>
+<p>为了与 STL 保持一致，对于无状态类型（例如 traits、<a href="#Template_metaprogramming">模板元函数</a> 和某些仿函数），可以使用 <code>struct</code> 代替 <code>class</code>。</p>
 
 <p>Note that member variables in structs and classes have
 <a href="#Variable_Names">different naming rules</a>.</p>
+<p>请注意，struct 和 class 中的成员变量具有 <a href="#Variable_Names">不同的命名规则</a>。</p>
 
-<h3 id="Structs_vs._Tuples">Structs vs. Pairs and Tuples</h3>
+<h3 id="Structs_vs._Tuples">Structs vs. Pairs and Tuples 结构体 vs. Pairs 和 Tuples</h3>
 
 <p>Prefer to use a <code>struct</code> instead of a pair or a
 tuple whenever the elements can have meaningful names.</p>
+<p>只要元素可以有有意义的名称，就优先使用 <code>struct</code> 而不是 pair 或 tuple。</p>
 
 <p>
   While using pairs and tuples can avoid the need to define a custom type,
@@ -1723,18 +1870,21 @@ tuple whenever the elements can have meaningful names.</p>
   sometimes partially mitigate this, a field name is usually substantially
   clearer and more informative than a type.
 </p>
+<p>虽然使用 pair 和 tuple 可以避免定义自定义类型的需要，从而可能在<em>编写</em>代码时节省工作量，但在<em>阅读</em>代码时，有意义的字段名称几乎总是比 <code>.first</code>、<code>.second</code> 或 <code>std::get&lt;X&gt;</code> 清晰得多。虽然 C++14 引入的 <code>std::get&lt;Type&gt;</code> 允许按类型而不是索引访问 tuple 元素（当类型唯一时），有时可以部分缓解这个问题，但字段名称通常比类型更清晰、更具信息量。</p>
 
 <p>
   Pairs and tuples may be appropriate in generic code where there are not
   specific meanings for the elements of the pair or tuple. Their use may
   also be required in order to interoperate with existing code or APIs.
 </p>
+<p>在 pair 或 tuple 的元素没有特定含义的通用代码中，pair 和 tuple 可能是合适的。为了与现有代码或 API 进行互操作，也可能需要使用它们。</p>
 
 <a id="Multiple_Inheritance"></a>
-<h3 id="Inheritance">Inheritance</h3>
+<h3 id="Inheritance">Inheritance 继承</h3>
 
 <p>Composition is often more appropriate than inheritance.
 When using inheritance, make it <code>public</code>.</p>
+<p>组合通常比继承更合适。使用继承时，请将其设为 <code>public</code>。</p>
 
 <p class="definition"></p>
 <p> When a sub-class
@@ -1744,6 +1894,7 @@ defines. "Interface inheritance" is inheritance from a
 pure abstract base class (one with no state or defined
 methods); all other inheritance is "implementation
 inheritance".</p>
+<p>当子类继承基类时，它包含基类定义的所有数据和操作的定义。“接口继承”是指从纯抽象基类（没有状态或已定义方法的类）继承；所有其他继承都是“实现继承”。</p>
 
 <p class="pros"></p>
 <p>Implementation inheritance reduces code size by re-using
@@ -1755,6 +1906,7 @@ programmatically enforce that a class expose a particular
 API. Again, the compiler can detect errors, in this case,
 when a class does not define a necessary method of the
 API.</p>
+<p>实现继承通过重用基类代码来减小代码大小，因为它特化了现有类型。因为继承是编译时声明，你和编译器都可以理解操作并检测错误。接口继承可用于以编程方式强制类公开特定 API。同样，编译器可以在这种情况下检测错误，即当类未定义 API 的必要方法时。</p>
 
 <p class="cons"></p>
 <p>For implementation inheritance, because the code
@@ -1763,6 +1915,7 @@ the sub-class, it can be more difficult to understand an
 implementation. The sub-class cannot override functions
 that are not virtual, so the sub-class cannot change
 implementation.</p>
+<p>对于实现继承，由于实现子类的代码分散在基类和子类之间，因此可能更难理解实现。子类无法覆盖非虚函数，因此子类无法更改实现。</p>
 
 <p>Multiple inheritance is especially problematic, because
 it often imposes a higher performance overhead (in fact,
@@ -1771,6 +1924,7 @@ inheritance can often be greater than the performance
 drop from ordinary to virtual dispatch), and because
 it risks leading to "diamond" inheritance patterns,
 which are prone to ambiguity, confusion, and outright bugs.</p>
+<p>多重继承特别有问题，因为它通常会带来更高的性能开销（事实上，从单继承到多重继承的性能下降通常比从普通调度到虚调度的性能下降更大），而且因为它有可能导致“菱形”继承模式，这种模式容易产生歧义、困惑甚至错误。</p>
 
 <p class="decision"></p>
 
@@ -1779,6 +1933,7 @@ want to do private inheritance, you should be including
 an instance of the base class as a member instead. You may use
 <code>final</code> on classes when you don't intend to support using
 them as base classes.</p>
+<p>所有继承都应该是 <code>public</code>。如果你想进行私有继承，你应该改为将基类的实例包含为成员。当你不想支持将类用作基类时，可以在类上使用 <code>final</code>。</p>
 
 <p>Do not overuse implementation inheritance. Composition
 is often more appropriate. Try to restrict use of
@@ -1786,11 +1941,13 @@ inheritance to the "is-a" case: <code>Bar</code>
 subclasses <code>Foo</code> if it can reasonably be said
 that <code>Bar</code> "is a kind of"
 <code>Foo</code>.</p>
+<p>不要过度使用实现继承。组合通常更合适。尝试将继承的使用限制在 "is-a" 情况下：如果可以说 <code>Bar</code> "是一种" <code>Foo</code>，则 <code>Bar</code> 继承 <code>Foo</code>。</p>
 
 <p>Limit the use of <code>protected</code> to those
 member functions that might need to be accessed from
 subclasses. Note that <a href="#Access_Control">data
 members should be <code>private</code></a>.</p>
+<p>限制 <code>protected</code> 的使用，仅用于那些可能需要从子类访问的成员函数。请注意 <a href="#Access_Control">数据成员应该是 <code>private</code></a>。</p>
 
 <p>Explicitly annotate overrides of virtual functions or virtual
 destructors with exactly one of an <code>override</code> or (less
@@ -1804,13 +1961,16 @@ specifiers serve as documentation; if no specifier is
 present, the reader has to check all ancestors of the
 class in question to determine if the function or
 destructor is virtual or not.</p>
+<p>使用 <code>override</code> 或（较少见）<code>final</code> 说明符之一明确注释虚函数或虚析构函数的覆盖。在声明覆盖时不要使用 <code>virtual</code>。理由：标记为 <code>override</code> 或 <code>final</code> 但不是基类虚函数覆盖的函数或析构函数将无法编译，这有助于捕获常见错误。说明符充当文档；如果没有说明符，读者必须检查相关类的所有祖先，以确定函数或析构函数是否为虚函数。</p>
 
 <p>Multiple inheritance is permitted, but multiple <em>implementation</em>
 inheritance is strongly discouraged.</p>
+<p>允许多重继承，但强烈不鼓励多重<em>实现</em>继承。</p>
 
-<h3 id="Operator_Overloading">Operator Overloading</h3>
+<h3 id="Operator_Overloading">Operator Overloading 运算符重载</h3>
 
 <p>Overload operators judiciously. Do not use user-defined literals.</p>
+<p>谨慎地重载运算符。不要使用用户定义的字面量。</p>
 
 <p class="definition"></p>
 <p>C++ permits user code to
@@ -1821,6 +1981,7 @@ is a user-defined type. The <code>operator</code> keyword also
 permits user code to define new kinds of literals using
 <code>operator""</code>, and to define type-conversion functions
 such as <code>operator bool()</code>.</p>
+<p>C++ 允许用户代码使用 <code>operator</code> 关键字 <a href="http://en.cppreference.com/w/cpp/language/operators">声明内置运算符的重载版本</a>，只要其中一个参数是用户定义的类型。<code>operator</code> 关键字还允许用户代码使用 <code>operator""</code> 定义新型字面量，并定义类型转换函数，例如 <code>operator bool()</code>。</p>
 
 <p class="pros"></p>
 <p>Operator overloading can make code more concise and
@@ -1831,36 +1992,44 @@ for certain operations (e.g., <code>==</code>, <code>&lt;</code>,
 those conventions can make user-defined types more readable
 and enable them to interoperate with libraries that expect
 those names.</p>
+<p>运算符重载可以使代码更简洁、直观，因为它使用户定义的类型能够像内置类型一样行事。重载运算符是某些操作的习惯名称（例如 <code>==</code>、<code>&lt;</code>、<code>=</code> 和 <code>&lt;&lt;</code>），遵循这些约定可以使用户定义的类型更具可读性，并使其能够与期望这些名称的库进行互操作。</p>
 
 <p>User-defined literals are a very concise notation for
 creating objects of user-defined types.</p>
+<p>用户定义的字面量是创建用户定义类型对象的一种非常简洁的符号。</p>
 
 <p class="cons"></p>
 <ul>
   <li>Providing a correct, consistent, and unsurprising
   set of operator overloads requires some care, and failure
   to do so can lead to confusion and bugs.</li>
+  <li>提供一套正确、一致且令人不意外的运算符重载需要一些小心，如果做不到这一点，可能会导致困惑和错误。</li>
 
   <li>Overuse of operators can lead to obfuscated code,
   particularly if the overloaded operator's semantics
   don't follow convention.</li>
+  <li>过度使用运算符可能会导致代码晦涩难懂，特别是如果重载运算符的语义不遵循约定时。</li>
 
   <li>The hazards of function overloading apply just as
   much to operator overloading, if not more so.</li>
+  <li>函数重载的危害同样适用于运算符重载，甚至可能更严重。</li>
 
   <li>Operator overloads can fool our intuition into
   thinking that expensive operations are cheap, built-in
   operations.</li>
+  <li>运算符重载可能会欺骗我们的直觉，让我们误以为昂贵的操作是廉价的内置操作。</li>
 
   <li>Finding the call sites for overloaded operators may
   require a search tool that's aware of C++ syntax, rather
   than, e.g., grep.</li>
+  <li>查找重载运算符的调用点可能需要一个了解 C++ 语法的搜索工具，而不是像 grep 这样的工具。</li>
 
   <li>If you get the argument type of an overloaded operator
   wrong, you may get a different overload rather than a
   compiler error. For example, <code>foo &lt; bar</code>
   may do one thing, while <code>&amp;foo &lt; &amp;bar</code>
   does something totally different.</li>
+  <li>如果你弄错了重载运算符的参数类型，你可能会得到不同的重载，而不是编译器错误。例如，<code>foo &lt; bar</code> 可能会做一件事，而 <code>&amp;foo &lt; &amp;bar</code> 会做完全不同的事情。</li>
 
   <li>Certain operator overloads are inherently hazardous.
   Overloading unary <code>&amp;</code> can cause the same
@@ -1869,6 +2038,7 @@ creating objects of user-defined types.</p>
   <code>&amp;&amp;</code>, <code>||</code>, and <code>,</code>
   (comma) cannot match the evaluation-order semantics of the
   built-in operators.</li>
+  <li>某些运算符重载本质上是危险的。重载一元 <code>&amp;</code> 可能会导致同一代码具有不同的含义，具体取决于重载声明是否可见。<code>&amp;&amp;</code>、<code>||</code> 和 <code>,</code>（逗号）的重载无法匹配内置运算符的求值顺序语义。</li>
 
   <li>Operators are often defined outside the class,
   so there's a risk of different files introducing
@@ -1876,12 +2046,14 @@ creating objects of user-defined types.</p>
   definitions are linked into the same binary, this results
   in undefined behavior, which can manifest as subtle
   run-time bugs.</li>
+  <li>运算符通常在类外部定义，因此存在不同文件引入同一运算符不同定义的风险。如果两个定义都链接到同一个二进制文件中，这将导致未定义行为，可能表现为微妙的运行时错误。</li>
 
   <li>User-defined literals (UDLs) allow the creation of new
   syntactic forms that are unfamiliar even to experienced C++
   programmers, such as <code>"Hello World"sv</code> as a
   shorthand for <code>std::string_view("Hello World")</code>.
   Existing notations are clearer, though less terse.</li>
+  <li>用户定义字面量 (UDL) 允许创建连经验丰富的 C++ 程序员都不熟悉的新语法形式，例如用 <code>"Hello World"sv</code> 作为 <code>std::string_view("Hello World")</code> 的简写。现有的符号虽然不那么简洁，但更清晰。</li>
 
   <li>Because they can't be namespace-qualified, uses of UDLs also require
   use of either using-directives (which <a href="#Namespaces">we ban</a>) or
@@ -1891,6 +2063,7 @@ creating objects of user-defined types.</p>
   suffixes, we prefer to avoid having conventions for literals differ
   between header files and source files.
   </li>
+  <li>由于 UDL 不能被命名空间限定，因此使用 UDL 还需要使用 using 指令（<a href="#Namespaces">我们禁止</a>）或 using 声明（<a href="#Aliases">我们在头文件中禁止</a>，除非导入的名称是该头文件公开接口的一部分）。鉴于头文件必须避免 UDL 后缀，我们宁愿避免头文件和源文件之间的字面量约定不同。</li>
 </ul>
 
 <p class="decision"></p>
@@ -1898,6 +2071,7 @@ creating objects of user-defined types.</p>
 obvious, unsurprising, and consistent with the corresponding
 built-in operators. For example, use <code>|</code> as a
 bitwise- or logical-or, not as a shell-style pipe.</p>
+<p>只有当重载运算符的含义明显、不令人意外且与相应的内置运算符一致时，才定义重载运算符。例如，将 <code>|</code> 用作按位或或逻辑或，而不是 shell 风格的管道。</p>
 
 <p>Define operators only on your own types. More precisely,
 define them in the same headers, <code>.cc</code> files, and namespaces
@@ -1908,6 +2082,7 @@ because they must satisfy this rule for any possible template
 arguments. If you define an operator, also define
 any related operators that make sense, and make sure they
 are defined consistently.</p>
+<p>仅在你自己的类型上定义运算符。更准确地说，在与其操作的类型相同的头文件、<code>.cc</code> 文件和命名空间中定义它们。这样，只要类型可用，运算符就可用，从而最大限度地减少多重定义的风险。如果可能，避免将运算符定义为模板，因为它们必须满足任何可能的模板参数的这条规则。如果你定义了一个运算符，请同时定义任何有意义的相关运算符，并确保它们的定义是一致的。</p>
 
 <p>Prefer to define non-modifying binary operators as
 non-member functions. If a binary operator is defined as a
@@ -1915,6 +2090,7 @@ class member, implicit conversions will apply to the
 right-hand argument, but not the left-hand one. It will
 confuse your users if <code>a + b</code> compiles but
 <code>b + a</code> doesn't.</p>
+<p>优先将非修改性二元运算符定义为非成员函数。如果二元运算符定义为类成员，则隐式转换将应用于右侧参数，但不应用于左侧参数。如果 <code>a + b</code> 编译通过但 <code>b + a</code> 编译失败，这会让你的用户感到困惑。</p>
 
 <p>For a type <code>T</code> whose values can be compared for
 equality, define a non-member <code>operator==</code> and document when
@@ -1924,6 +2100,7 @@ of type <code>T</code> is less than another such value <code>t2</code> then
 you may also define <code>operator&lt;=&gt;</code>, which should be
 consistent with <code>operator==</code>.
 Prefer not to overload the other comparison and ordering operators.</p>
+<p>对于值可以比较相等的类型 <code>T</code>，定义一个非成员 <code>operator==</code> 并记录何时认为两个类型为 <code>T</code> 的值相等。如果对于类型 <code>T</code> 的值 <code>t1</code> 何时小于另一个此类值 <code>t2</code> 有一个明显的单一概念，那么你也可以定义 <code>operator&lt;=&gt;</code>，它应该与 <code>operator==</code> 一致。最好不要重载其他比较和排序运算符。</p>
 
 <p>Don't go out of your way to avoid defining operator
 overloads. For example, prefer to define <code>==</code>,
@@ -1935,6 +2112,7 @@ them. For example, if your type doesn't have a natural
 ordering, but you want to store it in a <code>std::set</code>,
 use a custom comparator rather than overloading
 <code>&lt;</code>.</p>
+<p>不要刻意避免定义运算符重载。例如，优先定义 <code>==</code>、<code>=</code> 和 <code>&lt;&lt;</code>，而不是 <code>Equals()</code>、<code>CopyFrom()</code> 和 <code>PrintTo()</code>。相反，不要仅仅因为其他库期望它们就定义运算符重载。例如，如果你的类型没有自然排序，但你想将其存储在 <code>std::set</code> 中，请使用自定义比较器，而不是重载 <code>&lt;</code>。</p>
 
 <p>Do not overload <code>&amp;&amp;</code>, <code>||</code>,
 <code>,</code> (comma), or unary <code>&amp;</code>. Do not overload
@@ -1967,40 +2145,51 @@ Test</a>.
 If a test fixture class is defined outside of the <code>.cc</code> file it is used in, for example
 in a <code>.h</code> file, make data members <code>private</code>.</p>
 
-<h3 id="Declaration_Order">Declaration Order</h3>
+<h3 id="Declaration_Order">Declaration Order 声明顺序</h3>
 
 <p>Group similar declarations together, placing <code>public</code> parts
 earlier.</p>
+<p>将相似的声明分组在一起，将 <code>public</code> 部分放在前面。</p>
 
 <p>A class definition should usually start with a
 <code>public:</code> section, followed by
 <code>protected:</code>, then <code>private:</code>.  Omit
 sections that would be empty.</p>
+<p>类定义通常应以 <code>public:</code> 部分开始，后跟 <code>protected:</code>，然后是 <code>private:</code>。省略空的部分。</p>
 
 <p>Within each section, prefer grouping similar
 kinds of declarations together, and prefer the
 following order:</p>
+<p>在每个部分中，最好将相似类型的声明分组在一起，并首选以下顺序：</p>
 
 <ol>
   <li>Types and type aliases (<code>typedef</code>, <code>using</code>,
     <code>enum</code>, nested structs and classes, and <code>friend</code> types)</li>
+  <li>类型和类型别名（<code>typedef</code>、<code>using</code>、<code>enum</code>、嵌套结构体和类以及 <code>friend</code> 类型）</li>
 
   <li>(Optionally, for structs only) non-<code>static</code> data members</li>
+  <li>（可选，仅适用于结构体）非 <code>static</code> 数据成员</li>
 
   <li>Static constants</li>
+  <li>静态常量</li>
 
   <li>Factory functions</li>
+  <li>工厂函数</li>
 
   <li>Constructors and assignment operators</li>
+  <li>构造函数和赋值运算符</li>
 
   <li>Destructor</li>
+  <li>析构函数</li>
 
   <li>
     All other functions (<code>static</code> and non-<code>static</code> member
     functions, and <code>friend</code> functions)
   </li>
+  <li>所有其他函数（<code>static</code> 和非 <code>static</code> 成员函数，以及 <code>friend</code> 函数）</li>
 
   <li>All other data members (static and non-static)</li>
+  <li>所有其他数据成员（静态和非静态）</li>
 </ol>
 
 <p>Do not put large method definitions inline in the
@@ -2008,23 +2197,27 @@ class definition. Usually, only trivial or
 performance-critical, and very short, methods may be
 defined inline. See <a href="#Defining_Functions_in_Header_Files">Defining
 Functions in Header Files</a> for more details.</p>
+<p>不要在类定义中内联放置大型方法定义。通常，只有简单的或性能关键且非常短的方法可以在内联定义。有关更多详细信息，请参阅 <a href="#Defining_Functions_in_Header_Files">在头文件中定义函数</a>。</p>
 
-<h2 id="Functions">Functions</h2>
+<h2 id="Functions">Functions 函数</h2>
 
 <a id="Function_Parameter_Ordering"></a>
 <a id="Output_Parameters"></a>
-<h3 id="Inputs_and_Outputs">Inputs and Outputs</h3>
+<h3 id="Inputs_and_Outputs">Inputs and Outputs 输入和输出</h3>
 
 <p>The output of a C++ function is naturally provided via
 a return value and sometimes via output parameters (or in/out parameters).</p>
+<p>C++ 函数的输出自然通过返回值提供，有时通过输出参数（或输入/输出参数）提供。</p>
 
 <p>Prefer using return values over output parameters:
 they improve readability, and often provide the same or better performance.
 See
 <a href="https://abseil.io/tips/176">TotW #176</a>.</p>
+<p>优先使用返回值而不是输出参数：它们提高了可读性，并且通常提供相同或更好的性能。参见 <a href="https://abseil.io/tips/176">TotW #176</a>。</p>
 
 <p>Prefer to return by value or, failing that, return by reference.
 Avoid returning a raw pointer unless it can be null.</p>
+<p>优先按值返回，如果不行，则按引用返回。避免返回原始指针，除非它可以为 null。</p>
 
 <p>Parameters are either inputs to the function, outputs from the
 function, or both. Non-optional input parameters should usually be values
@@ -2034,8 +2227,7 @@ Generally, use <code>std::optional</code> to represent optional by-value
 inputs, and use a <code>const</code> pointer when the non-optional form would
 have used a reference. Use non-<code>const</code> pointers to represent
 optional outputs and optional input/output parameters.</p>
-
-
+<p>参数可以是函数的输入、函数的输出，或两者兼而有之。非可选输入参数通常应该是值或 <code>const</code> 引用，而非可选输出和输入/输出参数通常应该是引用（不能为 null）。通常，使用 <code>std::optional</code> 来表示可选的按值输入，当非可选形式使用引用时，使用 <code>const</code> 指针。使用非 <code>const</code> 指针来表示可选输出和可选输入/输出参数。</p>
 
 <p>
 Avoid defining functions that require a reference parameter to outlive the call.
@@ -2044,6 +2236,7 @@ bugs. Instead, find a way to eliminate the lifetime requirement
 (for example, by copying the parameter), or pass retained parameters by
 pointer and document the lifetime and non-null requirements.
 See <a href="https://abseil.io/tips/116">TotW 116</a> for more.</p>
+<p>避免定义需要引用参数在调用后仍然存活的函数。在某些情况下，引用参数可以绑定到临时对象，导致生命周期错误。相反，找到一种消除生命周期要求的方法（例如，通过复制参数），或者通过指针传递保留参数，并记录生命周期和非空要求。更多信息请参见 <a href="https://abseil.io/tips/116">TotW 116</a>。</p>
 
 <p>When ordering function parameters, put all input-only
 parameters before any output parameters. In particular,
@@ -2053,16 +2246,19 @@ the output parameters. This is not a hard-and-fast rule. Parameters that
 are both input and output muddy the waters, and, as always,
 consistency with related functions may require you to bend the rule.
 Variadic functions may also require unusual parameter ordering.</p>
+<p>在对函数参数进行排序时，将所有仅输入参数放在任何输出参数之前。特别是，不要仅仅因为它们是新的就将新参数添加到函数的末尾；将新的仅输入参数放在输出参数之前。这不是一条硬性规定。既是输入又是输出的参数会使情况变得复杂，而且一如既往，与相关函数的一致性可能需要你变通这条规则。变参函数也可能需要不寻常的参数排序。</p>
 
-<h3 id="Write_Short_Functions">Write Short Functions</h3>
+<h3 id="Write_Short_Functions">Write Short Functions 编写短函数</h3>
 
 <p>Prefer small and focused functions.</p>
+<p>倾向于编写小而专注的函数。</p>
 
 <p>We recognize that long functions are sometimes
 appropriate, so no hard limit is placed on functions
 length. If a function exceeds about 40 lines, think about
 whether it can be broken up without harming the structure
 of the program.</p>
+<p>我们认识到长函数有时是合适的，因此对函数长度没有硬性限制。如果一个函数超过约 40 行，请考虑是否可以在不损害程序结构的情况下将其拆分。</p>
 
 <p>Even if your long function works perfectly now,
 someone modifying it in a few months may add new
@@ -2070,6 +2266,7 @@ behavior. This could result in bugs that are hard to
 find. Keeping your functions short and simple makes it
 easier for other people to read and modify your code.
 Small functions are also easier to test.</p>
+<p>即使你的长函数现在工作得很完美，几个月后修改它的人可能会添加新的行为。这可能会导致难以发现的错误。保持函数简短和简单，使其他人更容易阅读和修改你的代码。小函数也更容易测试。</p>
 
 <p>You could find long and complicated functions when
 working with
@@ -2079,13 +2276,15 @@ such a function proves to be difficult, you find that
 errors are hard to debug, or you want to use a piece of
 it in several different contexts, consider breaking up
 the function into smaller and more manageable pieces.</p>
+<p>你在处理某些代码时可能会发现冗长而复杂的函数。不要被修改现有代码吓倒：如果处理这样的函数证明很困难，或者你发现错误难以调试，或者你想在几个不同的上下文中使用它的一部分，请考虑将该函数拆分为更小、更易于管理的部分。</p>
 
-<h3 id="Function_Overloading">Function Overloading</h3>
+<h3 id="Function_Overloading">Function Overloading 函数重载</h3>
 
 <p>Use overloaded functions (including constructors) only if a
 reader looking at a call site can get a good idea of what
 is happening without having to first figure out exactly
 which overload is being called.</p>
+<p>仅当读者在查看调用点时，无需首先弄清楚到底调用了哪个重载就能很好地了解发生了什么时，才使用重载函数（包括构造函数）。</p>
 
 <p class="definition"></p>
 <p>You may write a function that takes a <code>const
@@ -2094,6 +2293,7 @@ takes <code>const char*</code>. However, in this case consider
 <code>std::string_view
 </code>
 instead.</p>
+<p>你可以编写一个接受 <code>const std::string&amp;</code> 的函数，并用另一个接受 <code>const char*</code> 的函数重载它。但是，在这种情况下，请考虑改用 <code>std::string_view</code>。</p>
 
 <pre class="neutralcode">class MyClass {
  public:
@@ -2107,9 +2307,11 @@ instead.</p>
 identically-named function to take different arguments.
 It may be necessary for templatized code, and it can be
 convenient for Visitors.</p>
+<p>重载可以通过允许同名函数接受不同的参数使代码更直观。对于模板化代码，它可能是必要的，并且对于 Visitor 模式来说可能很方便。</p>
 <p>Overloading based on <code>const</code> or ref qualification
 may make utility code more usable, more efficient, or both.
 See <a href="https://abseil.io/tips/148">TotW #148</a> for more.</p>
+<p>基于 <code>const</code> 或引用限定符的重载可以使实用代码更易用、更高效，或两者兼而有之。更多信息请参见 <a href="https://abseil.io/tips/148">TotW #148</a>。</p>
 
 <p class="cons"></p>
 <p>If a function is overloaded by the argument types alone,
@@ -2118,6 +2320,7 @@ rules in order to tell what's going on. Also many people
 are confused by the semantics of inheritance if a derived
 class overrides only some of the variants of a
 function.</p>
+<p>如果函数仅通过参数类型重载，读者可能必须了解 C++ 复杂的匹配规则才能知道发生了什么。此外，如果派生类仅覆盖函数的某些变体，许多人会对继承的语义感到困惑。</p>
 
 <p class="decision"></p>
 <p>You may overload a function when there are no semantic differences
@@ -2125,21 +2328,25 @@ between variants. These overloads may vary in types, qualifiers, or
 argument count. However, a reader of such a call must not need to know
 which member of the overload set is chosen, only that <b>something</b>
 from the set is being called.</p>
+<p>当变体之间没有语义差异时，你可以重载函数。这些重载可以在类型、限定符或参数数量上有所不同。但是，此类调用的读者必须不需要知道选择了重载集中的哪个成员，只需要知道调用了该集合中的 <b>某个</b> 东西。</p>
 
 <p>To reflect this unified design, prefer a single, comprehensive "umbrella"
 comment that documents the entire overload set and is placed before the first
 declaration.</p>
+<p>为了反映这种统一的设计，最好使用一个单一的、全面的“伞形”注释来记录整个重载集，并将其放在第一个声明之前。</p>
 
 <p>Where a reader might have difficulty connecting the umbrella
 comment to a specific overload, it's okay to have a comment for specific overloads.</p>
+<p>如果读者可能难以将伞形注释与特定重载联系起来，那么为特定重载添加注释是可以的。</p>
 
-<h3 id="Default_Arguments">Default Arguments</h3>
+<h3 id="Default_Arguments">Default Arguments 默认参数</h3>
 
 <p>Default arguments are allowed on non-virtual functions
 when the default is guaranteed to always have the same
 value. Follow the same restrictions as for <a href="#Function_Overloading">function overloading</a>, and
 prefer overloaded functions if the readability gained with
 default arguments doesn't outweigh the downsides below.</p>
+<p>当默认值保证始终具有相同值时，允许在非虚函数上使用默认参数。遵循与 <a href="#Function_Overloading">函数重载</a> 相同的限制，如果默认参数获得的可读性不超过下面的缺点，则优先使用重载函数。</p>
 
 <p class="pros"></p>
 <p>Often you have a function that uses default values, but
@@ -2150,26 +2357,31 @@ to overloading the function, default arguments have a
 cleaner syntax, with less boilerplate and a clearer
 distinction between 'required' and 'optional'
 arguments.</p>
+<p>通常你有一个使用默认值的函数，但偶尔你想覆盖默认值。默认参数允许一种简单的方法来做到这一点，而不必为罕见的例外定义许多函数。与重载函数相比，默认参数具有更清晰的语法，样板代码更少，并且“必需”和“可选”参数之间的区别更清晰。</p>
 
 <p class="cons"></p>
 <p>Defaulted arguments are another way to achieve the
 semantics of overloaded functions, so all the <a href="#Function_Overloading">reasons not to overload
 functions</a> apply.</p>
+<p>默认参数是实现重载函数语义的另一种方式，因此所有 <a href="#Function_Overloading">不重载函数的原因</a> 都适用。</p>
 
 <p>The defaults for arguments in a virtual function call are
 determined by the static type of the target object, and
 there's no guarantee that all overrides of a given function
 declare the same defaults.</p>
+<p>虚函数调用中参数的默认值由目标对象的静态类型决定，并且不能保证给定函数的所有覆盖都声明相同的默认值。</p>
 
 <p>Default parameters are re-evaluated at each call site,
 which can bloat the generated code. Readers may also expect
 the default's value to be fixed at the declaration instead
 of varying at each call.</p>
+<p>默认参数在每个调用点重新求值，这可能会使生成的代码膨胀。读者也可能期望默认值在声明时固定，而不是在每次调用时变化。</p>
 
 <p>Function pointers are confusing in the presence of
 default arguments, since the function signature often
 doesn't match the call signature. Adding
 function overloads avoids these problems.</p>
+<p>在存在默认参数的情况下，函数指针会令人困惑，因为函数签名通常与调用签名不匹配。添加函数重载可以避免这些问题。</p>
 
 <p class="decision"></p>
 <p>Default arguments are banned on virtual functions, where
@@ -2177,32 +2389,38 @@ they don't work properly, and in cases where the specified
 default might not evaluate to the same value depending on
 when it was evaluated. (For example, don't write <code>void
 f(int n = counter++);</code>.)</p>
+<p>在虚函数上禁止使用默认参数，因为它们无法正常工作，并且在指定的默认值可能因求值时间不同而求值为不同值的情况下也是如此。（例如，不要写 <code>void f(int n = counter++);</code>。）</p>
 
 <p>In some other cases, default arguments can improve the
 readability of their function declarations enough to
 overcome the downsides above, so they are allowed. When in
 doubt, use overloads.</p>
+<p>在其他一些情况下，默认参数可以充分提高其函数声明的可读性，从而克服上述缺点，因此是允许的。如有疑问，请使用重载。</p>
 
-<h3 id="trailing_return">Trailing Return Type Syntax</h3>
+<h3 id="trailing_return">Trailing Return Type Syntax 尾置返回类型语法</h3>
 
 <p>Use trailing return types only where using the ordinary syntax (leading
   return types) is impractical or much less readable.</p>
+<p>仅在普通语法（前置返回类型）不切实际或可读性差得多的情况下使用尾置返回类型。</p>
 
 <p class="definition"></p>
 <p>C++ allows two different forms of function declarations. In the older
   form, the return type appears before the function name. For example:</p>
+<p>C++ 允许两种不同形式的函数声明。在旧形式中，返回类型出现在函数名之前。例如：</p>
 <pre class="neutralcode">int Foo(int x);
 </pre>
 <p>The newer form uses the <code>auto</code>
   keyword before the function name and a trailing return type after
   the argument list. For example, the declaration above could
   equivalently be written:</p>
+<p>新形式在函数名之前使用 <code>auto</code> 关键字，并在参数列表之后使用尾置返回类型。例如，上面的声明可以等效地写成：</p>
 <pre class="neutralcode">auto Foo(int x) -&gt; int;
 </pre>
 <p>The trailing return type is in the function's scope. This doesn't
   make a difference for a simple case like <code>int</code> but it matters
   for more complicated cases, like types declared in class scope or
   types written in terms of the function parameters.</p>
+<p>尾置返回类型位于函数的作用域内。这对于像 <code>int</code> 这样的简单情况没有区别，但对于更复杂的情况（如在类作用域中声明的类型或根据函数参数编写的类型）很重要。</p>
 
 <p class="pros"></p>
 <p>Trailing return types are the only way to explicitly specify the
@@ -2211,10 +2429,12 @@ doubt, use overloads.</p>
   but not in all cases. Even when the compiler can deduce it automatically,
   sometimes specifying it explicitly would be clearer for readers.
 </p>
+<p>尾置返回类型是显式指定 <a href="#Lambda_expressions">lambda 表达式</a> 返回类型的唯一方法。在某些情况下，编译器能够推断出 lambda 的返回类型，但并非在所有情况下都能推断出。即使编译器可以自动推断出它，有时显式指定它对读者来说也会更清楚。</p>
 <p>Sometimes it's easier and more readable to specify a return type
   after the function's parameter list has already appeared. This is
   particularly true when the return type depends on template parameters.
   For example:</p>
+<p>有时在函数的参数列表出现后指定返回类型更容易且更易读。当返回类型依赖于模板参数时尤其如此。例如：</p>
   <pre class="neutralcode">    template &lt;typename T, typename U&gt;
     auto Add(T t, U u) -&gt; decltype(t + u);
   </pre>
@@ -2226,10 +2446,12 @@ doubt, use overloads.</p>
 <p class="cons"></p>
 <p>Trailing return type syntax has no analogue in C++-like languages
   such as C and Java, so some readers may find it unfamiliar.</p>
+<p>尾置返回类型语法在 C 和 Java 等类 C++ 语言中没有类似物，因此一些读者可能会觉得陌生。</p>
 <p>Existing codebases have an enormous number of function
   declarations that aren't going to get changed to use the new syntax,
   so the realistic choices are using the old syntax only or using a mixture
   of the two. Using a single version is better for uniformity of style.</p>
+<p>现有的代码库有大量的函数声明不会更改为使用新语法，因此现实的选择是仅使用旧语法或混合使用两者。使用单一版本更有利于风格统一。</p>
 
 <p class="decision"></p>
 <p>In most cases, continue to use the older style of function
@@ -2240,25 +2462,24 @@ doubt, use overloads.</p>
   more readable way. The latter case should be rare; it's mostly an
   issue in fairly complicated template code, which is
   <a href="#Template_metaprogramming">discouraged in most cases</a>.</p>
+<p>在大多数情况下，继续使用返回类型位于函数名之前的旧式函数声明。仅在需要时（例如 lambda）或通过将类型放在函数参数列表之后可以以更易读的方式编写类型的情况下，才使用新的尾置返回类型形式。后一种情况应该很少见；这主要是在相当复杂的模板代码中的问题，而在大多数情况下 <a href="#Template_metaprogramming">不鼓励使用这种代码</a>。</p>
 
 
-<h2 id="Google-Specific_Magic">Google-Specific Magic</h2>
-
-
+<h2 id="Google-Specific_Magic">Google-Specific Magic 谷歌特有的魔法</h2>
 
 <div>
 <p>There are various tricks and utilities that
 we use to make C++ code more robust, and various ways we use
 C++ that may differ from what you see elsewhere.</p>
+<p>我们使用了各种技巧和实用程序来使 C++ 代码更加健壮，并且我们使用 C++ 的各种方式可能与你在其他地方看到的不同。</p>
 </div>
 
-
-
-<h3 id="Ownership_and_Smart_Pointers">Ownership and Smart Pointers</h3>
+<h3 id="Ownership_and_Smart_Pointers">Ownership and Smart Pointers 所有权和智能指针</h3>
 
 <p>Prefer to have single, fixed owners for dynamically
 allocated objects. Prefer to transfer ownership with smart
 pointers.</p>
+<p>最好让动态分配的对象有单一、固定的所有者。最好使用智能指针转移所有权。</p>
 
 <p class="definition"></p>
 <p>"Ownership" is a bookkeeping technique for managing
@@ -2270,6 +2491,7 @@ shared, in which case the last owner is typically
 responsible for deleting it. Even when ownership is not
 shared, it can be transferred from one piece of code to
 another.</p>
+<p>“所有权”是一种用于管理动态分配的内存（和其他资源）的簿记技术。动态分配对象的所有者是负责确保在不再需要该对象时将其删除的对象或函数。所有权有时可以共享，在这种情况下，通常由最后一个所有者负责删除它。即使所有权不共享，它也可以从一段代码转移到另一段代码。</p>
 
 <p>"Smart" pointers are classes that act like pointers,
 e.g., by overloading the <code>*</code> and
@@ -2290,31 +2512,38 @@ a dynamically allocated object. <code>std::shared_ptr</code>s
 can be copied; ownership of the object is shared among
 all copies, and the object is deleted when the last
 <code>std::shared_ptr</code> is destroyed. </p>
+<p>“智能”指针是行为类似于指针的类，例如通过重载 <code>*</code> 和 <code>-&gt;</code> 运算符。某些智能指针类型可用于自动执行所有权簿记，以确保履行这些责任。<a href="http://en.cppreference.com/w/cpp/memory/unique_ptr"><code>std::unique_ptr</code></a> 是一种智能指针类型，它表示对动态分配对象的独占所有权；当 <code>std::unique_ptr</code> 超出作用域时，该对象将被删除。它不能被复制，但可以被<em>移动</em>以表示所有权转移。<a href="http://en.cppreference.com/w/cpp/memory/shared_ptr"><code>std::shared_ptr</code></a> 是一种智能指针类型，它表示对动态分配对象的共享所有权。<code>std::shared_ptr</code> 可以被复制；对象的所有权在所有副本之间共享，当最后一个 <code>std::shared_ptr</code> 被销毁时，该对象将被删除。</p>
 
 <p class="pros"></p>
 <ul>
   <li>It's virtually impossible to manage dynamically
   allocated memory without some sort of ownership
   logic.</li>
+  <li>如果没有某种所有权逻辑，几乎不可能管理动态分配的内存。</li>
 
   <li>Transferring ownership of an object can be cheaper
   than copying it (if copying it is even possible).</li>
+  <li>转移对象的所有权可能比复制它更便宜（如果甚至可以复制的话）。</li>
 
   <li>Transferring ownership can be simpler than
   'borrowing' a pointer or reference, because it reduces
   the need to coordinate the lifetime of the object
   between the two users.</li>
+  <li>转移所有权可能比“借用”指针或引用更简单，因为它减少了在两个用户之间协调对象生命周期的需要。</li>
 
   <li>Smart pointers can improve readability by making
   ownership logic explicit, self-documenting, and
   unambiguous.</li>
+  <li>智能指针通过使所有权逻辑明确、自文档化和无歧义来提高可读性。</li>
 
   <li>Smart pointers can eliminate manual ownership
   bookkeeping, simplifying the code and ruling out large
   classes of errors.</li>
+  <li>智能指针可以消除手动所有权簿记，简化代码并排除大类错误。</li>
 
   <li>For <code>const</code> objects, shared ownership can be a simple
   and efficient alternative to deep copying.</li>
+  <li>对于 <code>const</code> 对象，共享所有权可以是深度复制的简单高效的替代方案。</li>
 </ul>
 
 <p class="cons"></p>
@@ -2325,34 +2554,43 @@ all copies, and the object is deleted when the last
   in APIs: you have to worry not just about ownership,
   but also aliasing, lifetime, and mutability, among
   other issues.</li>
+  <li>所有权必须通过指针（无论是智能指针还是普通指针）来表示和转移。指针语义比值语义更复杂，尤其是在 API 中：你不仅要担心所有权，还要担心别名、生命周期和可变性等问题。</li>
 
   <li>The performance costs of value semantics are often
   overestimated, so the performance benefits of ownership
   transfer might not justify the readability and
   complexity costs.</li>
+  <li>值语义的性能成本通常被高估，因此所有权转移的性能优势可能无法证明可读性和复杂性成本是合理的。</li>
 
   <li>APIs that transfer ownership force their clients
   into a single memory management model.</li>
+  <li>转移所有权的 API 迫使其客户端进入单一的内存管理模型。</li>
 
   <li>Code using smart pointers is less explicit about
   where the resource releases take place.</li>
+  <li>使用智能指针的代码不太明确资源释放发生的位置。</li>
 
   <li><code>std::unique_ptr</code> expresses ownership
   transfer using move semantics, which can be complex and
   may confuse some programmers.</li>
+  <li><code>std::unique_ptr</code> 使用移动语义表示所有权转移，这可能很复杂，并且可能会让一些程序员感到困惑。</li>
 
   <li>Shared ownership can be a tempting alternative to
   careful ownership design, obfuscating the design of a
   system.</li>
+  <li>共享所有权可能是仔细的所有权设计的一种诱人替代方案，这会混淆系统的设计。</li>
 
   <li>Shared ownership requires explicit bookkeeping at
   run-time, which can be costly.</li>
+  <li>共享所有权需要在运行时进行显式簿记，这可能会很昂贵。</li>
 
   <li>In some cases (e.g., cyclic references), objects
   with shared ownership may never be deleted.</li>
+  <li>在某些情况下（例如循环引用），具有共享所有权的对象可能永远不会被删除。</li>
 
   <li>Smart pointers are not perfect substitutes for
   plain pointers.</li>
+  <li>智能指针并不是普通指针的完美替代品。</li>
 </ul>
 
 <p class="decision"></p>
@@ -2362,6 +2600,7 @@ needs access to the object, consider passing it a copy,
 or passing a pointer or reference without transferring
 ownership. Prefer to use <code>std::unique_ptr</code> to
 make ownership transfer explicit. For example:</p>
+<p>如果必须进行动态分配，最好将所有权保留在分配它的代码中。如果其他代码需要访问该对象，请考虑传递它的副本，或者在不转移所有权的情况下传递指针或引用。最好使用 <code>std::unique_ptr</code> 来明确所有权转移。例如：</p>
 
 <pre class="goodcode">std::unique_ptr&lt;Foo&gt; FooFactory();
 void FooConsumer(std::unique_ptr&lt;Foo&gt; ptr);
@@ -2377,21 +2616,23 @@ underlying object is immutable (i.e.,
 <code>std::shared_ptr&lt;const Foo&gt;</code>).  If you
 do use shared ownership, prefer to use
 <code>std::shared_ptr</code>.</p>
+<p>没有非常好的理由，不要将代码设计为使用共享所有权。其中一个理由是避免昂贵的复制操作，但只有在性能优势显著且底层对象不可变（即 <code>std::shared_ptr&lt;const Foo&gt;</code>）的情况下，你才应该这样做。如果你确实使用共享所有权，最好使用 <code>std::shared_ptr</code>。</p>
 
 <p>Never use <code>std::auto_ptr</code>. Instead, use
 <code>std::unique_ptr</code>.</p>
+<p>永远不要使用 <code>std::auto_ptr</code>。相反，请使用 <code>std::unique_ptr</code>。</p>
 
 <h3 id="cpplint">cpplint</h3>
 
 <p>Use <code>cpplint.py</code> to detect style errors.</p>
+<p>使用 <code>cpplint.py</code> 检测风格错误。</p>
 
 <p><code>cpplint.py</code>
 is a tool that reads a source file and identifies many
 style errors. It is not perfect, and has both false
 positives and false negatives, but it is still a valuable
 tool. </p>
-
-
+<p><code>cpplint.py</code> 是一个读取源文件并识别许多风格错误的工具。它并不完美，既有误报也有漏报，但它仍然是一个有价值的工具。</p>
 
 <div>
 <p>Some projects have instructions on
@@ -2400,15 +2641,15 @@ tools. If the project you are contributing to does not,
 you can download
 <a href="https://raw.githubusercontent.com/cpplint/cpplint/HEAD/cpplint.py">
 <code>cpplint.py</code></a> separately.</p>
+<p>有些项目有关于如何从项目工具运行 <code>cpplint.py</code> 的说明。如果你贡献的项目没有，你可以单独下载 <a href="https://raw.githubusercontent.com/cpplint/cpplint/HEAD/cpplint.py"><code>cpplint.py</code></a>。</p>
 </div>
 
+<h2 id="Other_C++_Features">Other C++ Features 其他 C++ 特性</h2>
 
-
-<h2 id="Other_C++_Features">Other C++ Features</h2>
-
-<h3 id="Rvalue_references">Rvalue References</h3>
+<h3 id="Rvalue_references">Rvalue References 右值引用</h3>
 
 <p>Use rvalue references only in certain special cases listed below.</p>
+<p>仅在下列特定特殊情况下使用右值引用。</p>
 
 <p class="definition"></p>
 <p> Rvalue references
@@ -2417,11 +2658,13 @@ objects. The syntax is similar to traditional reference
 syntax. For example, <code>void f(std::string&amp;&amp;
 s);</code> declares a function whose argument is an
 rvalue reference to a <code>std::string</code>.</p>
+<p>右值引用是一种只能绑定到临时对象的引用类型。其语法类似于传统的引用语法。例如，<code>void f(std::string&amp;&amp; s);</code> 声明了一个参数为 <code>std::string</code> 右值引用的函数。</p>
 
 <p id="Forwarding_references"> When the token '&amp;&amp;' is applied to
 an unqualified template argument in a function
 parameter, special template argument deduction
 rules apply. Such a reference is called a forwarding reference.</p>
+<p>当符号 '&amp;&amp;' 应用于函数参数中的未限定模板参数时，适用特殊的模板参数推导规则。这种引用称为转发引用。</p>
 
 <p class="pros"></p>
 <ul>
@@ -2434,16 +2677,19 @@ rules apply. Such a reference is called a forwarding reference.</p>
   manipulation instead of copying a large amount of data.
   In many cases this can result in a major performance
   improvement.</li>
+  <li>定义移动构造函数（接受类类型的右值引用的构造函数）使得移动值而不是复制值成为可能。例如，如果 <code>v1</code> 是一个 <code>std::vector&lt;std::string&gt;</code>，那么 <code>auto v2(std::move(v1))</code> 可能只会导致一些简单的指针操作，而不是复制大量数据。在许多情况下，这可以带来重大的性能提升。</li>
 
   <li>Rvalue references make it possible to implement
   types that are movable but not copyable, which can be
   useful for types that have no sensible definition of
   copying but where you might still want to pass them as
   function arguments, put them in containers, etc.</li>
+  <li>右值引用使得实现可移动但不可复制的类型成为可能，这对于那些没有合理的复制定义，但你可能仍想将它们作为函数参数传递、放入容器等的类型非常有用。</li>
 
   <li><code>std::move</code> is necessary to make
   effective use of some standard-library types, such as
   <code>std::unique_ptr</code>.</li>
+  <li><code>std::move</code> 对于有效使用某些标准库类型（如 <code>std::unique_ptr</code>）是必要的。</li>
 
   <li><a href="#Forwarding_references">Forwarding references</a> which
   use the rvalue reference token make it possible to write a
@@ -2451,6 +2697,7 @@ rules apply. Such a reference is called a forwarding reference.</p>
   another function, and works whether or not its
   arguments are temporary objects and/or const.
   This is called 'perfect forwarding'.</li>
+  <li>使用右值引用符号的 <a href="#Forwarding_references">转发引用</a> 使得编写一个通用函数包装器成为可能，该包装器将其参数转发给另一个函数，并且无论其参数是否为临时对象和/或 const 都能正常工作。这被称为“完美转发”。</li>
 </ul>
 
 <p class="cons"></p>
@@ -2458,31 +2705,38 @@ rules apply. Such a reference is called a forwarding reference.</p>
   <li>Rvalue references are not yet widely understood. Rules like reference
   collapsing and the special deduction rule for forwarding references
   are somewhat obscure.</li>
+  <li>右值引用尚未被广泛理解。引用折叠和转发引用的特殊推导规则等规则有些晦涩难懂。</li>
 
   <li>Rvalue references are often misused. Using rvalue
   references is counter-intuitive in signatures where the argument is expected
   to have a valid specified state after the function call, or where no move
   operation is performed.</li>
+  <li>右值引用经常被滥用。在参数预期在函数调用后具有有效指定状态或不执行移动操作的签名中使用右值引用是违反直觉的。</li>
 </ul>
 
 <p class="decision"></p>
 <p>Do not use rvalue references (or apply the <code>&amp;&amp;</code>
 qualifier to methods), except as follows:</p>
+<p>不要使用右值引用（或将 <code>&amp;&amp;</code> 限定符应用于方法），除非如下所示：</p>
+
 <ul>
   <li>You may use them to define move constructors and move assignment
   operators (as described in
   <a href="#Copyable_Movable_Types">Copyable and Movable Types</a>).
   </li>
+  <li>你可以使用它们来定义移动构造函数和移动赋值运算符（如 <a href="#Copyable_Movable_Types">可拷贝和可移动类型</a> 中所述）。</li>
 
   <li>You may use them to define <code>&amp;&amp;</code>-qualified methods that
   logically "consume" <code>*this</code>, leaving it in an unusable
   or empty state. Note that this applies only to method qualifiers (which come
   after the closing parenthesis of the function signature); if you want to
   "consume" an ordinary function parameter, prefer to pass it by value.</li>
+  <li>你可以使用它们来定义 <code>&amp;&amp;</code> 限定的方法，这些方法在逻辑上“消耗” <code>*this</code>，使其处于不可用或空状态。请注意，这仅适用于方法限定符（位于函数签名闭括号之后）；如果你想“消耗”一个普通函数参数，最好按值传递它。</li>
 
   <li>You may use forwarding references in conjunction with <code>
   <a href="http://en.cppreference.com/w/cpp/utility/forward">std::forward</a></code>,
   to support perfect forwarding.</li>
+  <li>你可以结合使用转发引用和 <code><a href="http://en.cppreference.com/w/cpp/utility/forward">std::forward</a></code> 来支持完美转发。</li>
 
   <li>You may use them to define pairs of overloads, such as one taking
   <code>Foo&amp;&amp;</code> and the other taking <code>const Foo&amp;</code>.
@@ -2491,12 +2745,14 @@ qualifier to methods), except as follows:</p>
   functions sometimes don't consume the input. As always: if you're writing
   more complicated code for the sake of performance, make sure you have evidence
   that it actually helps.</li>
+  <li>你可以使用它们来定义重载对，例如一个接受 <code>Foo&amp;&amp;</code>，另一个接受 <code>const Foo&amp;</code>。通常首选的解决方案只是按值传递，但有时重载函数对会产生更好的性能，例如如果函数有时不消耗输入。一如既往：如果你为了性能而编写更复杂的代码，请确保你有证据表明它确实有帮助。</li>
 </ul>
 
-<h3 id="Friends">Friends</h3>
+<h3 id="Friends">Friends 友元</h3>
 
 <p>We allow use of <code>friend</code> classes and functions,
 within reason.</p>
+<p>我们允许在合理范围内使用 <code>friend</code> 类和函数。</p>
 
 <p>Friends should usually be defined in the same file so
 that the reader does not have to look in another file to
@@ -2507,6 +2763,7 @@ of <code>friend</code> is to have a
 of <code>Foo</code> correctly, without exposing this
 state to the world. In some cases it may be useful to
 make a unit test class a friend of the class it tests.</p>
+<p>友元通常应该定义在同一个文件中，以便读者不必查看另一个文件来查找类的私有成员的使用。<code>friend</code> 的一个常见用途是让 <code>FooBuilder</code> 类成为 <code>Foo</code> 的友元，以便它可以正确构造 <code>Foo</code> 的内部状态，而无需向外界公开该状态。在某些情况下，让单元测试类成为它测试的类的友元可能很有用。</p>
 
 <p>Friends extend, but do not break, the encapsulation
 boundary of a class. In some cases this is better than
@@ -2514,10 +2771,12 @@ making a member <code>public</code> when you want to give only one
 other class access to it. However, most classes should
 interact with other classes solely through their public
 members.</p>
+<p>友元扩展了类的封装边界，但并没有打破它。在某些情况下，当你想只让另一个类访问某个成员时，这比将成员设为 <code>public</code> 更好。但是，大多数类应该仅通过其公共成员与其他类交互。</p>
 
-<h3 id="Exceptions">Exceptions</h3>
+<h3 id="Exceptions">Exceptions 异常</h3>
 
 <p>We do not use C++ exceptions.</p>
+<p>我们不使用 C++ 异常。</p>
 
 <p class="pros"></p>
 <ul>
@@ -2525,27 +2784,30 @@ members.</p>
   decide how to handle "can't happen" failures in deeply
   nested functions, without the obscuring and error-prone
   bookkeeping of error codes.</li>
-
-
+  <li>异常允许应用程序的更高层决定如何处理深度嵌套函数中“不可能发生”的故障，而无需进行晦涩且容易出错的错误代码簿记。</li>
 
   <div>
   <li>Exceptions are used by most other
   modern languages. Using them in C++ would make it more
   consistent with Python, Java, and the C++ that others
   are familiar with.</li>
+  <li>大多数其他现代语言都使用异常。在 C++ 中使用它们将使其与 Python、Java 以及其他人熟悉的 C++更加一致。</li>
   </div>
 
   <li>Some third-party C++ libraries use exceptions, and
   turning them off internally makes it harder to
   integrate with those libraries.</li>
+  <li>一些第三方 C++ 库使用异常，在内部关闭它们使得与这些库集成变得更加困难。</li>
 
   <li>Exceptions are the only way for a constructor to
   fail. We can simulate this with a factory function or
   an <code>Init()</code> method, but these require heap
   allocation or a new "invalid" state, respectively.</li>
+  <li>异常是构造函数失败的唯一途径。我们可以通过工厂函数或 <code>Init()</code> 方法来模拟这一点，但这分别需要堆分配或新的“无效”状态。</li>
 
   <li>Exceptions are really handy in testing
   frameworks.</li>
+  <li>异常在测试框架中非常方便。</li>
 </ul>
 
 <p class="cons"></p>
@@ -2560,6 +2822,7 @@ members.</p>
   <code>h()</code>, and <code>h</code> throws an
   exception that <code>f</code> catches, <code>g</code>
   has to be careful or it may not clean up properly.</li>
+  <li>当你向现有函数添加 <code>throw</code> 语句时，必须检查其所有传递调用者。它们要么必须至少提供基本的异常安全保证，要么必须永远不捕获异常，并乐于接受程序因此终止的结果。例如，如果 <code>f()</code> 调用 <code>g()</code>，<code>g()</code> 调用 <code>h()</code>，并且 <code>h</code> 抛出了一个 <code>f</code> 捕获的异常，那么 <code>g</code> 必须小心，否则它可能无法正确清理。</li>
 
   <li>More generally, exceptions make the control flow of
   programs difficult to evaluate by looking at code:
@@ -2568,6 +2831,7 @@ members.</p>
   can minimize this cost via some rules on how and where
   exceptions can be used, but at the cost of more that a
   developer needs to know and understand.</li>
+  <li>更一般地说，异常使得通过查看代码来评估程序的控制流变得困难：函数可能会在你意想不到的地方返回。这会导致可维护性和调试方面的困难。你可以通过关于如何以及在何处使用异常的一些规则来最小化此成本，但这需要开发人员了解和理解更多内容。</li>
 
   <li>Exception safety requires both RAII and different
   coding practices. Lots of supporting machinery is
@@ -2579,11 +2843,13 @@ members.</p>
   where you're forced to obfuscate code to isolate the
   commit). Allowing exceptions would force us to always
   pay those costs even when they're not worth it.</li>
+  <li>异常安全既需要 RAII，也需要不同的编码实践。需要大量的支持机制才能轻松编写正确的异常安全代码。此外，为了避免要求读者理解整个调用图，异常安全代码必须将写入持久状态的逻辑隔离到“提交”阶段。这既有好处也有成本（也许你被迫混淆代码以隔离提交）。允许异常将迫使我们总是支付这些成本，即使它们不值得。</li>
 
   <li>Turning on exceptions adds data to each binary
   produced, increasing compile time (probably slightly)
   and possibly increasing address space pressure.
   </li>
+  <li>开启异常会向生成的每个二进制文件添加数据，增加编译时间（可能稍微增加），并可能增加地址空间压力。</li>
 
   <li>The availability of exceptions may encourage
   developers to throw them when they are not appropriate
@@ -2591,6 +2857,7 @@ members.</p>
   example, invalid user input should not cause exceptions
   to be thrown. We would need to make the style guide
   even longer to document these restrictions!</li>
+  <li>异常的可用性可能会鼓励开发人员在不合适的时候抛出异常，或者在不安全的时候从异常中恢复。例如，无效的用户输入不应导致抛出异常。我们将需要使风格指南更长来记录这些限制！</li>
 </ul>
 
 <p class="decision"></p>
@@ -2604,6 +2871,7 @@ exception-free code. Because most existing C++ code at
 Google is not prepared to deal with exceptions, it is
 comparatively difficult to adopt new code that generates
 exceptions.</p>
+<p>从表面上看，使用异常的好处大于成本，尤其是在新项目中。但是，对于现有代码，引入异常会对所有依赖代码产生影响。如果异常可以传播到新项目之外，那么将新项目集成到现有的无异常代码中也会成为问题。因为 Google 的大多数现有 C++ 代码都没有准备好处理异常，所以采用生成异常的新代码相对困难。</p>
 
 <p>Given that Google's existing code is not
 exception-tolerant, the costs of using exceptions are
@@ -2612,6 +2880,7 @@ conversion process would be slow and error-prone. We
 don't believe that the available alternatives to
 exceptions, such as error codes and assertions, introduce
 a significant burden. </p>
+<p>鉴于 Google 的现有代码不容忍异常，使用异常的成本在某种程度上大于新项目中的成本。转换过程将缓慢且容易出错。我们不认为异常的可用替代方案（如错误代码和断言）会带来沉重的负担。</p>
 
 <p>Our advice against using exceptions is not predicated
 on philosophical or moral grounds, but practical ones.
@@ -2621,27 +2890,33 @@ projects use exceptions, we need to advise against
 exceptions in Google open-source projects as well.
 Things would probably be different if we had to do it all
 over again from scratch.</p>
+<p>我们不建议使用异常并非基于哲学或道德理由，而是基于实际理由。因为我们希望在 Google 使用我们的开源项目，如果这些项目使用异常，这就很难做到，所以我们也需要在 Google 开源项目中建议不要使用异常。如果我们必须从头再来，情况可能会有所不同。</p>
 
 <p>This prohibition also applies to exception handling related
 features such as <code>std::exception_ptr</code> and
 <code>std::nested_exception</code>.</p>
+<p>此禁令也适用于异常处理相关特性，如 <code>std::exception_ptr</code> 和 <code>std::nested_exception</code>。</p>
 
 <p>There is an <a href="#Windows_Code">exception</a> to
 this rule (no pun intended) for Windows code.</p>
+<p>对于 Windows 代码，此规则有一个 <a href="#Windows_Code">例外</a>（无意双关）。</p>
 
 <h3 id="noexcept"><code>noexcept</code></h3>
 
 <p>Specify <code>noexcept</code> when it is useful and correct.</p>
+<p>当有用且正确时，请指定 <code>noexcept</code>。</p>
 
 <p class="definition"></p>
 <p>The <code>noexcept</code> specifier is used to specify whether
 a function will throw exceptions or not. If an exception
 escapes from a function marked <code>noexcept</code>, the program
 crashes via <code>std::terminate</code>.</p>
+<p><code>noexcept</code> 说明符用于指定函数是否会抛出异常。如果异常从标记为 <code>noexcept</code> 的函数中逃逸，程序将通过 <code>std::terminate</code> 崩溃。</p>
 
 <p>The <code>noexcept</code> operator performs a compile-time
 check that returns true if an expression is declared to not
 throw any exceptions.</p>
+<p><code>noexcept</code> 运算符执行编译时检查，如果表达式声明为不抛出任何异常，则返回 true。</p>
 
 <p class="pros"></p>
 <ul>
@@ -2650,6 +2925,7 @@ throw any exceptions.</p>
   <code>std::vector&lt;T&gt;::resize()</code> moves rather than
   copies the objects if T's move constructor is
   <code>noexcept</code>.</li>
+  <li>将移动构造函数指定为 <code>noexcept</code> 在某些情况下可以提高性能，例如，如果 T 的移动构造函数是 <code>noexcept</code> 的，则 <code>std::vector&lt;T&gt;::resize()</code> 会移动而不是复制对象。</li>
 
   <li>Specifying <code>noexcept</code> on a function can
   trigger compiler optimizations in environments where
@@ -2657,6 +2933,7 @@ throw any exceptions.</p>
   generate extra code for stack-unwinding, if it knows
   that no exceptions can be thrown due to a
   <code>noexcept</code> specifier.</li>
+  <li>在启用了异常的环境中，在函数上指定 <code>noexcept</code> 可以触发编译器优化，例如，如果编译器知道由于 <code>noexcept</code> 说明符而不会抛出异常，则不必为堆栈展开生成额外的代码。</li>
 </ul>
 
 <p class="cons"></p>
@@ -2668,10 +2945,12 @@ throw any exceptions.</p>
   to ensure that <code>noexcept</code>
   specifiers are correct, and hard to define what
   correctness even means.</li>
+  <li>在遵循本指南且禁用了异常的项目中，很难确保 <code>noexcept</code> 说明符是正确的，也很难定义正确性意味着什么。</li>
 
   <li>It's hard, if not impossible, to undo <code>noexcept</code>
   because it eliminates a guarantee that callers may be relying
   on, in ways that are hard to detect.</li>
+  <li>撤消 <code>noexcept</code> 即使不是不可能，也很困难，因为它消除了调用者可能依赖的保证，而这种依赖方式很难检测。</li>
 </ul>
 
 <p class="decision"></p>
@@ -2685,6 +2964,7 @@ there is significant performance benefit from specifying
 <code>noexcept</code> on some other function, please discuss it
 with
 your project leads.</p>
+<p>当 <code>noexcept</code> 对性能有用时，如果它准确地反映了函数的预期语义，即如果异常以某种方式从函数体内部抛出，则它表示致命错误，你可以使用它。你可以假设移动构造函数上的 <code>noexcept</code> 具有有意义的性能优势。如果你认为在其他函数上指定 <code>noexcept</code> 有显著的性能优势，请与你的项目负责人讨论。</p>
 
 <p>Prefer unconditional <code>noexcept</code> if exceptions are
 completely disabled (i.e., most Google C++ environments).
@@ -2710,17 +2990,20 @@ that depends on whether a hash function can throw, for example,
 simply document that your component doesn't support hash
 functions throwing and make it unconditionally
 <code>noexcept</code>.</p>
+<p>如果异常被完全禁用（即大多数 Google C++ 环境），则首选无条件 <code>noexcept</code>。否则，使用带有简单条件的条件 <code>noexcept</code> 说明符，使其仅在函数可能抛出的少数情况下计算为 false。测试可能包括类型特征检查，检查所涉及的操作是否可能抛出（例如，用于移动构造对象的 <code>std::is_nothrow_move_constructible</code>），或者检查分配是否可能抛出（例如，用于标准默认分配的 <code>absl::default_allocator_is_nothrow</code>）。请注意，在许多情况下，异常的唯一可能原因是分配失败（我们认为移动构造函数不应抛出异常，除非是由于分配失败），并且在许多应用程序中，将内存耗尽视为致命错误而不是程序应尝试恢复的异常情况是适当的。即使对于其他潜在的故障，你也应该优先考虑接口简单性，而不是支持所有可能的异常抛出场景：例如，与其编写一个取决于哈希函数是否可能抛出的复杂 <code>noexcept</code> 子句，不如简单地记录你的组件不支持哈希函数抛出，并使其无条件为 <code>noexcept</code>。</p>
 
 <h3 id="Run-Time_Type_Information__RTTI_">Run-Time Type
-Information (RTTI)</h3>
+Information (RTTI) 运行时类型信息 (RTTI)</h3>
 
 <p>Avoid using run-time type information (RTTI).</p>
+<p>避免使用运行时类型信息 (RTTI)。</p>
 
 <p class="definition"></p>
 <p> RTTI allows a
 programmer to query the C++ class of an object at
 run-time. This is done by use of <code>typeid</code> or
 <code>dynamic_cast</code>.</p>
+<p>RTTI 允许程序员在运行时查询对象的 C++ 类。这是通过使用 <code>typeid</code> 或 <code>dynamic_cast</code> 完成的。</p>
 
 <p class="pros"></p>
 <p>The standard alternatives to RTTI (described below)
@@ -2728,15 +3011,18 @@ require modification or redesign of the class hierarchy
 in question. Sometimes such modifications are infeasible
 or undesirable, particularly in widely-used or mature
 code.</p>
+<p>RTTI 的标准替代方案（如下所述）需要修改或重新设计相关的类层次结构。有时此类修改是不可行的或不可取的，尤其是在广泛使用或成熟的代码中。</p>
 
 <p>RTTI can be useful in some unit tests. For example, it
 is useful in tests of factory classes where the test has
 to verify that a newly created object has the expected
 dynamic type. It is also useful in managing the
 relationship between objects and their mocks.</p>
+<p>RTTI 在某些单元测试中可能很有用。例如，在工厂类的测试中，测试必须验证新创建的对象是否具有预期的动态类型。在管理对象与其 mock 对象之间的关系时，它也很有用。</p>
 
 <p>RTTI is useful when considering multiple abstract
 objects. Consider</p>
+<p>当考虑多个抽象对象时，RTTI 很有用。考虑</p>
 
 <pre class="neutralcode">bool Base::Equal(Base* other) = 0;
 bool Derived::Equal(Base* other) {
@@ -2752,11 +3038,13 @@ bool Derived::Equal(Base* other) {
 means a design problem. Needing to know the type of an
 object at runtime is often an indication that the design
 of your class hierarchy is flawed.</p>
+<p>在运行时查询对象的类型通常意味着设计问题。需要在运行时知道对象的类型通常表明类层次结构的设计存在缺陷。</p>
 
 <p>Undisciplined use of RTTI makes code hard to maintain.
 It can lead to type-based decision trees or switch
 statements scattered throughout the code, all of which
 must be examined when making further changes.</p>
+<p>不加约束地使用 RTTI 会使代码难以维护。它可能导致基于类型的决策树或 switch 语句分散在整个代码中，在进行进一步更改时必须检查所有这些决策树或 switch 语句。</p>
 
 <p class="decision"></p>
 <p>RTTI has legitimate uses but is prone to abuse, so you
@@ -2766,11 +3054,13 @@ particular, think twice before using RTTI in new code. If
 you find yourself needing to write code that behaves
 differently based on the class of an object, consider one
 of the following alternatives to querying the type:</p>
+<p>RTTI 有合法的用途，但容易被滥用，因此在使用时必须小心。你可以在单元测试中自由使用它，但在其他代码中尽可能避免使用它。特别是，在新代码中使用 RTTI 之前要三思。如果你发现自己需要根据对象的类编写行为不同的代码，请考虑以下查询类型的替代方案之一：</p>
 
 <ul>
   <li>Virtual methods are the preferred way of executing
   different code paths depending on a specific subclass
   type. This puts the work within the object itself.</li>
+  <li>虚方法是根据特定子类类型执行不同代码路径的首选方式。这将工作放在对象本身内。</li>
 
   <li>If the work belongs outside the object and instead
   in some processing code, consider a double-dispatch
@@ -2778,6 +3068,7 @@ of the following alternatives to querying the type:</p>
   allows a facility outside the object itself to
   determine the type of class using the built-in type
   system.</li>
+  <li>如果工作属于对象外部，而是在某些处理代码中，请考虑双重分派解决方案，例如 Visitor 设计模式。这允许对象外部的设施使用内置类型系统确定类的类型。</li>
 </ul>
 
 <p>When the logic of a program guarantees that a given
@@ -2787,9 +3078,11 @@ particular derived class, then a
 object.  Usually one
 can use a <code>static_cast</code> as an alternative in
 such situations.</p>
+<p>当程序逻辑保证基类的给定实例实际上是特定派生类的实例时，可以在对象上自由使用 <code>dynamic_cast</code>。通常在这种情况下可以使用 <code>static_cast</code> 作为替代方案。</p>
 
 <p>Decision trees based on type are a strong indication
 that your code is on the wrong track.</p>
+<p>基于类型的决策树有力地表明你的代码走错了方向。</p>
 
 <pre class="badcode">if (typeid(*data) == typeid(D1)) {
   ...
@@ -2803,13 +3096,15 @@ that your code is on the wrong track.</p>
 subclasses are added to the class hierarchy. Moreover,
 when properties of a subclass change, it is difficult to
 find and modify all the affected code segments.</p>
+<p>当向类层次结构中添加其他子类时，此类代码通常会中断。此外，当子类的属性发生变化时，很难找到并修改所有受影响的代码段。</p>
 
 <p>Do not hand-implement an RTTI-like workaround. The
 arguments against RTTI apply just as much to workarounds
 like class hierarchies with type tags. Moreover,
 workarounds disguise your true intent.</p>
+<p>不要手动实现类似 RTTI 的变通方法。反对 RTTI 的论据同样适用于带有类型标签的类层次结构等变通方法。此外，变通方法掩盖了你的真实意图。</p>
 
-<h3 id="Casting">Casting</h3>
+<h3 id="Casting">Casting 类型转换</h3>
 
 <p>Use C++-style casts
 like <code>static_cast&lt;float&gt;(double_value)</code>, or brace
@@ -2818,11 +3113,13 @@ initialization for conversion of arithmetic types like
 cast formats like <code>(int)x</code> unless the cast is to
 <code>void</code>. You may use cast formats like <code>T(x)</code> only when
 <code>T</code> is a class type.</p>
+<p>使用 C++ 风格的转换，如 <code>static_cast&lt;float&gt;(double_value)</code>，或者使用大括号初始化来转换算术类型，如 <code>int64_t y = int64_t{1} &lt;&lt; 42</code>。不要使用 <code>(int)x</code> 之类的转换格式，除非转换到 <code>void</code>。仅当 <code>T</code> 是类类型时，才可以使用 <code>T(x)</code> 之类的转换格式。</p>
 
 <p class="definition"></p>
 <p> C++ introduced a
 different cast system from C that distinguishes the types
 of cast operations.</p>
+<p>C++ 引入了与 C 不同的转换系统，该系统区分了转换操作的类型。</p>
 
 <p class="pros"></p>
 <p>The problem with C casts is the ambiguity of the operation;
@@ -2832,24 +3129,29 @@ a <em>cast</em> (e.g., <code>(int)"hello"</code>). Brace
 initialization and C++ casts can often help avoid this
 ambiguity. Additionally, C++ casts are more visible when searching for
 them.</p>
+<p>C 转换的问题在于操作的歧义性；有时你在进行 <em>转换（conversion）</em>（例如 <code>(int)3.5</code>），有时你在进行 <em>强制转换（cast）</em>（例如 <code>(int)"hello"</code>）。大括号初始化和 C++ 转换通常有助于避免这种歧义。此外，C++ 转换在搜索时更显眼。</p>
 
 <p class="cons"></p>
 <p>The C++-style cast syntax is verbose and cumbersome.</p>
+<p>C++ 风格的转换语法冗长且繁琐。</p>
 
 <p class="decision"></p>
 <p>In general, do not use C-style casts. Instead, use these C++-style
 casts when explicit type conversion is necessary.
 </p>
+<p>一般情况下，不要使用 C 风格的转换。相反，当需要显式类型转换时，请使用这些 C++ 风格的转换。</p>
 
 <ul>
   <li>Use brace initialization to convert arithmetic types
   (e.g., <code>int64_t{x}</code>).  This is the safest approach because code
   will not compile if conversion can result in information loss.  The
   syntax is also concise.</li>
+  <li>使用大括号初始化来转换算术类型（例如 <code>int64_t{x}</code>）。这是最安全的方法，因为如果转换可能导致信息丢失，代码将无法编译。语法也很简洁。</li>
 
   <li>When explicitly converting to a class type, use a function-style cast;
   e.g., prefer <code>std::string(some_cord)</code> to
   <code>static_cast&lt;std::string&gt;(some_cord)</code>.</li>
+  <li>显式转换为类类型时，使用函数式转换；例如，优先使用 <code>std::string(some_cord)</code> 而不是 <code>static_cast&lt;std::string&gt;(some_cord)</code>。</li>
 
   <li>Use <code>absl::implicit_cast</code>
   to safely cast up a type hierarchy,
@@ -2859,6 +3161,7 @@ casts when explicit type conversion is necessary.
   usually does this automatically but some situations
   need an explicit up-cast, such as use of the
   <code>?:</code> operator.</li>
+  <li>使用 <code>absl::implicit_cast</code> 在类型层次结构中安全地向上转换，例如将 <code>Foo*</code> 转换为 <code>SuperclassOfFoo*</code> 或将 <code>Foo*</code> 转换为 <code>const Foo*</code>。C++ 通常会自动执行此操作，但某些情况需要显式向上转换，例如使用 <code>?:</code> 运算符。</li>
 
   <li>Use <code>static_cast</code> as the equivalent of a C-style cast
   that does value conversion, when you need to
@@ -2866,11 +3169,11 @@ casts when explicit type conversion is necessary.
   you need to explicitly cast a pointer from a superclass to a
   subclass.  In this last case, you must be sure your object is
   actually an instance of the subclass.</li>
-
-
+  <li>当你需要显式地将指针从类向上转换为其超类，或者当你需要显式地将指针从超类转换为子类时，使用 <code>static_cast</code> 作为进行值转换的 C 风格转换的等价物。在后一种情况下，你必须确保你的对象实际上是子类的实例。</li>
 
   <li>Use <code>const_cast</code> to remove the
   <code>const</code> qualifier (see <a href="#Use_of_const">const</a>).</li>
+  <li>使用 <code>const_cast</code> 移除 <code>const</code> 限定符（参见 <a href="#Use_of_const">const</a>）。</li>
 
   <li>Use <code>reinterpret_cast</code> to do unsafe conversions of
   pointer types to and from integer and other pointer
@@ -2879,29 +3182,34 @@ casts when explicit type conversion is necessary.
   only if you know what you are doing and you understand the aliasing
   issues. Also, consider dereferencing the pointer (without a cast) and
   using <code>std::bit_cast</code> to cast the resulting value.</li>
+  <li>使用 <code>reinterpret_cast</code> 在指针类型与整数和其他指针类型（包括 <code>void*</code>）之间进行不安全的转换。仅当你确实知道自己在做什么并且了解别名问题时才使用此方法。此外，考虑解引用指针（不进行转换）并使用 <code>std::bit_cast</code> 来转换结果值。</li>
 
   <li>Use <code>std::bit_cast</code> to interpret the raw bits of a
   value using a different type of the same size (a type pun), such as
   interpreting the bits of a <code>double</code> as
   <code>int64_t</code>.</li>
+  <li>使用 <code>std::bit_cast</code> 用相同大小的不同类型来解释值的原始位（类型双关），例如将 <code>double</code> 的位解释为 <code>int64_t</code>。</li>
 </ul>
 
 <p>See the <a href="#Run-Time_Type_Information__RTTI_">
 RTTI section</a> for guidance on the use of
 <code>dynamic_cast</code>.</p>
+<p>关于使用 <code>dynamic_cast</code> 的指导，请参阅 <a href="#Run-Time_Type_Information__RTTI_">RTTI 章节</a>。</p>
 
-<h3 id="Streams">Streams</h3>
+<h3 id="Streams">Streams 流</h3>
 
 <p>Use streams where appropriate, and stick to "simple"
 usages. Overload <code>&lt;&lt;</code> for streaming only for types
 representing values, and write only the user-visible value, not any
 implementation details.</p>
+<p>在适当的地方使用流，并坚持“简单”的用法。仅为表示值的类型重载 <code>&lt;&lt;</code> 用于流式传输，并且仅写入用户可见的值，而不写入任何实现细节。</p>
 
 <p class="definition"></p>
 <p>Streams are the standard I/O abstraction in C++, as
 exemplified by the standard header <code>&lt;iostream&gt;</code>.
 They are widely used in Google code, mostly for debug logging
 and test diagnostics.</p>
+<p>流是 C++ 中的标准 I/O 抽象，标准头文件 <code>&lt;iostream&gt;</code> 就是例证。它们在 Google 代码中广泛使用，主要用于调试日志记录和测试诊断。</p>
 
 <p class="pros"></p>
 <p>The <code>&lt;&lt;</code> and <code>&gt;&gt;</code>
@@ -2913,12 +3221,14 @@ and is very difficult to use portably.
 <code>printf</code> also obliges you to choose among the
 numerous slightly different versions of that function,
 and navigate the dozens of conversion specifiers.</p>
+<p><code>&lt;&lt;</code> 和 <code>&gt;&gt;</code> 流运算符提供了一个易于学习、可移植、可重用且可扩展的格式化 I/O API。相比之下，<code>printf</code> 甚至不支持 <code>std::string</code>，更不用说用户定义的类型了，而且很难以可移植的方式使用。<code>printf</code> 还迫使你在该函数的众多略有不同的版本中进行选择，并浏览数十个转换说明符。</p>
 
 <p>Streams provide first-class support for console I/O
 via <code>std::cin</code>, <code>std::cout</code>,
 <code>std::cerr</code>, and <code>std::clog</code>.
 The C APIs do as well, but are hampered by the need to
 manually buffer the input. </p>
+<p>流通过 <code>std::cin</code>、<code>std::cout</code>、<code>std::cerr</code> 和 <code>std::clog</code> 为控制台 I/O 提供了一流的支持。C API 也可以，但受到需要手动缓冲输入的阻碍。</p>
 
 <p class="cons"></p>
 <ul>
@@ -2930,29 +3240,30 @@ way to restore it to a known state every time other code
 might have touched it. User code can not only modify the
 built-in state, it can add new state variables and behaviors
 through a registration system.</li>
+<li>流格式化可以通过改变流的状态来配置。这种改变是持久的，因此你的代码行为可能会受到流的整个先前历史的影响，除非你特意在每次其他代码可能触及它时将其恢复到已知状态。用户代码不仅可以修改内置状态，还可以通过注册系统添加新的状态变量和行为。</li>
 
 <li>It is difficult to precisely control stream output, due
 to the above issues, the way code and data are mixed in
 streaming code, and the use of operator overloading (which
 may select a different overload than you expect).</li>
+<li>由于上述问题、代码和数据在流式代码中混合的方式以及运算符重载的使用（可能会选择与你预期不同的重载），很难精确控制流输出。</li>
 
 <li>The practice of building up output through chains
 of <code>&lt;&lt;</code> operators interferes with
 internationalization, because it bakes word order into the
 code, and streams' support for localization is <a href="http://www.boost.org/doc/libs/1_48_0/libs/locale/doc/html/rationale.html#rationale_why">
 flawed</a>.</li>
-
-
-
-
+<li>通过 <code>&lt;&lt;</code> 运算符链构建输出的做法会干扰国际化，因为它将词序硬编码到代码中，而且流对本地化的支持是 <a href="http://www.boost.org/doc/libs/1_48_0/libs/locale/doc/html/rationale.html#rationale_why">有缺陷的</a>。</li>
 
 <li>The streams API is subtle and complex, so programmers must
 develop experience with it in order to use it effectively.</li>
+<li>流 API 微妙且复杂，因此程序员必须积累经验才能有效地使用它。</li>
 
 <li>Resolving the many overloads of <code>&lt;&lt;</code> is
 extremely costly for the compiler. When used pervasively in a
 large codebase, it can consume as much as 20% of the parsing
 and semantic analysis time.</li>
+<li>解决 <code>&lt;&lt;</code> 的许多重载对编译器来说非常昂贵。当在大型代码库中广泛使用时，它可能会消耗高达 20% 的解析和语义分析时间。</li>
 </ul>
 
 <p class="decision"></p>
@@ -2963,19 +3274,19 @@ end-users. Be consistent with the code around you, and with the
 codebase as a whole; if there's an established tool for
 your problem, use that tool instead.
 In particular,
-
 logging libraries are usually a better
 choice than <code>std::cerr</code> or <code>std::clog</code>
 for diagnostic output, and the libraries in
-
 <code>absl/strings</code>
 or the equivalent are usually a
 better choice than <code>std::stringstream</code>.</p>
+<p>仅当流是完成工作的最佳工具时才使用流。这通常是在 I/O 是临时的、本地的、人类可读的，并且针对其他开发人员而不是最终用户时的情况。与周围的代码以及整个代码库保持一致；如果针对你的问题有既定的工具，请改用该工具。特别是，对于诊断输出，日志库通常是比 <code>std::cerr</code> 或 <code>std::clog</code> 更好的选择，并且 <code>absl/strings</code> 或等效库中的库通常是比 <code>std::stringstream</code> 更好的选择。</p>
 
 <p>Avoid using streams for I/O that faces external users or
 handles untrusted data. Instead, find and use the appropriate
 templating libraries to handle issues like internationalization,
 localization, and security hardening.</p>
+<p>避免对面向外部用户或处理不受信任数据的 I/O 使用流。相反，找到并使用适当的模板库来处理国际化、本地化和安全强化等问题。</p>
 
 <p>If you do use streams, avoid the stateful parts of the
 streams API (other than error state), such as <code>imbue()</code>,
@@ -2984,6 +3295,7 @@ Use explicit formatting functions (such as
 <code>absl::StreamFormat()</code>) rather than
 stream manipulators or formatting flags to control formatting
 details such as number base, precision, or padding.</p>
+<p>如果你确实使用流，请避免使用流 API 的有状态部分（错误状态除外），例如 <code>imbue()</code>、<code>xalloc()</code> 和 <code>register_callback()</code>。使用显式格式化函数（例如 <code>absl::StreamFormat()</code>）而不是流操纵器或格式化标志来控制格式化细节，例如数制、精度或填充。</p>
 
 <p>Overload <code>&lt;&lt;</code> as a streaming operator
 for your type only if your type represents a value, and
@@ -2993,11 +3305,13 @@ details in the output of <code>&lt;&lt;</code>; if you need to print
 object internals for debugging, use named functions instead
 (a method named <code>DebugString()</code> is the most common
 convention).</p>
+<p>仅当你的类型表示一个值，并且 <code>&lt;&lt;</code> 写出该值的可读字符串表示形式时，才将 <code>&lt;&lt;</code> 重载为你的类型的流运算符。避免在 <code>&lt;&lt;</code> 的输出中暴露实现细节；如果你需要打印对象内部进行调试，请改用命名函数（名为 <code>DebugString()</code> 的方法是最常见的约定）。</p>
 
-<h3 id="Preincrement_and_Predecrement">Preincrement and Predecrement</h3>
+<h3 id="Preincrement_and_Predecrement">Preincrement and Predecrement 前置自增和前置自减</h3>
 
 <p>Use the prefix form (<code>++i</code>) of the increment
 and decrement operators unless you need postfix semantics.</p>
+<p>使用前置形式 (<code>++i</code>) 的自增和自减运算符，除非你需要后置语义。</p>
 
 <p class="definition"></p>
 <p> When a variable
@@ -3006,6 +3320,7 @@ decremented (<code>--i</code> or <code>i--</code>) and
 the value of the expression is not used, one must decide
 whether to preincrement (decrement) or postincrement
 (decrement).</p>
+<p>当变量自增 (<code>++i</code> 或 <code>i++</code>) 或自减 (<code>--i</code> 或 <code>i--</code>) 且表达式的值未被使用时，必须决定是使用前置自增（自减）还是后置自增（自减）。</p>
 
 <p class="pros"></p>
 
@@ -3015,21 +3330,25 @@ compact but harder to read. The prefix form is generally more readable, is
 never less efficient, and can be more efficient because it doesn't need to
 make a copy of the value as it was before the operation.
 </p>
+<p>后置自增/自减表达式求值为<i>修改前的值</i>。这可能导致代码更紧凑但更难阅读。前置形式通常更具可读性，效率从不低于后置形式，而且可能更高效，因为它不需要在操作前复制该值。</p>
 
 <p class="cons"></p>
 <p>The tradition developed, in C, of using post-increment, even
 when the expression value is not used, especially in
 <code>for</code> loops.</p>
+<p>C 语言中形成了使用后置自增的传统，即使在不使用表达式值的情况下也是如此，尤其是在 <code>for</code> 循环中。</p>
 
 <p class="decision"></p>
 <p>Use prefix increment/decrement, unless the code explicitly
 needs the result of the postfix increment/decrement expression.</p>
+<p>使用前置自增/自减，除非代码明确需要后置自增/自减表达式的结果。</p>
 
-<h3 id="Use_of_const">Use of const</h3>
+<h3 id="Use_of_const">Use of const const 的使用</h3>
 
 <p>In APIs, use <code>const</code> whenever it makes sense.
 <code>constexpr</code> is a better choice for some uses of
 <code>const</code>.</p>
+<p>在 API 中，只要有意义就使用 <code>const</code>。对于 <code>const</code> 的某些用途，<code>constexpr</code> 是更好的选择。</p>
 
 <p class="definition"></p>
 <p> Declared variables and parameters can be preceded
@@ -3039,6 +3358,7 @@ functions can have the <code>const</code> qualifier to
 indicate the function does not change the state of the
 class member variables (e.g., <code>class Foo { int
 Bar(char c) const; };</code>).</p>
+<p>声明的变量和参数可以在前面加上关键字 <code>const</code>，以表示变量未被更改（例如，<code>const int foo</code>）。类函数可以具有 <code>const</code> 限定符，以表示该函数不会更改类成员变量的状态（例如，<code>class Foo { int Bar(char c) const; };</code>）。</p>
 
 <p class="pros"></p>
 <p>Easier for people to understand how variables are being
@@ -3049,6 +3369,7 @@ know the functions they call are limited in how they can
 modify your variables. Helps people know what functions
 are safe to use without locks in multi-threaded
 programs.</p>
+<p>使人们更容易理解变量的使用方式。允许编译器进行更好的类型检查，并且可以想象，生成更好的代码。帮助人们确信程序的正确性，因为他们知道他们调用的函数在修改变量方面受到限制。帮助人们知道在多线程程序中哪些函数可以安全地不加锁使用。</p>
 
 <p class="cons"></p>
 <p><code>const</code> is viral: if you pass a
@@ -3057,6 +3378,7 @@ must have <code>const</code> in its prototype (or the
 variable will need a <code>const_cast</code>). This can
 be a particular problem when calling library
 functions.</p>
+<p><code>const</code> 具有传染性：如果你将 <code>const</code> 变量传递给函数，则该函数的原型中必须有 <code>const</code>（否则变量将需要 <code>const_cast</code>）。在调用库函数时，这可能是一个特别的问题。</p>
 
 <p class="decision"></p>
 <p>We strongly recommend using <code>const</code>
@@ -3067,32 +3389,38 @@ of what objects an operation can mutate. Having
 a consistent and reliable way to distinguish reads from writes
 is critical to writing thread-safe code, and is useful in
 many other contexts as well. In particular:</p>
+<p>我们强烈建议在 API 中（即在函数参数、方法和非局部变量上）只要有意义且准确就使用 <code>const</code>。这提供了关于操作可以改变哪些对象的一致的、主要是编译器验证的文档。拥有一种一致且可靠的方法来区分读和写对于编写线程安全代码至关重要，并且在许多其他上下文中也很有用。特别是：</p>
 
 <ul>
   <li>If a function guarantees that it will not modify an argument
   passed by reference or by pointer, the corresponding function parameter
   should be a reference-to-const (<code>const T&amp;</code>) or
   pointer-to-const (<code>const T*</code>), respectively.</li>
+  <li>如果函数保证不会修改通过引用或指针传递的参数，则相应的函数参数应分别为 const 引用 (<code>const T&amp;</code>) 或 const 指针 (<code>const T*</code>)。</li>
 
   <li>For a function parameter passed by value, <code>const</code> has
   no effect on the caller, thus is not recommended in function
   declarations. See <a href="https://abseil.io/tips/109">TotW #109</a>.</li>
+  <li>对于按值传递的函数参数，<code>const</code> 对调用者没有影响，因此不建议在函数声明中使用。参见 <a href="https://abseil.io/tips/109">TotW #109</a>。</li>
 
   <li>Declare methods to be <code>const</code> unless they
   alter the logical state of the object (or enable the user to modify
   that state, e.g., by returning a non-<code>const</code> reference, but that's
   rare), or they can't safely be invoked concurrently.</li>
+  <li>将方法声明为 <code>const</code>，除非它们更改对象的逻辑状态（或使用户能够修改该状态，例如通过返回非 <code>const</code> 引用，但这很少见），或者它们无法安全地并发调用。</li>
 </ul>
 
 <p>Using <code>const</code> on local variables is neither encouraged
 nor discouraged.</p>
+<p>既不鼓励也不反对在局部变量上使用 <code>const</code>。</p>
 
 <p>All of a class's <code>const</code> operations should be safe
 to invoke concurrently with each other. If that's not feasible, the class must
 be clearly documented as "thread-unsafe".</p>
+<p>类的所有 <code>const</code> 操作都应该可以安全地相互并发调用。如果不可行，则必须将该类清楚地记录为“线程不安全”。</p>
 
 
-<h4>Where to put the const</h4>
+<h4>Where to put the const const 放哪里</h4>
 
 <p>Some people favor the form <code>int const* foo</code>
 to <code>const int* foo</code>. They argue that this is
@@ -3107,18 +3435,21 @@ to maintain. Putting the <code>const</code> first is
 arguably more readable, since it follows English in
 putting the "adjective" (<code>const</code>) before the
 "noun" (<code>int</code>).</p>
+<p>有些人喜欢 <code>int const* foo</code> 形式胜过 <code>const int* foo</code>。他们认为这更具可读性，因为它更一致：它保持了 <code>const</code> 始终跟随它描述的对象的规则。但是，这种一致性论点不适用于几乎没有深层嵌套指针表达式的代码库，因为大多数 <code>const</code> 表达式只有一个 <code>const</code>，并且它适用于基础值。在这种情况下，没有一致性需要维护。将 <code>const</code> 放在前面可以说更具可读性，因为它遵循英语将“形容词”(<code>const</code>) 放在“名词”(<code>int</code>) 之前的习惯。</p>
 
 <p>That said, while we encourage putting
 <code>const</code> first, we do not require it. But be
 consistent with the code around you!</p>
+<p>话虽如此，虽然我们鼓励将 <code>const</code> 放在前面，但我们不强制要求这样做。但是要与周围的代码保持一致！</p>
 
-<h3 id="Use_of_constexpr">Use of constexpr, constinit, and consteval</h3>
+<h3 id="Use_of_constexpr">Use of constexpr, constinit, and consteval 使用 constexpr、constinit 和 consteval</h3>
 
 <p>Use <code>constexpr</code> to define true
 constants or to ensure constant initialization.
 Use <code>constinit</code> to ensure constant
 initialization for non-constant variables.
 </p>
+<p>使用 <code>constexpr</code> 定义真正常量或确保常量初始化。使用 <code>constinit</code> 确保非变量常量的常量初始化。</p>
 
 <p class="definition"></p>
 <p> Some variables can be declared <code>constexpr</code>
@@ -3128,6 +3459,7 @@ can be declared <code>constexpr</code> which enables them
 to be used in defining a <code>constexpr</code>
 variable. Functions can be declared <code>consteval</code>
 to restrict their use to compile time.</p>
+<p>某些变量可以声明为 <code>constexpr</code>，以表示这些变量是真正常量，即在编译/链接时固定。某些函数和构造函数可以声明为 <code>constexpr</code>，这使得它们能够用于定义 <code>constexpr</code> 变量。函数可以声明为 <code>consteval</code> 以限制其在编译时的使用。</p>
 
 <p class="pros"></p>
 <p>Use of <code>constexpr</code> enables definition of
@@ -3135,6 +3467,7 @@ constants with floating-point expressions rather than
 just literals; definition of constants of user-defined
 types; and definition of constants with function
 calls.</p>
+<p>使用 <code>constexpr</code> 使得可以用浮点表达式而不仅仅是字面量定义常量；定义用户定义类型的常量；以及使用函数调用定义常量。</p>
 
 <p class="cons"></p>
 <p>Prematurely marking something as <code>constexpr</code> may cause
@@ -3142,6 +3475,7 @@ migration problems if later on it has to be downgraded.
 Current restrictions on what is allowed in <code>constexpr</code>
 functions and constructors may invite obscure workarounds
 in these definitions.</p>
+<p>过早地将某物标记为 <code>constexpr</code> 可能会导致迁移问题，如果以后必须将其降级。目前对 <code>constexpr</code> 函数和构造函数中允许的内容的限制可能会导致这些定义中出现晦涩的变通方法。</p>
 
 <p class="decision"></p>
 <p><code>constexpr</code> definitions enable a more
@@ -3153,8 +3487,9 @@ code that must not be invoked at runtime.
 Avoid complexifying function definitions to
 enable their use with <code>constexpr</code>. Do not use
 <code>constexpr</code> or <code>consteval</code> to force inlining.</p>
+<p><code>constexpr</code> 定义使得接口的常量部分的规范更加健壮。使用 <code>constexpr</code> 指定真正常量以及支持其定义的函数。<code>consteval</code> 可用于不得在运行时调用的代码。避免为了使函数能够与 <code>constexpr</code> 一起使用而使函数定义复杂化。不要使用 <code>constexpr</code> 或 <code>consteval</code> 强制内联。</p>
 
-<h3 id="Integer_Types">Integer Types</h3>
+<h3 id="Integer_Types">Integer Types 整数类型</h3>
 
 <p>Of the built-in C++ integer types, the only one used
  is
@@ -3168,6 +3503,7 @@ Keep in mind that even if your value won't ever be too large
 for an <code>int</code>, it may be used in intermediate
 calculations which may require a larger type. When in doubt,
 choose a larger type.</p>
+<p>在内置的 C++ 整数类型中，唯一使用的是 <code>int</code>。如果程序需要不同大小的整数类型，请使用 <code>&lt;stdint.h&gt;</code> 中的精确宽度整数类型，例如 <code>int16_t</code>。如果你有一个可能大于或等于 2^31 的值，请使用 64 位类型，例如 <code>int64_t</code>。请记住，即使你的值对于 <code>int</code> 来说永远不会太大，它也可能用于可能需要更大类型的中间计算。如有疑问，请选择较大的类型。</p>
 
 <p class="definition"></p>
 <p>C++ does not specify exact sizes for the integer types
@@ -3176,13 +3512,16 @@ like <code>int</code>. Common sizes on contemporary architectures are
 bits for <code>long</code>, and 64 bits for <code>long long</code>,
 but different platforms make different choices, in particular
 for <code>long</code>.</p>
+<p>C++ 没有指定 <code>int</code> 等整数类型的确切大小。当代架构上的常见大小是 <code>short</code> 为 16 位，<code>int</code> 为 32 位，<code>long</code> 为 32 或 64 位，<code>long long</code> 为 64 位，但不同的平台会做出不同的选择，特别是对于 <code>long</code>。</p>
 
 <p class="pros"></p>
 <p>Uniformity of declaration.</p>
+<p>声明的统一性。</p>
 
 <p class="cons"></p>
 <p>The sizes of integral types in C++ can vary based on
 compiler and architecture.</p>
+<p>C++ 中整数类型的大小可能会因编译器和架构而异。</p>
 
 <p class="decision"></p>
 
@@ -3198,6 +3537,7 @@ not merit the added clutter. Of the built-in integer types, only
 <code>int</code> should be used. When appropriate, you
 are welcome to use standard type aliases like
 <code>size_t</code> and <code>ptrdiff_t</code>.</p>
+<p>标准库头文件 <code>&lt;stdint.h&gt;</code> 定义了 <code>int16_t</code>、<code>uint32_t</code>、<code>int64_t</code> 等类型。当你需要保证整数大小时，你应该始终优先使用这些类型，而不是 <code>short</code>、<code>unsigned long long</code> 等。最好省略这些类型的 <code>std::</code> 前缀，因为额外的 5 个字符不值得增加混乱。在内置整数类型中，应仅使用 <code>int</code>。在适当的时候，欢迎使用标准类型别名，如 <code>size_t</code> 和 <code>ptrdiff_t</code>。</p>
 
 <p>We use <code>int</code> very often, for integers we
 know are not going to be too big, e.g., loop counters.
@@ -3212,6 +3552,8 @@ integer type, use <code>int64_t</code> or <code>uint64_t</code>.
  use
 <code>int64_t</code>.
 </p>
+<p>我们经常使用 <code>int</code>，用于我们知道不会太大的整数，例如循环计数器。对这些事情使用普通的旧式 <code>int</code>。你应该假设 <code>int</code> 至少为 32 位，但不要假设它超过 32 位。如果你需要 64 位整数类型，请使用 <code>int64_t</code> 或 <code>uint64_t</code>。</p>
+<p>对于我们知道可能“很大”的整数，使用 <code>int64_t</code>。</p>
 
 <p>You should not use the unsigned integer types such as
 <code>uint32_t</code>, unless there is a valid
@@ -3221,6 +3563,7 @@ particular, do not use unsigned types to say a number
 will never be negative. Instead, use
 
 assertions for this.</p>
+<p>你不应该使用无符号整数类型（如 <code>uint32_t</code>），除非有正当理由，例如表示位模式而不是数字，或者你需要定义的模 2^N 溢出。特别是，不要使用无符号类型来表示数字永远不会为负数。相反，为此使用断言。</p>
 
 
 
@@ -3228,12 +3571,14 @@ assertions for this.</p>
 sure to use a type that will accommodate any possible
 usage of your container. When in doubt, use a larger type
 rather than a smaller type.</p>
+<p>如果你的代码是一个返回大小的容器，请务必使用一种能够适应容器任何可能用法的类型。如有疑问，请使用较大的类型而不是较小的类型。</p>
 
 <p>Use care when converting integer types. Integer conversions and
 promotions can cause undefined behavior, leading to security bugs and
 other problems.</p>
+<p>转换整数类型时要小心。整数转换和提升可能会导致未定义行为，从而导致安全漏洞和其他问题。</p>
 
-<h4>On Unsigned Integers</h4>
+<h4>On Unsigned Integers 关于无符号整数</h4>
 
 <p>Unsigned integers are good for representing bitfields and modular
 arithmetic. Because of historical accident, the C++ standard also uses
@@ -3245,6 +3590,7 @@ instead defined by the standard to model modular arithmetic (wrapping
 around on overflow/underflow), means that a significant class of bugs
 cannot be diagnosed by the compiler. In other cases, the defined
 behavior impedes optimization.</p>
+<p>无符号整数非常适合表示位域和模运算。由于历史原因，C++ 标准也使用无符号整数来表示容器的大小——标准机构的许多成员认为这是一个错误，但在这一点上实际上不可能修复。无符号算术不模拟简单整数的行为，而是由标准定义为模拟模算术（溢出/下溢时回绕），这意味着编译器无法诊断出一大类错误。在其他情况下，定义的行为会阻碍优化。</p>
 
 <p>That said, mixing signedness of integer types is responsible for an
 equally large class of problems. The best advice we can provide: try
@@ -3252,6 +3598,7 @@ to use iterators and containers rather than pointers and sizes, try
 not to mix signedness, and try to avoid unsigned types (except for
 representing bitfields or modular arithmetic). Do not use an unsigned
 type merely to assert that a variable is non-negative.</p>
+<p>话虽如此，混合整数类型的符号也会导致同样大的一类问题。我们可以提供的最佳建议是：尝试使用迭代器和容器而不是指针和大小，尝试不要混合符号，并尝试避免无符号类型（除非用于表示位域或模运算）。不要仅仅为了断言变量非负而使用无符号类型。</p>
 
 <h3 id="Floating-Point_Types">Floating-Point Types</h3>
 
