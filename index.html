@@ -3600,21 +3600,24 @@ representing bitfields or modular arithmetic). Do not use an unsigned
 type merely to assert that a variable is non-negative.</p>
 <p>话虽如此，混合整数类型的符号也会导致同样大的一类问题。我们可以提供的最佳建议是：尝试使用迭代器和容器而不是指针和大小，尝试不要混合符号，并尝试避免无符号类型（除非用于表示位域或模运算）。不要仅仅为了断言变量非负而使用无符号类型。</p>
 
-<h3 id="Floating-Point_Types">Floating-Point Types</h3>
+<h3 id="Floating-Point_Types">Floating-Point Types 浮点类型</h3>
 
 <p>Of the built-in C++ floating-point types, the only ones used
  are <code>float</code> and
 <code>double</code>. You may assume that these types represent IEEE-754 binary32
 and binary64, respectively.</p>
+<p>在内置的 C++ 浮点类型中，唯一使用的是 <code>float</code> 和 <code>double</code>。你可以假设这些类型分别代表 IEEE-754 binary32 和 binary64。</p>
 
 <p>Do not use <code>long double</code>, as it gives non-portable
 results.</p>
+<p>不要使用 <code>long double</code>，因为它的结果不具可移植性。</p>
 
 <a id="64-bit_Portability"></a>
-<h3 id="Architecture_Portability">Architecture Portability</h3>
+<h3 id="Architecture_Portability">Architecture Portability 架构可移植性</h3>
 
 <p>Write architecture-portable code. Do not rely on CPU features specific to a
 single processor.</p>
+<p>编写架构可移植的代码。不要依赖特定于单个处理器的 CPU 功能。</p>
 
 <ul>
   <li>When printing values, use type-safe numeric formatting libraries like
@@ -3623,16 +3626,28 @@ single processor.</p>
   <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/strings/str_format.h"><code>absl::StrFormat</code></a>,
   or <a href="#Streams"><code>std::ostream</code></a> instead of the
   <code>printf</code> family of functions.</li>
+  <li>打印值时，请使用类型安全的数字格式化库，如
+  <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/strings/str_cat.h"><code>absl::StrCat</code></a>、
+  <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/strings/substitute.h"><code>absl::Substitute</code></a>、
+  <a href="https://github.com/abseil/abseil-cpp/blob/master/absl/strings/str_format.h"><code>absl::StrFormat</code></a>
+  或 <a href="#Streams"><code>std::ostream</code></a>，而不是 <code>printf</code> 系列函数。</li>
 
   <li>When moving structured data into or out of your process, encode it using a
   serialization library like
   <a href="https://protobuf.dev/">Protocol
   Buffers</a> rather than copying the in-memory representation around.
   </li>
+  <li>当将结构化数据移入或移出进程时，请使用像
+  <a href="https://protobuf.dev/">Protocol
+  Buffers</a> 这样的序列化库对其进行编码，而不是到处复制内存中的表示形式。
+  </li>
 
   <li>If you need to work with memory addresses as integers, store them in
   <code>uintptr_t</code>s rather than <code>uint32_t</code>s or
   <code>uint64_t</code>s.</li>
+  <li>如果你需要将内存地址作为整数处理，请将它们存储在
+  <code>uintptr_t</code> 中，而不是 <code>uint32_t</code> 或
+  <code>uint64_t</code> 中。</li>
 
   <li>
   Use <a href="#Casting">braced-initialization</a> as needed to create
@@ -3641,24 +3656,37 @@ single processor.</p>
 uint64_t my_mask{uint64_t{3} &lt;&lt; 48};
 </pre>
   </li>
+  <li>
+  根据需要使用 <a href="#Casting">braced-initialization</a> 来创建
+  64 位常量。例如：
+<pre class="goodcode">int64_t my_value{0x123456789};
+uint64_t my_mask{uint64_t{3} &lt;&lt; 48};
+</pre>
+  </li>
 
   <li>Use portable <a href="#Floating-Point_Types">floating point types</a>;
   avoid <code>long double</code>.</li>
+  <li>使用可移植的 <a href="#Floating-Point_Types">floating point types</a>；
+  避免 <code>long double</code>。</li>
 
   <li>Use portable <a href="#Integer_Types">integer types</a>; avoid
   <code>short</code>, <code>long</code>, and <code>long long</code>.</li>
+  <li>使用可移植的 <a href="#Integer_Types">integer types</a>；避免
+  <code>short</code>、<code>long</code> 和 <code>long long</code>。</li>
 </ul>
 
-<h3 id="Preprocessor_Macros">Preprocessor Macros</h3>
+<h3 id="Preprocessor_Macros">Preprocessor Macros 预处理宏</h3>
 
 <p>Avoid defining macros, especially in headers; prefer
 inline functions, enums, and <code>const</code> variables.
 Name macros with a project-specific prefix. Do not use
 macros to define pieces of a C++ API.</p>
+<p>避免定义宏，尤其是在头文件中；首选内联函数、枚举和 <code>const</code> 变量。使用特定于项目的前缀命名宏。不要使用宏来定义 C++ API 的片段。</p>
 
 <p>Macros mean that the code you see is not the same as
 the code the compiler sees. This can introduce unexpected
 behavior, especially since macros have global scope.</p>
+<p>宏意味着你看到的代码与编译器看到的代码不同。这可能会引入意想不到的行为，特别是考虑到宏具有全局作用域。</p>
 
 <p>The problems introduced by macros are especially severe
 when they are used to define pieces of a C++ API,
@@ -3669,6 +3697,7 @@ Refactoring and analysis tools have a dramatically harder
 time updating the interface. As a consequence, we
 specifically disallow using macros in this way.
 For example, avoid patterns like:</p>
+<p>当宏用于定义 C++ API 的片段时，引入的问题尤其严重，对于公共 API 更是如此。开发人员错误地使用该接口时，编译器的每条错误消息现在都必须解释宏是如何形成接口的。重构和分析工具更新接口的难度大大增加。因此，我们特别禁止以这种方式使用宏。例如，避免如下模式：</p>
 
 <pre class="badcode">class WOMBAT_TYPE(Foo) {
   // ...
@@ -3691,6 +3720,7 @@ Instead of using a macro to conditionally compile code
 the <code>#define</code> guards to prevent double
 inclusion of header files). It makes testing much more
 difficult.</p>
+<p>幸运的是，宏在 C++ 中并不像在 C 中那样必要。不要使用宏来内联性能关键代码，而是使用内联函数。不要使用宏来存储常量，而是使用 <code>const</code> 变量。不要使用宏来“缩写”长变量名，而是使用引用。不要使用宏来有条件地编译代码……好吧，根本不要这样做（当然，除了防止头文件双重包含的 <code>#define</code> 保护）。这使得测试更加困难。</p>
 
 <p>Macros can do things these other techniques cannot,
 and you do see them in the codebase, especially in the
@@ -3702,27 +3732,34 @@ to achieve the same result. If you need to use a macro to
 define an interface, contact
 your project leads to request
 a waiver of this rule.</p>
+<p>宏可以做这些其他技术做不到的事情，你确实会在代码库中看到它们，尤其是在底层库中。它们的一些特殊功能（如字符串化、连接等）无法通过语言本身获得。但在使用宏之前，请仔细考虑是否有非宏方法可以达到相同的结果。如果你需要使用宏来定义接口，请联系你的项目负责人申请豁免此规则。</p>
 
 <p>The following usage pattern will avoid many problems
 with macros; if you use macros, follow it whenever
 possible:</p>
+<p>以下使用模式将避免宏的许多问题；如果你使用宏，请尽可能遵循它：</p>
 
 <ul>
   <li>Don't define macros in a <code>.h</code> file.</li>
+  <li>不要在 <code>.h</code> 文件中定义宏。</li>
 
   <li><code>#define</code> macros right before you use
   them, and <code>#undef</code> them right after.</li>
+  <li>在使用宏之前立即 <code>#define</code> 它们，并在使用后立即 <code>#undef</code> 它们。</li>
 
   <li>Do not just <code>#undef</code> an existing macro
   before replacing it with your own; instead, pick a name
   that's likely to be unique.</li>
+  <li>不要只是在用你自己的宏替换现有宏之前 <code>#undef</code> 它；相反，选择一个可能唯一的名称。</li>
 
   <li>Try not to use macros that expand to unbalanced C++
   constructs, or at least document that behavior
   well.</li>
+  <li>尽量不要使用扩展为不平衡 C++ 构造的宏，或者至少详细记录该行为。</li>
 
   <li>Prefer not using <code>##</code> to generate
   function/class/variable names.</li>
+  <li>最好不要使用 <code>##</code> 生成函数/类/变量名称。</li>
 
 </ul>
 
@@ -3732,22 +3769,27 @@ is extremely strongly discouraged. If you do export a macro from a
 header, it must have a globally unique name. To achieve this, it
 must be named with a prefix consisting of your project's namespace
 name (but upper case). </p>
+<p>非常强烈不建议从头文件导出宏（即在头文件中定义它们而不在头文件结束前 <code>#undef</code> 它们）。如果你确实从头文件导出宏，它必须具有全局唯一的名称。为了实现这一点，它必须以由项目命名空间名称组成的前缀命名（但大写）。</p>
 
-<h3 id="0_and_nullptr/NULL">0 and nullptr/NULL</h3>
+<h3 id="0_and_nullptr/NULL">0 and nullptr/NULL 0 和 nullptr/NULL</h3>
 
 <p>Use <code>nullptr</code> for pointers, and <code>'\0'</code> for chars (and
 not the <code>0</code> literal).</p>
+<p>对指针使用 <code>nullptr</code>，对字符使用 <code>'\0'</code>（而不是 <code>0</code> 字面量）。</p>
 
 <p>For pointers (address values), use <code>nullptr</code>, as this
 provides type-safety.</p>
+<p>对于指针（地址值），使用 <code>nullptr</code>，因为这提供了类型安全。</p>
 
 <p>Use <code>'\0'</code> for the null character. Using the correct type makes
 the code more readable.</p>
+<p>对空字符使用 <code>'\0'</code>。使用正确的类型使代码更具可读性。</p>
 
 <h3 id="sizeof">sizeof</h3>
 
 <p>Prefer <code>sizeof(<var>varname</var>)</code> to
 <code>sizeof(<var>type</var>)</code>.</p>
+<p>优先使用 <code>sizeof(<var>varname</var>)</code> 而不是 <code>sizeof(<var>type</var>)</code>。</p>
 
 <p>Use <code>sizeof(<var>varname</var>)</code> when you
 take the size of a particular variable.
@@ -3758,6 +3800,7 @@ now or later. You may use
 to any particular variable, such as code that manages an
 external or internal data format where a variable of an
 appropriate C++ type is not convenient.</p>
+<p>当你获取特定变量的大小时，使用 <code>sizeof(<var>varname</var>)</code>。如果有人现在或将来更改变量类型，<code>sizeof(<var>varname</var>)</code> 将适当地更新。你可以对与任何特定变量无关的代码使用 <code>sizeof(<var>type</var>)</code>，例如管理外部或内部数据格式的代码，其中适当 C++ 类型的变量不方便。</p>
 
 <pre class="goodcode">MyStruct data;
 memset(&amp;data, 0, sizeof(data));
@@ -3773,18 +3816,21 @@ memset(&amp;data, 0, sizeof(data));
 </pre>
 
 <a id="auto"></a>
-<h3 id="Type_deduction">Type Deduction (including auto)</h3>
+<h3 id="Type_deduction">Type Deduction (including auto) 类型推导（包括 auto）</h3>
 
 <p>Use type deduction only if it makes the code clearer to readers who aren't
   familiar with the project, or if it makes the code safer. Do not use it
   merely to avoid the inconvenience of writing an explicit type.</p>
+<p>仅当类型推导使代码对不熟悉项目的读者更清晰，或使代码更安全时，才使用它。不要仅仅为了避免编写显式类型的不便而使用它。</p>
 
 <p class="definition"></p>
 
 <p>There are several contexts in which C++ allows (or even requires) types to
 be deduced by the compiler, rather than spelled out explicitly in the code:</p>
+<p>在几种上下文中，C++ 允许（甚至要求）编译器推导类型，而不是在代码中显式拼写出来：</p>
 <dl>
   <dt><a href="https://en.cppreference.com/w/cpp/language/template_argument_deduction">Function template argument deduction</a></dt>
+  <dt><a href="https://en.cppreference.com/w/cpp/language/template_argument_deduction">函数模板参数推导</a></dt>
   <dd>A function template can be invoked without explicit template arguments.
     The compiler deduces those arguments from the types of the function
     arguments:
@@ -3793,7 +3839,14 @@ void f(T t);
 
 f(0);  // Invokes f&lt;int&gt;(0)</pre>
   </dd>
+  <dd>函数模板可以在没有显式模板参数的情况下调用。编译器从函数参数的类型推导出这些参数：
+    <pre class="neutralcode">template &lt;typename T&gt;
+void f(T t);
+
+f(0);  // Invokes f&lt;int&gt;(0)</pre>
+  </dd>
   <dt><a href="https://en.cppreference.com/w/cpp/language/auto"><code>auto</code> variable declarations</a></dt>
+  <dt><a href="https://en.cppreference.com/w/cpp/language/auto"><code>auto</code> 变量声明</a></dt>
   <dd>A variable declaration can use the <code>auto</code> keyword in place
     of the type. The compiler deduces the type from the variable's
     initializer, following the same rules as function template argument
@@ -3812,7 +3865,16 @@ auto d{42};   // d is an int, not a std::initializer_list&lt;int&gt;
     <a href="https://en.cppreference.com/w/cpp/language/decltype"><code>decltype</code></a>
     to the initializer.
   </dd>
+  <dd>变量声明可以使用 <code>auto</code> 关键字代替类型。编译器根据变量的初始化器推导类型，遵循与具有相同初始化器的函数模板参数推导相同的规则（只要你不使用花括号代替括号）。
+    <pre class="neutralcode">auto a = 42;  // a is an int
+auto&amp; b = a;  // b is an int&amp;
+auto c = b;   // c is an int
+auto d{42};   // d is an int, not a std::initializer_list&lt;int&gt;
+</pre>
+    <code>auto</code> 可以用 <code>const</code> 限定，并且可以用作指针或引用类型的一部分，以及（自 C++17 起）作为非类型模板参数。这种语法的罕见变体使用 <code>decltype(auto)</code> 代替 <code>auto</code>，在这种情况下，推导的类型是将 <a href="https://en.cppreference.com/w/cpp/language/decltype"><code>decltype</code></a> 应用于初始化器的结果。
+  </dd>
   <dt><a href="https://en.cppreference.com/w/cpp/language/function#Return_type_deduction">Function return type deduction</a></dt>
+  <dt><a href="https://en.cppreference.com/w/cpp/language/function#Return_type_deduction">函数返回类型推导</a></dt>
   <dd><code>auto</code> (and <code>decltype(auto)</code>) can also be used in
     place of a function return type. The compiler deduces the return type from
     the <code>return</code> statements in the function body, following the same
@@ -3826,7 +3888,12 @@ auto d{42};   // d is an int, not a std::initializer_list&lt;int&gt;
     rely on type deduction; it's just an alternative syntax for an explicit
     return type.
   </dd>
+  <dd><code>auto</code>（和 <code>decltype(auto)</code>）也可以代替函数返回类型使用。编译器根据函数体中的 <code>return</code> 语句推导返回类型，遵循与变量声明相同的规则：
+    <pre class="neutralcode">auto f() { return 0; }  // The return type of f is int</pre>
+    <a href="#Lambda_expressions">Lambda 表达式</a> 返回类型可以以相同的方式推导，但这是通过省略返回类型而不是通过显式 <code>auto</code> 触发的。令人困惑的是，函数的 <a href="#trailing_return">尾置返回类型</a> 语法也在返回类型位置使用 <code>auto</code>，但这不依赖于类型推导；它只是显式返回类型的替代语法。
+  </dd>
   <dt><a href="https://isocpp.org/wiki/faq/cpp14-language#generic-lambdas">Generic lambdas</a></dt>
+  <dt><a href="https://isocpp.org/wiki/faq/cpp14-language#generic-lambdas">泛型 Lambda</a></dt>
   <dd>A lambda expression can use the <code>auto</code> keyword in place of
     one or more of its parameter types. This causes the lambda's call operator
     to be a function template instead of an ordinary function, with a separate
@@ -3834,16 +3901,28 @@ auto d{42};   // d is an int, not a std::initializer_list&lt;int&gt;
     <pre class="neutralcode">// Sort `vec` in decreasing order
 std::sort(vec.begin(), vec.end(), [](auto lhs, auto rhs) { return lhs &gt; rhs; });</pre>
   </dd>
+  <dd>Lambda 表达式可以使用 <code>auto</code> 关键字代替其一个或多个参数类型。这会导致 lambda 的调用运算符成为函数模板而不是普通函数，每个 <code>auto</code> 函数参数都有一个单独的模板参数：
+    <pre class="neutralcode">// Sort `vec` in decreasing order
+std::sort(vec.begin(), vec.end(), [](auto lhs, auto rhs) { return lhs &gt; rhs; });</pre>
+  </dd>
   <dt><a href="https://isocpp.org/wiki/faq/cpp14-language#lambda-captures">Lambda init captures</a></dt>
+  <dt><a href="https://isocpp.org/wiki/faq/cpp14-language#lambda-captures">Lambda 初始化捕获</a></dt>
   <dd>Lambda captures can have explicit initializers, which can be used to
     declare wholly new variables rather than only capturing existing ones:
     <pre class="neutralcode">[x = 42, y = "foo"] { ... }  // x is an int, and y is a const char*</pre>
     This syntax doesn't allow the type to be specified; instead, it's deduced
     using the rules for <code>auto</code> variables.
   </dd>
+  <dd>Lambda 捕获可以有显式的初始化器，可用于声明全新的变量，而不仅仅是捕获现有的变量：
+    <pre class="neutralcode">[x = 42, y = "foo"] { ... }  // x is an int, and y is a const char*</pre>
+    这种语法不允许指定类型；相反，它是使用 <code>auto</code> 变量的规则推导出来的。
+  </dd>
   <dt><a href="https://en.cppreference.com/w/cpp/language/class_template_argument_deduction">Class template argument deduction</a></dt>
+  <dt><a href="https://en.cppreference.com/w/cpp/language/class_template_argument_deduction">类模板参数推导</a></dt>
   <dd>See <a href="#CTAD">below</a>.</dd>
+  <dd>参见 <a href="#CTAD">下文</a>。</dd>
   <dt><a href="https://en.cppreference.com/w/cpp/language/structured_binding">Structured bindings</a></dt>
+  <dt><a href="https://en.cppreference.com/w/cpp/language/structured_binding">结构化绑定</a></dt>
   <dd>When declaring a tuple, struct, or array using <code>auto</code>, you can
     specify names for the individual elements instead of a name for the whole
     object; these names are called "structured bindings", and the whole
@@ -3862,26 +3941,38 @@ if (!success) {
     the binding types typically won't be references even if the declaration
     declares a reference (but they will usually behave like references anyway).
   </dd>
+  <dd>当使用 <code>auto</code> 声明元组、结构体或数组时，你可以指定单个元素的名称，而不是整个对象的名称；这些名称称为“结构化绑定”，整个声明称为“结构化绑定声明”。这种语法无法指定封闭对象或单个名称的类型：
+    <pre class="neutralcode">auto [iter, success] = my_map.insert({key, value});
+if (!success) {
+  iter-&gt;second = value;
+}</pre>
+    <code>auto</code> 也可以用 <code>const</code>、<code>&amp;</code> 和 <code>&amp;&amp;</code> 限定，但请注意，这些限定符在技术上适用于匿名元组/结构体/数组，而不是单个绑定。确定绑定类型的规则相当复杂；结果通常并不令人惊讶，除了绑定类型通常不会是引用，即使声明声明了引用（但无论如何它们通常表现得像引用）。
+  </dd>
 </dl>
 
 <p>(These summaries omit many details and caveats; see the links for further
   information.)</p>
+<p>（这些摘要省略了许多细节和注意事项；有关更多信息，请参阅链接。）</p>
 
 <p class="pros"></p>
 
 <ul>
   <li>C++ type names can be long and cumbersome, especially when they
     involve templates or namespaces.</li>
+  <li>C++ 类型名称可能很长且麻烦，尤其是当它们涉及模板或命名空间时。</li>
   <li>When a C++ type name is repeated within a single declaration or a
     small code region, the repetition may not be aiding readability.</li>
+  <li>当 C++ 类型名称在单个声明或小代码区域中重复时，重复可能无助于可读性。</li>
   <li>It is sometimes safer to let the type be deduced, since that avoids
     the possibility of unintended copies or type conversions.</li>
+  <li>让类型被推导有时更安全，因为这避免了意外复制或类型转换的可能性。</li>
 </ul>
 
 <p class="cons"></p>
 <p>C++ code is usually clearer when types are explicit,
   especially when type deduction would depend on information from
   distant parts of the code. In expressions like:</p>
+<p>当类型显式时，C++ 代码通常更清晰，尤其是当类型推导依赖于代码远处部分的信息时。在如下表达式中：</p>
 
 <pre class="badcode">auto foo = x.add_foo();
 auto i = y.Find(key);
@@ -3890,15 +3981,18 @@ auto i = y.Find(key);
 <p>it may not be obvious what the resulting types are if the type
   of <code>y</code> isn't very well known, or if <code>y</code> was
   declared many lines earlier.</p>
+<p>如果 <code>y</code> 的类型不是很清楚，或者如果 <code>y</code> 是在许多行之前声明的，那么结果类型可能并不明显。</p>
 
 <p>Programmers have to understand when type deduction will or won't
   produce a reference type, or they'll get copies when they didn't
   mean to.</p>
+<p>程序员必须了解类型推导何时会或不会产生引用类型，否则他们会在无意中获得副本。</p>
 
 <p>If a deduced type is used as part of an interface, then a
   programmer might change its type while only intending to
   change its value, leading to a more radical API change
   than intended.</p>
+<p>如果推导类型用作接口的一部分，那么程序员可能会在只打算更改其值时更改其类型，从而导致比预期更激进的 API 更改。</p>
 
 <p class="decision"></p>
 
@@ -3911,11 +4005,13 @@ auto i = y.Find(key);
   provide useful information to others. For example, you can assume that
   the return type of <code>make_unique&lt;Foo&gt;()</code> is obvious,
   but the return type of <code>MyWidgetFactory()</code> probably isn't.</p>
+<p>基本规则是：仅当类型推导使代码更清晰或更安全时才使用它，不要仅仅为了避免编写显式类型的不便而使用它。在判断代码是否更清晰时，请记住你的读者不一定在你的团队中，也不一定熟悉你的项目，因此你和你的审阅者认为是该去除的混乱类型通常会为其他人提供有用的信息。例如，你可以假设 <code>make_unique&lt;Foo&gt;()</code> 的返回类型是显而易见的，但 <code>MyWidgetFactory()</code> 的返回类型可能不是。</p>
 
   <p>These principles apply to all forms of type deduction, but the
   details vary, as described in the following sections.</p>
+  <p>这些原则适用于所有形式的类型推导，但细节各不相同，如下节所述。</p>
 
-<h4>Function template argument deduction</h4>
+<h4>Function template argument deduction 函数模板参数推导</h4>
 
 <p>Function template argument deduction is almost always OK. Type deduction
   is the expected default way of interacting with function templates,
@@ -3923,12 +4019,14 @@ auto i = y.Find(key);
   function overloads. Consequently, function templates are almost always
   designed so that template argument deduction is clear and safe, or
   doesn't compile.</p>
+<p>函数模板参数推导几乎总是可以的。类型推导是与函数模板交互的预期默认方式，因为它允许函数模板像无限的普通函数重载集一样行动。因此，函数模板的设计几乎总是使得模板参数推导清晰且安全，或者无法编译。</p>
 
-<h4>Local variable type deduction</h4>
+<h4>Local variable type deduction 局部变量类型推导</h4>
 
 <p>For local variables, you can use type deduction to make the code clearer
   by eliminating type information that is obvious or irrelevant, so that
   the reader can focus on the meaningful parts of the code:</p>
+<p>对于局部变量，你可以使用类型推导来消除明显或不相关的类型信息，从而使代码更清晰，以便读者可以关注代码的有意义部分：</p>
   <pre class="neutralcode">std::unique_ptr&lt;WidgetWithBellsAndWhistles&gt; widget =
     std::make_unique&lt;WidgetWithBellsAndWhistles&gt;(arg1, arg2);
 absl::flat_hash_map&lt;std::string,
@@ -3946,6 +4044,7 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   key type aren't relevant, but the type of the values is probably useful.
   In such situations, it's often possible to define local variables with
   explicit types that convey the relevant information:</p>
+<p>类型有时包含有用信息和样板代码的混合，例如上面的 <code>it</code>：很明显类型是迭代器，在许多上下文中，容器类型甚至键类型都不相关，但值的类型可能有用。在这种情况下，通常可以使用传达相关信息的显式类型定义局部变量：</p>
   <pre class="goodcode">if (auto it = my_map_.find(key); it != my_map_.end()) {
   WidgetWithBellsAndWhistles&amp; widget = *it-&gt;second;
   // Do stuff with `widget`
@@ -3956,10 +4055,12 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   cases where this actually provides a meaningful benefit are quite rare.
   Note that class template argument deduction is also subject to a
   <a href="#CTAD">separate style rule</a>.</p>
+<p>如果类型是模板实例，并且参数是样板代码但模板本身提供信息，你可以使用类模板参数推导来抑制样板代码。但是，这种情况实际上提供有意义好处的情况非常少见。请注意，类模板参数推导也受 <a href="#CTAD">单独的风格规则</a> 约束。</p>
 
 <p>Do not use <code>decltype(auto)</code> if a simpler option will work;
   because it's a fairly obscure feature, it has a high cost in code
   clarity.</p>
+<p>如果更简单的选项可行，请不要使用 <code>decltype(auto)</code>；因为它是一个相当晦涩的功能，所以在代码清晰度方面代价很高。</p>
 
 <h4>Return type deduction</h4>
 
@@ -3971,6 +4072,7 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   deduced return types don't define abstraction boundaries: the implementation
   <em>is</em> the interface. In particular, public functions in header files
   should almost never have deduced return types.</p>
+<p>仅当函数体具有非常少量的 <code>return</code> 语句且几乎没有其他代码时，才使用返回类型推导（对于函数和 lambda），否则读者可能无法一眼看出返回类型是什么。此外，仅当函数或 lambda 的范围非常窄时才使用它，因为具有推导返回类型的函数不定义抽象边界：实现 <em>就是</em> 接口。特别是，头文件中的公共函数几乎不应该有推导的返回类型。</p>
 
 <h4>Parameter type deduction</h4>
 
@@ -3982,12 +4084,14 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   or the lambda is passed to an interface so well-known that it's
   obvious what arguments it will eventually be called with (e.g.,
   the <code>std::sort</code> example above).</p>
+<p>Lambda 的 <code>auto</code> 参数类型应谨慎使用，因为实际类型由调用 lambda 的代码确定，而不是由 lambda 的定义确定。因此，显式类型几乎总是更清晰，除非 lambda 在定义它的位置附近被显式调用（以便读者可以轻松看到两者），或者 lambda 传递给一个众所周知的接口，以至于很明显它最终将被调用的参数是什么（例如，上面的 <code>std::sort</code> 示例）。</p>
 
 <h4>Lambda init captures</h4>
 
 <p>Init captures are covered by a <a href="#Lambda_expressions">more specific
     style rule</a>, which largely supersedes the general rules for
   type deduction.</p>
+<p>初始化捕获由 <a href="#Lambda_expressions">更具体的风格规则</a> 涵盖，该规则在很大程度上取代了类型推导的一般规则。</p>
 
 <h4>Structured bindings</h4>
 
@@ -4001,6 +4105,7 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   but note that you generally <a href="#Structs_vs._Tuples">shouldn't use
     pairs or tuples</a> unless a pre-existing API like <code>insert</code>
   forces you to.</p>
+<p>与其他形式的类型推导不同，结构化绑定实际上可以通过为较大对象的元素提供有意义的名称来向读者提供更多信息。这意味着结构化绑定声明可以在显式类型之上提供净可读性改进，即使在 <code>auto</code> 不会的情况下也是如此。当对象是一对或元组时（如上面的 <code>insert</code> 示例），结构化绑定特别有益，因为它们一开始就没有有意义的字段名称，但请注意，通常 <a href="#Structs_vs._Tuples">不应该使用对或元组</a>，除非像 <code>insert</code> 这样的现有 API 强迫你这样做。</p>
 
 <p>If the object being bound is a struct, it may sometimes be helpful to
   provide names that are more specific to your usage, but keep in mind that
@@ -4008,41 +4113,50 @@ std::array numbers = {4, 8, 15, 16, 23, 42};</pre>
   field names. We recommend using a comment to indicate the name of the
   underlying field, if it doesn't match the name of the binding, using the
   same syntax as for function parameter comments:</p>
+<p>如果绑定的对象是结构体，有时提供更具体于你用法的名称可能会有所帮助，但请记住，这也可能意味着这些名称对读者来说比字段名称更难识别。如果它与绑定的名称不匹配，我们建议使用注释来指示基础字段的名称，使用与函数参数注释相同的语法：</p>
   <pre class="goodcode">auto [/*field_name1=*/bound_name1, /*field_name2=*/bound_name2] = ...</pre>
 <p>As with function parameter comments, this can enable tools to detect if
   you get the order of the fields wrong.</p>
+<p>与函数参数注释一样，这可以使用户工具检测你是否弄错了字段的顺序。</p>
 
-<h3 id="CTAD">Class Template Argument Deduction</h3>
+<h3 id="CTAD">Class Template Argument Deduction 类模板参数推导</h3>
 
 <p>Use class template argument deduction only with templates that have
   explicitly opted into supporting it.</p>
+<p>仅对已显式选择支持类模板参数推导的模板使用它。</p>
 
 <p class="definition"></p>
 <p><a href="https://en.cppreference.com/w/cpp/language/class_template_argument_deduction">Class
     template argument deduction</a> (often abbreviated "CTAD") occurs when
   a variable is declared with a type that names a template, and the template
   argument list is not provided (not even empty angle brackets):</p>
+<p><a href="https://en.cppreference.com/w/cpp/language/class_template_argument_deduction">类模板参数推导</a>（通常缩写为 "CTAD"）发生在变量声明为命名模板的类型，并且未提供模板参数列表（甚至没有空尖括号）时：</p>
   <pre class="neutralcode">std::array a = {1, 2, 3};  // `a` is a std::array&lt;int, 3&gt;</pre>
 <p>The compiler deduces the arguments from the initializer using the
   template's "deduction guides", which can be explicit or implicit.</p>
+<p>编译器使用模板的“推导指南”（可以是显式的或隐式的）从初始化器推导参数。</p>
 
 <p>Explicit deduction guides look like function declarations with trailing
   return types, except that there's no leading <code>auto</code>, and the
   function name is the name of the template. For example, the above example
   relies on this deduction guide for <code>std::array</code>:</p>
+<p>显式推导指南看起来像带有尾置返回类型的函数声明，除了没有前导 <code>auto</code>，并且函数名称是模板的名称。例如，上面的示例依赖于 <code>std::array</code> 的这个推导指南：</p>
   <pre class="neutralcode">namespace std {
 template &lt;class T, class... U&gt;
 array(T, U...) -&gt; std::array&lt;T, 1 + sizeof...(U)&gt;;
 }</pre>
 <p>Constructors in a primary template (as opposed to a template specialization)
   also implicitly define deduction guides.</p>
+<p>主模板（相对于模板特化）中的构造函数也隐式定义推导指南。</p>
 
 <p>When you declare a variable that relies on CTAD, the compiler selects
   a deduction guide using the rules of constructor overload resolution,
   and that guide's return type becomes the type of the variable.</p>
+<p>当你声明一个依赖于 CTAD 的变量时，编译器使用构造函数重载解析规则选择一个推导指南，该指南的返回类型成为变量的类型。</p>
 
 <p class="pros"></p>
 <p>CTAD can sometimes allow you to omit boilerplate from your code.</p>
+<p>CTAD 有时允许你从代码中省略样板代码。</p>
 
 <p class="cons"></p>
 <p>The implicit deduction guides that are generated from constructors
@@ -4053,12 +4167,14 @@ array(T, U...) -&gt; std::array&lt;T, 1 + sizeof...(U)&gt;;
   constructors would cause for CTAD. Furthermore, adding explicit deduction
   guides to fix those problems might break any existing code that relies on
   the implicit deduction guides.</p>
+<p>从构造函数生成的隐式推导指南可能有不良行为，或者是完全错误的。这对于在 C++17 引入 CTAD 之前编写的构造函数来说尤其成问题，因为这些构造函数的作者无法知道（更不用说修复）他们的构造函数会对 CTAD 造成的任何问题。此外，添加显式推导指南以修复这些问题可能会破坏依赖隐式推导指南的任何现有代码。</p>
 
 <p>CTAD also suffers from many of the same drawbacks as <code>auto</code>,
   because they are both mechanisms for deducing all or part of a variable's
   type from its initializer. CTAD does give the reader more information
   than <code>auto</code>, but it also doesn't give the reader an obvious
   cue that information has been omitted.</p>
+<p>CTAD 也遭受许多与 <code>auto</code> 相同的缺点，因为它们都是从初始化器推导变量类型的全部或部分的机制。CTAD 确实给读者提供了比 <code>auto</code> 更多的信息，但它也没有给读者一个明显的提示，即信息已被省略。</p>
 
 <p class="decision"></p>
 <p>Do not use CTAD with a given template unless the template's maintainers
@@ -4066,18 +4182,23 @@ array(T, U...) -&gt; std::array&lt;T, 1 + sizeof...(U)&gt;;
   deduction guide (all templates in the <code>std</code> namespace are
   also presumed to have opted in). This should be enforced with a compiler
   warning if available.</p>
+<p>不要对给定模板使用 CTAD，除非模板的维护者通过提供至少一个显式推导指南（也被假定为已选择加入 <code>std</code> 命名空间中的所有模板）已选择支持使用 CTAD。如果可用，这应该通过编译器警告来强制执行。</p>
 
 <p>Uses of CTAD must also follow the general rules on
   <a href="#Type_deduction">Type deduction</a>.</p>
+<p>CTAD 的使用还必须遵循 <a href="#Type_deduction">类型推导</a> 的一般规则。</p>
 
-<h3 id="Designated_initializers">Designated Initializers</h3>
+<h3 id="Designated_initializers">Designated Initializers 指定初始化器</h3>
 
 <p>Use designated initializers only in their C++20-compliant form.</p>
+<p>仅以符合 C++20 的形式使用指定初始化器。</p>
 
 <p class="definition"></p>
 <p><a href="https://en.cppreference.com/w/cpp/language/aggregate_initialization#Designated_initializers">
   Designated initializers</a> are a syntax that allows for initializing an
   aggregate ("plain old struct") by naming its fields explicitly:</p>
+<p><a href="https://en.cppreference.com/w/cpp/language/aggregate_initialization#Designated_initializers">
+  指定初始化器</a> 是一种允许通过显式命名字段来初始化聚合（“普通旧结构体”）的语法：</p>
   <pre class="neutralcode">  struct Point {
     float x = 0.0;
     float y = 0.0;
@@ -4092,39 +4213,46 @@ array(T, U...) -&gt; std::array&lt;T, 1 + sizeof...(U)&gt;;
 <p>The explicitly listed fields will be initialized as specified, and others
   will be initialized in the same way they would be in a traditional aggregate
   initialization expression like <code>Point{1.0, 2.0}</code>.</p>
+<p>显式列出的字段将按指定进行初始化，其他字段将以与传统聚合初始化表达式（如 <code>Point{1.0, 2.0}</code>）相同的方式进行初始化。</p>
 
 <p class="pros"></p>
 <p>Designated initializers can make for convenient and highly readable
 aggregate expressions, especially for structs with less straightforward
 ordering of fields than the <code>Point</code> example above.</p>
+<p>指定初始化器可以使聚合表达式方便且高度可读，特别是对于字段排序不如上面的 <code>Point</code> 示例那样直观的结构体。</p>
 
 <p class="cons"></p>
 <p>While designated initializers have long been part of the C standard and
 supported by C++ compilers as an extension, they were not supported by
 C++ prior to C++20.</p>
+<p>虽然指定初始化器长期以来一直是 C 标准的一部分，并作为扩展受 C++ 编译器支持，但在 C++20 之前，C++ 并不支持它们。</p>
 
 <p>The rules in the C++ standard are stricter than in C and compiler extensions,
 requiring that the designated initializers appear in the same order as the
 fields appear in the struct definition. So in the example above, it is legal
 according to C++20 to initialize <code>x</code> and then <code>z</code>, but not
 <code>y</code> and then <code>x</code>.</p>
+<p>C++ 标准中的规则比 C 和编译器扩展中的规则更严格，要求指定初始化器以与结构体定义中字段出现的相同顺序出现。因此，在上面的示例中，根据 C++20，初始化 <code>x</code> 然后初始化 <code>z</code> 是合法的，但初始化 <code>y</code> 然后初始化 <code>x</code> 是不合法的。</p>
 
 <p class="decision"></p>
 <p>Use designated initializers only in the form that is compatible with the
 C++20 standard: with initializers in the same order as the corresponding fields
 appear in the struct definition.</p>
+<p>仅以与 C++20 标准兼容的形式使用指定初始化器：初始化器的顺序与结构体定义中对应字段出现的顺序相同。</p>
 
 
 
-<h3 id="Lambda_expressions">Lambda Expressions</h3>
+<h3 id="Lambda_expressions">Lambda Expressions Lambda 表达式</h3>
 
 <p>Use lambda expressions where appropriate. Prefer explicit captures
 when the lambda will escape the current scope.</p>
+<p>在适当的地方使用 lambda 表达式。当 lambda 逃逸出当前作用域时，首选显式捕获。</p>
 
 <p class="definition"></p>
 <p> Lambda expressions are a concise way of creating anonymous
 function objects. They're often useful when passing
 functions as arguments. For example:</p>
+<p> Lambda 表达式是创建匿名函数对象的简洁方式。在将函数作为参数传递时，它们通常很有用。例如：</p>
 
 <pre class="neutralcode">std::sort(v.begin(), v.end(), [](int x, int y) {
   return Weight(x) &lt; Weight(y);
@@ -4135,6 +4263,7 @@ functions as arguments. For example:</p>
 explicitly by name, or implicitly using a default capture. Explicit captures
 require each variable to be listed, as
 either a value or reference capture:</p>
+<p> 它们还允许通过名称显式捕获或使用默认捕获隐式捕获封闭作用域中的变量。显式捕获要求列出每个变量，无论是值捕获还是引用捕获：</p>
 
 <pre class="neutralcode">int weight = 3;
 int sum = 0;
@@ -4147,6 +4276,7 @@ std::for_each(v.begin(), v.end(), [weight, &amp;sum](int x) {
 
 <p>Default captures implicitly capture any variable referenced in the
 lambda body, including <code>this</code> if any members are used:</p>
+<p>默认捕获隐式捕获 lambda 主体中引用的任何变量，如果使用了任何成员，则包括 <code>this</code>：</p>
 
 <pre class="neutralcode">const std::vector&lt;int&gt; lookup_table = ...;
 std::vector&lt;int&gt; indices = ...;
@@ -4160,6 +4290,7 @@ std::sort(indices.begin(), indices.end(), [&amp;](int a, int b) {
 <p>A variable capture can also have an explicit initializer, which can
   be used for capturing move-only variables by value, or for other situations
   not handled by ordinary reference or value captures:</p>
+<p>变量捕获也可以具有显式初始化器，可用于按值捕获仅移动变量，或用于普通引用或值捕获未处理的其他情况：</p>
   <pre class="neutralcode">std::unique_ptr&lt;Foo&gt; foo = ...;
 [foo = std::move(foo)] () {
   ...
@@ -4168,11 +4299,13 @@ std::sort(indices.begin(), indices.end(), [&amp;](int a, int b) {
   need not actually "capture" anything from the enclosing scope, or even have
   a name from the enclosing scope; this syntax is a fully general way to define
   members of a lambda object:</p>
+<p>此类捕获（通常称为“初始化捕获”或“广义 lambda 捕获”）实际上不需要从封闭作用域“捕获”任何内容，甚至不需要具有封闭作用域中的名称；这种语法是定义 lambda 对象成员的完全通用方式：</p>
   <pre class="neutralcode">[foo = std::vector&lt;int&gt;({1, 2, 3})] () {
   ...
 }</pre>
 <p>The type of a capture with an initializer is deduced using the same rules
   as <code>auto</code>.</p>
+<p>具有初始化器的捕获类型是使用与 <code>auto</code> 相同的规则推导出来的。</p>
 
 <p class="pros"></p>
 <ul>
@@ -4180,28 +4313,33 @@ std::sort(indices.begin(), indices.end(), [&amp;](int a, int b) {
    defining function objects to be passed to STL
    algorithms, which can be a readability
    improvement.</li>
+  <li>Lambda 比定义传递给 STL 算法的函数对象的其他方式简洁得多，这可以提高可读性。</li>
 
   <li>Appropriate use of default captures can remove
     redundancy and highlight important exceptions from
     the default.</li>
+  <li>适当使用默认捕获可以消除冗余并突出显示与默认情况的重要例外。</li>
 
    <li>Lambdas, <code>std::function</code>, and
    <code>std::bind</code> can be used in combination as a
    general purpose callback mechanism; they make it easy
    to write functions that take bound functions as
    arguments.</li>
+   <li>Lambda、<code>std::function</code> 和 <code>std::bind</code> 可以组合使用作为通用回调机制；它们使得编写将绑定函数作为参数的函数变得容易。</li>
 </ul>
 
 <p class="cons"></p>
 <ul>
   <li>Variable capture in lambdas can be a source of dangling-pointer
   bugs, particularly if a lambda escapes the current scope.</li>
+  <li>Lambda 中的变量捕获可能是悬空指针错误的来源，特别是如果 lambda 逃逸出当前作用域。</li>
 
   <li>Default captures by value can be misleading because they do not prevent
   dangling-pointer bugs. Capturing a pointer by value doesn't cause a deep
   copy, so it often has the same lifetime issues as capture by reference.
   This is especially confusing when capturing <code>this</code> by value,
   since the use of <code>this</code> is often implicit.</li>
+  <li>按值默认捕获可能会产生误导，因为它们不能防止悬空指针错误。按值捕获指针不会导致深层复制，因此它通常具有与按引用捕获相同的生命周期问题。当按值捕获 <code>this</code> 时，这尤其令人困惑，因为 <code>this</code> 的使用通常是隐式的。</li>
 
   <li>Captures actually declare new variables (whether or not the captures have
     initializers), but they look nothing like any other variable declaration
@@ -4209,15 +4347,18 @@ std::sort(indices.begin(), indices.end(), [&amp;](int a, int b) {
     or even an <code>auto</code> placeholder (although init captures can
     indicate it indirectly, e.g., with a cast). This can make it difficult to
     even recognize them as declarations.</li>
+  <li>捕获实际上声明了新变量（无论捕获是否具有初始化器），但它们看起来一点也不像 C++ 中的任何其他变量声明语法。特别是，没有地方放置变量的类型，甚至没有 <code>auto</code> 占位符（虽然初始化捕获可以间接指示它，例如，通过转换）。这可能使得甚至很难将它们识别为声明。</li>
 
   <li>Init captures inherently rely on <a href="#Type_deduction">type
       deduction</a>, and suffer from many of the same drawbacks as
     <code>auto</code>, with the additional problem that the syntax doesn't
     even cue the reader that deduction is taking place.</li>
+  <li>初始化捕获本质上依赖于 <a href="#Type_deduction">类型推导</a>，并遭受许多与 <code>auto</code> 相同的缺点，还有一个额外的问题，即语法甚至没有提示读者正在进行推导。</li>
 
   <li>It's possible for use of lambdas to get out of
   hand; very long nested anonymous functions can make
   code harder to understand.</li>
+  <li>Lambda 的使用可能会失控；非常长的嵌套匿名函数会使代码更难理解。</li>
 
 </ul>
 
@@ -4225,6 +4366,7 @@ std::sort(indices.begin(), indices.end(), [&amp;](int a, int b) {
 <ul>
 <li>Use lambda expressions where appropriate, with formatting as
 described <a href="#Formatting_Lambda_Expressions">below</a>.</li>
+<li>在适当的地方使用 lambda 表达式，格式如下所述 <a href="#Formatting_Lambda_Expressions">下文</a>。</li>
 <li>Prefer explicit captures if the lambda may escape the current scope.
 For example, instead of:
 <pre class="badcode">{
@@ -4251,10 +4393,36 @@ prefer to write:
 // reference.
 </pre>
 </li>
+<li>如果 lambda 可能逃逸出当前作用域，请首选显式捕获。例如，不要这样写：
+<pre class="badcode">{
+  Foo foo;
+  ...
+  executor-&gt;Schedule([&amp;] { Frobnicate(foo); })
+  ...
+}
+// BAD! The fact that the lambda makes use of a reference to `foo` and
+// possibly `this` (if `Frobnicate` is a member function) may not be
+// apparent on a cursory inspection. If the lambda is invoked after
+// the function returns, that would be bad, because both `foo`
+// and the enclosing object could have been destroyed.
+</pre>
+最好这样写：
+<pre class="goodcode">{
+  Foo foo;
+  ...
+  executor-&gt;Schedule([&amp;foo] { Frobnicate(foo); })
+  ...
+}
+// BETTER - The compile will fail if `Frobnicate` is a member
+// function, and it's clearer that `foo` is dangerously captured by
+// reference.
+</pre>
+</li>
 <li>Use default capture by reference (<code>[&amp;]</code>) only when
 the lifetime of the lambda is obviously shorter than any potential
 captures.
 </li>
+<li>仅当 lambda 的生命周期明显短于任何潜在捕获时，才使用按引用默认捕获 (<code>[&amp;]</code>)。</li>
 <li>Use default capture by value (<code>[=]</code>) only as a means of
 binding a few variables for a short lambda, where the set of captured
 variables is obvious at a glance, and which does not result in
@@ -4264,25 +4432,30 @@ class members in its body must capture <code>this</code> explicitly or
 via <code>[&amp;]</code>.) Prefer not to write long or complex lambdas
 with default capture by value.
 </li>
+<li>仅当作为绑定短 lambda 的几个变量的一种手段时，才使用按值默认捕获 (<code>[=]</code>)，其中捕获的变量集一目了然，并且不会导致隐式捕获 <code>this</code>。（这意味着出现在非静态类成员函数中并在其主体中引用非静态类成员的 lambda 必须显式捕获 <code>this</code> 或通过 <code>[&amp;]</code> 捕获。）尽量不要编写带有按值默认捕获的长或复杂 lambda。</li>
 <li>Use captures only to actually capture variables from the enclosing scope.
   Do not use captures with initializers to introduce new names, or
   to substantially change the meaning of an existing name. Instead,
   declare a new variable in the conventional way and then capture it,
   or avoid the lambda shorthand and define a function object explicitly.</li>
+<li>仅使用捕获来实际捕获封闭作用域中的变量。不要使用带有初始化器的捕获来引入新名称，或实质性地改变现有名称的含义。相反，以常规方式声明新变量，然后捕获它，或者避免 lambda 简写并显式定义函数对象。</li>
 <li>See the section on <a href="#Type_deduction">type deduction</a>
   for guidance on specifying the parameter and return types.</li>
+<li>有关指定参数和返回类型的指导，请参阅 <a href="#Type_deduction">类型推导</a> 一节。</li>
 
 </ul>
 
-<h3 id="Template_metaprogramming">Template Metaprogramming</h3>
+<h3 id="Template_metaprogramming">Template Metaprogramming 模板元编程</h3>
 
 <p>Avoid complicated template programming.</p>
+<p>避免复杂的模板编程。</p>
 
 <p class="definition"></p>
 <p>Template metaprogramming refers to a family of techniques that
 exploit the fact that the C++ template instantiation mechanism is
 Turing complete and can be used to perform arbitrary compile-time
 computation in the type domain.</p>
+<p>模板元编程是指一类技术，它利用 C++ 模板实例化机制具有图灵完备性这一事实，从而能够在类型域中执行任意的编译期计算。</p>
 
 <p class="pros"></p>
 <p>Template metaprogramming allows extremely flexible interfaces that
@@ -4291,17 +4464,22 @@ are type safe and high performance. Facilities like
 <a href="https://github.com/google/googletest">GoogleTest</a>,
 <code>std::tuple</code>, <code>std::function</code>, and
 Boost.Spirit would be impossible without it.</p>
+<p>模板元编程能够提供极其灵活、类型安全且高性能的接口。没有它，诸如
+<a href="https://github.com/google/googletest">GoogleTest</a>、
+<code>std::tuple</code>、<code>std::function</code> 以及 Boost.Spirit 之类的设施将难以实现。</p>
 
 <p class="cons"></p>
 <p>The techniques used in template metaprogramming are often obscure
 to anyone but language experts. Code that uses templates in
 complicated ways is often unreadable, and is hard to debug or
 maintain.</p>
+<p>模板元编程所使用的技术往往只有语言专家才熟悉。以复杂方式使用模板的代码通常难以阅读，也难以调试和维护。</p>
 
 <p>Template metaprogramming often leads to extremely poor compile
 time error messages: even if an interface is simple, the complicated
 implementation details become visible when the user does something
 wrong.</p>
+<p>模板元编程经常导致非常糟糕的编译期错误信息：即使接口很简单，当用户用错时，复杂的实现细节也会暴露出来。</p>
 
 <p>Template metaprogramming interferes with large scale refactoring by
 making the job of refactoring tools harder. First, the template code
@@ -4311,6 +4489,7 @@ tools work with an AST that only represents the structure of the code
 after template expansion. It can be difficult to automatically work
 back to the original source construct that needs to be
 rewritten.</p>
+<p>模板元编程会干扰大规模重构，因为它让重构工具的工作更困难。首先，模板代码会在多个上下文中展开，很难验证变换在所有上下文里都合理。其次，一些重构工具使用的 AST 只表示模板展开后的代码结构，很难自动回溯到需要改写的原始源代码结构。</p>
 
 <p class="decision"></p>
 <p>Template metaprogramming sometimes allows cleaner and easier-to-use
@@ -4318,6 +4497,7 @@ interfaces than would be possible without it, but it's also often a
 temptation to be overly clever. It's best used in a small number of
 low level components where the extra maintenance burden is spread out
 over a large number of uses.</p>
+<p>模板元编程有时能带来比不使用它更简洁、更易用的接口，但它也常常诱使人过度耍“聪明”。它最适合用于少量底层组件，在这些组件中额外的维护负担可以分摊到大量使用场景上。</p>
 
 <p>Think twice before using template metaprogramming or other
 complicated template techniques; think about whether the average
@@ -4330,6 +4510,7 @@ or type lists or metafunctions or expression templates, or relying on
 SFINAE or on the <code>sizeof</code> trick for detecting function
 overload resolution, then there's a good chance you've gone too
 far.</p>
+<p>在使用模板元编程或其他复杂模板技术之前要三思：想想当你转到另一个项目后，你团队中的普通成员是否能足够理解这段代码并维护它；或者对于非 C++ 程序员、以及随便浏览代码库的人来说，他们是否能理解错误信息，或追踪他们想调用的函数流程。如果你在使用递归模板实例化、类型列表、元函数、表达式模板，或依赖 SFINAE、或使用 <code>sizeof</code> 技巧来实现函数重载解析探测，那么你很可能已经走得太远了。</p>
 
 <p>If you use template metaprogramming, you should expect to put
 considerable effort into minimizing and isolating the complexity. You
@@ -4342,8 +4523,9 @@ error messages that the compiler emits when users make mistakes.  The
 error messages are part of your user interface, and your code should
 be tweaked as necessary so that the error messages are understandable
 and actionable from a user point of view.</p>
+<p>如果你使用模板元编程，就应该预期需要投入相当多精力来最小化并隔离其复杂度。应尽可能把元编程隐藏为实现细节，使面向用户的头文件保持可读；并确保棘手的代码有充分注释。应仔细文档化代码的使用方式，并说明“生成”的代码大致长什么样。还要格外关注用户出错时编译器发出的错误信息：错误信息是你用户界面的一部分，你应按需调整代码，使错误信息从用户角度看是可理解且可操作的。</p>
 
-<h3 id="Concepts">Concepts and Constraints</h3>
+<h3 id="Concepts">Concepts and Constraints 概念与约束</h3>
 
 <p>Use concepts sparingly.
 In general, concepts and constraints should only be used in cases
@@ -4355,6 +4537,7 @@ Prefer constraints over template metaprogramming, and
 avoid the <code>template&lt;<i>Concept</i> T&gt;</code> syntax;
 instead, use the <code>requires(<i>Concept&lt;T&gt;</i>)</code>
 syntax.</p>
+<p>谨慎使用概念（concept）。一般而言，概念和约束只应当用于在 C++20 之前本来就会使用模板的场景。避免在头文件中引入新的概念，除非该头文件标记为库的内部头文件。不要定义那些不会被编译器强制验证的概念。相较于模板元编程，更偏好使用约束（constraint）；并避免 <code>template&lt;<i>Concept</i> T&gt;</code> 语法，而改用 <code>requires(<i>Concept&lt;T&gt;</i>)</code> 语法。</p>
 
 <p class="definition"></p>
 <p>The <code>concept</code> keyword is a new mechanism for defining
@@ -4365,40 +4548,51 @@ anonymous constraints on templates and verifying that constraints
 are satisfied at compile time.
 Concepts and constraints are often used together, but can be
 also used independently.</p>
+<p><code>concept</code> 关键字是一种为模板参数定义需求（例如类型特征或接口规范）的新机制。<code>requires</code> 关键字提供了在模板上施加匿名约束并在编译期验证约束是否满足的机制。概念和约束经常配合使用，但也可以独立使用。</p>
 
 <p class="pros"></p>
 <ul>
   <li>Concepts allow the compiler to generate much better error
   messages when templates are involved, which can reduce confusion
   and significantly improve the development experience.</li>
+  <li>概念使得在涉及模板时编译器能够生成更好的错误信息，从而减少困惑并显著提升开发体验。</li>
   <li>Concepts can reduce the boilerplate necessary for defining
   and using compile-time constraints, often increasing the clarity
   of the resulting code.</li>
+  <li>概念可以减少定义和使用编译期约束所需的样板代码，通常能提升最终代码的清晰度。</li>
   <li>Constraints provide some capabilities that are difficult to
   achieve with templates and SFINAE techniques.</li>
+  <li>约束提供了一些用模板与 SFINAE 技术难以实现的能力。</li>
 </ul>
 
 <p class="cons"></p>
 <ul>
   <li>As with templates, concepts can make code significantly more
   complex and difficult to understand.</li>
+  <li>与模板类似，概念可能会让代码显著更复杂、更难理解。</li>
   <li>Concept syntax can be confusing to readers, as concepts
   appear similar to class types at their usage sites.</li>
+  <li>概念语法可能会让读者困惑，因为概念在使用处看起来很像类类型。</li>
   <li>Concepts, especially at API boundaries, increase code
   coupling, rigidity, and ossification.</li>
+  <li>概念（尤其在 API 边界处）会增加代码的耦合、刚性和固化。</li>
   <li>Concepts and constraints can replicate logic from a function
   body, resulting in code duplication and increased maintenance
   costs.</li>
+  <li>概念和约束可能会重复函数体中的逻辑，从而造成代码重复并增加维护成本。</li>
   <li>Concepts muddy the source of truth for their underlying
   contracts, as they are standalone named entities that can be
   utilized in multiple locations, all of which evolve separately
   from each other.
   This can cause the stated and implied requirements to diverge
   over time.</li>
+  <li>概念会模糊其底层契约的“事实来源”，因为它们是独立的命名实体，可以在多个位置被使用，而这些位置彼此独立演化。这会导致显式陈述的需求与隐含需求随时间发生偏离。</li>
   <li>Concepts and constraints affect overload resolution in novel
   and non-obvious ways.</li>
+  <li>概念和约束会以新的、且不那么直观的方式影响重载解析。</li>
   <li>As with SFINAE, constraints make it harder to refactor code
   at scale.</li>
+  <li>与 SFINAE 类似，约束会让大规模重构更困难。</li>
 </ul>
 
 <p class="decision"></p>
@@ -4413,6 +4607,7 @@ Avoid legacy template metaprogramming constructs
 (such as <code>std::enable_if&lt;<i>Condition</i>&gt;</code>)
 as well as the <code>template&lt;<i>Concept</i> T&gt;</code>
 syntax.</p>
+<p>当标准库中存在等价的预定义概念时，应优先使用它们而不是类型特征。（例如：如果在 C++20 之前会使用 <code>std::is_integral_v</code>，那么在 C++20 代码中应使用 <code>std::integral</code>。）同样，应优先使用现代约束语法（通过 <code>requires(<i>Condition</i>)</code>）。避免使用传统的模板元编程构造（例如 <code>std::enable_if&lt;<i>Condition</i>&gt;</code>）以及 <code>template&lt;<i>Concept</i> T&gt;</code> 语法。</p>
 
 <p>Do not manually re-implement any existing concepts or traits.
 For example, use
@@ -4427,6 +4622,12 @@ exposed at API boundaries.
 More generally, do not use concepts or constraints in cases where
 you wouldn't use their legacy template equivalents in C++17.
 </p>
+<p>不要手工重新实现任何已有的概念或特征。例如，使用
+<code>requires(std::default_initializable&lt;T&gt;)</code>
+而不是
+<code>requires(requires { T v; })</code>
+或类似写法。</p>
+<p>新的 <code>concept</code> 声明应当很少见，并且只应在库内部定义，使其不暴露在 API 边界处。更一般地说，不要在 C++17 中你不会使用其传统模板等价物的场景里使用概念或约束。</p>
 
 <p>Do not define concepts that duplicate the function body,
 or impose requirements that would be insignificant or obvious
@@ -4442,6 +4643,8 @@ you can demonstrate that concepts result in significant
 improvement for that particular case, such as in the resulting
 error messages for a deeply nested or non-obvious
 requirement.
+<p>不要定义那些重复函数体的概念，或施加那些从函数体或最终错误信息中就能看出、且无关紧要或显而易见的需求。例如，避免如下写法：</p>
+<p>相反，除非你能证明对某个特定案例概念带来显著改进（例如：对深度嵌套或不明显需求而言，生成的错误信息明显更好），否则更偏好把代码保留为普通模板。</p>
 
 <p>Concepts should be statically verifiable by the compiler.
 Do not use any concept whose primary benefits would come from a
@@ -4449,10 +4652,12 @@ semantic (or otherwise unenforced) constraint.
 Requirements that are unenforced at compile time should instead
 be imposed via other mechanisms such as comments, assertions,
 or tests.</p>
+<p>概念应该能被编译器静态验证。不要使用任何其主要收益来自语义（或其他无法强制执行）约束的概念。那些无法在编译期强制的需求，应该改用注释、断言或测试等其他机制来施加。</p>
 
-<h3 id="modules">C++20 modules</h3>
+<h3 id="modules">C++20 modules C++20 模块</h3>
 
 <p>Do not use C++20 Modules.</p>
+<p>不要使用 C++20 模块。</p>
 
 <p>C++20 introduces "modules", a new language feature designed as an
 alternative to textual inclusion of header files. It introduces three
@@ -4465,14 +4670,17 @@ are still assessing how they may fit into Google's C++ ecosystem in
 the future. Furthermore, they are not currently well-supported by our
 build systems, compilers, and other tooling, and need further
 exploration as to the best practices when writing and using them.</p>
+<p>C++20 引入了“模块”（modules），这是一项新的语言特性，旨在作为头文件文本包含的一种替代方案。它引入了三个新关键字来支持这一机制：<code>module</code>、<code>export</code> 和 <code>import</code>。</p>
+<p>模块会显著改变 C++ 的编写与编译方式，我们仍在评估它们未来如何融入 Google 的 C++ 生态系统。此外，目前我们的构建系统、编译器以及其他工具对模块的支持还不完善，因此在编写与使用模块的最佳实践方面仍需要进一步探索。</p>
 
 
 
-<h3 id="coroutines">Coroutines</h3>
+<h3 id="coroutines">Coroutines 协程</h3>
 
 
 <p>Only use C++20 coroutines via libraries that have been
   approved by your project leads.</p>
+<p>仅通过你项目负责人批准的库来使用 C++20 协程。</p>
 
 <p class="definition"></p>
 <p>C++20 introduced
@@ -4481,6 +4689,9 @@ functions that can suspend and resume
 executing later. They are especially convenient for asynchronous
 programming, where they can provide substantial improvements over
 traditional callback-based frameworks.</p>
+<p>C++20 引入了
+<a href="https://en.cppreference.com/w/cpp/language/coroutines.html">协程</a>：
+可以暂停并在之后恢复执行的函数。它们对异步编程尤其方便，相比传统的基于回调的框架，往往能带来显著改进。</p>
 
 <p>Unlike most other programming languages (Kotlin, Rust, TypeScript, etc.),
 C++ does not provide a concrete implementation of coroutines.
@@ -4489,34 +4700,43 @@ Instead, it requires users to implement their own awaitable type (using a
   promise type</a>) which determines coroutine parameter types, how coroutines
 are executed, and allows running user-defined code during different stages
 of their execution.</p>
+<p>与大多数其他编程语言（Kotlin、Rust、TypeScript 等）不同，C++ 并未提供协程的具体实现。相反，它要求用户自行实现可等待（awaitable）类型（使用
+<a href="https://en.cppreference.com/w/cpp/language/coroutines#Promise">promise 类型</a>），该类型决定协程的参数类型、协程如何执行，并允许在协程执行的不同阶段运行用户自定义代码。</p>
 
 <p class="pros"></p>
 <ul>
   <li>Coroutines can be used to implement safe and efficient libraries suited
     for specific tasks, such as asynchronous programming.</li>
+  <li>协程可用于实现针对特定任务（例如异步编程）的安全且高效的库。</li>
   <li>Coroutines are syntactically almost identical to non-coroutine functions,
     which can make them substantially more readable than alternatives.</li>
+  <li>协程在语法上与非协程函数几乎相同，相比替代方案通常可读性更好。</li>
   <li>The high degree of customization makes it possible to insert more
     detailed debugging information into coroutines, compared to
     alternatives.</li>
+  <li>高度可定制性使得相比替代方案，更容易在协程中插入更细致的调试信息。</li>
 </ul>
 
 <p class="cons"></p>
 <ul>
   <li>There is no standard coroutine promise type, and each user-defined
     implementation is likely going to be unique in some aspect.</li>
+  <li>没有标准的协程 promise 类型，每个用户自定义实现很可能在某些方面都是独一无二的。</li>
   <li>Because of load-bearing interactions between the return type, the
     various customizable hooks in the promise type, and compiler-generated
     code, coroutine semantics are extremely difficult to deduce from reading
     user code.</li>
+  <li>由于返回类型、promise 类型中多种可定制钩子以及编译器生成代码之间存在关键的相互作用，仅通过阅读用户代码几乎无法推断出协程的语义。</li>
   <li>The many customizable aspects of coroutines introduce a large number
     of pitfalls, especially around dangling references and race
     conditions.</li>
+  <li>协程的众多可定制点带来了大量陷阱，尤其是在悬空引用与竞态条件方面。</li>
 </ul>
 
 <p>In summary, designing a high-quality and interoperable coroutine library
 requires a large amount of difficult work, careful thought, and extensive
 documentation.</p>
+<p>总之，设计一个高质量且可互操作的协程库需要大量艰难工作、周密思考以及详尽文档。</p>
 
 <p class="decision"></p>
 
@@ -4525,28 +4745,35 @@ documentation.</p>
 <p>Use only coroutine libraries that have been approved for
   project-wide use by your project leads. Do not roll your own promise or
   awaitable types.</p>
+<p>只使用经项目负责人批准、可在整个项目范围内使用的协程库。不要自行实现 promise 或 awaitable 类型。</p>
 
-<h3 id="Boost">Boost</h3>
+<h3 id="Boost">Boost Boost 库</h3>
 
 <p>Use only approved libraries from the Boost library
 collection.</p>
+<p>仅使用 Boost 库集合中经批准的库。</p>
 
 <p class="definition"></p>
 <p> The
 <a href="https://www.boost.org/">
 Boost library collection</a> is a popular collection of
 peer-reviewed, free, open-source C++ libraries.</p>
+<p>
+<a href="https://www.boost.org/">Boost 库集合</a>
+是一套广受欢迎的、经同行评审的、免费开源的 C++ 库集合。</p>
 
 <p class="pros"></p>
 <p>Boost code is generally very high-quality, is widely
 portable, and fills many important gaps in the C++
 standard library, such as type traits and better binders.</p>
+<p>Boost 代码通常质量很高、可移植性好，并弥补了 C++ 标准库中的许多重要空缺，例如类型特征以及更好的 binder（绑定器）。</p>
 
 <p class="cons"></p>
 <p>Some Boost libraries encourage coding practices which can
 hamper readability, such as metaprogramming and other
 advanced template techniques, and an excessively
 "functional" style of programming. </p>
+<p>一些 Boost 库鼓励的编码实践可能会损害可读性，例如元编程和其他高级模板技术，以及过度“函数式”的编程风格。</p>
 
 <p class="decision"></p>
 
@@ -4557,6 +4784,7 @@ advanced template techniques, and an excessively
 all contributors who might read and maintain code, we
 only allow an approved subset of Boost features.
 Currently, the following libraries are permitted:</p>
+<p>为了让所有可能阅读和维护代码的贡献者都能保持较高的可读性，我们只允许使用经批准的 Boost 特性子集。目前允许使用以下库：</p>
 
 <ul>
   <li>
@@ -4625,12 +4853,13 @@ Currently, the following libraries are permitted:</p>
 <p>We are actively considering adding other Boost
 features to the list, so this list may be expanded in
 the future.</p>
+<p>我们正在积极考虑将其他 Boost 特性加入该列表，因此该列表未来可能会扩展。</p>
 </div>
 
 
 
 
-<h3 id="Disallowed_Stdlib">Disallowed standard library features</h3>
+<h3 id="Disallowed_Stdlib">Disallowed standard library features 禁用的标准库特性</h3>
 
 
 <p>As with <a href="#Boost">Boost</a>, some modern C++
@@ -4641,9 +4870,11 @@ helpful to readers, or by encouraging template
 metaprogramming. Other extensions duplicate functionality
 available through existing mechanisms, which may lead to confusion
 and conversion costs.</p>
+<p>与 <a href="#Boost">Boost</a> 类似，一些现代 C++ 库功能会鼓励损害可读性的编码实践——例如移除对读者可能有帮助的、可检查的冗余（如类型名），或鼓励模板元编程。还有一些扩展会重复现有机制已提供的功能，从而可能造成困惑并带来迁移成本。</p>
 
 <p class="decision"></p>
 <p>The following C++ standard library features may not be used:</p>
+<p>以下 C++ 标准库特性不得使用：</p>
 
 <ul>
 
@@ -4652,22 +4883,26 @@ and conversion costs.</p>
   (<code>&lt;ratio&gt;</code>), because of concerns that
   it's tied to a more template-heavy interface
   style.</li>
+  <li>编译期有理数（<code>&lt;ratio&gt;</code>），因为担心它与更“模板重”的接口风格绑定在一起。</li>
 
   <li>The <code>&lt;cfenv&gt;</code> and
   <code>&lt;fenv.h&gt;</code> headers, because many
   compilers do not support those features reliably.</li>
+  <li><code>&lt;cfenv&gt;</code> 与 <code>&lt;fenv.h&gt;</code> 头文件，因为许多编译器无法可靠地支持这些特性。</li>
 
   <li>The <code>&lt;filesystem&gt;</code> header, which
 
   does not have sufficient support for testing, and suffers
   from inherent security vulnerabilities.</li>
+  <li><code>&lt;filesystem&gt;</code> 头文件，因为它对测试的支持不足，并且存在固有的安全漏洞。</li>
 
 
 </ul>
 
-<h3 id="Nonstandard_Extensions">Nonstandard Extensions</h3>
+<h3 id="Nonstandard_Extensions">Nonstandard Extensions 非标准扩展</h3>
 
 <p>Nonstandard extensions to C++ may not be used unless otherwise specified.</p>
+<p>除非另有说明，否则不得使用 C++ 的非标准扩展。</p>
 
 <p class="definition"></p>
 <p>Compilers support various extensions that are not part of standard C++. Such
@@ -4678,25 +4913,32 @@ and conversion costs.</p>
     })</code>, variable-length arrays and <code>alloca()</code>, and the
    "<a href="https://en.wikipedia.org/wiki/Elvis_operator">Elvis
      Operator</a>" <code>a?:b</code>.</p>
+<p>编译器支持多种不属于标准 C++ 的扩展。这些扩展包括 GCC 的 <code>__attribute__</code>、内建函数（intrinsic）如 <code>__builtin_prefetch</code> 或 SIMD、<code>#pragma</code>、内联汇编、<code>__COUNTER__</code>、<code>__PRETTY_FUNCTION__</code>、复合语句表达式（例如 <code>foo = ({ int x; Bar(&amp;x); x })</code>）、变长数组与 <code>alloca()</code>，以及“<a href="https://en.wikipedia.org/wiki/Elvis_operator">Elvis 运算符</a>” <code>a?:b</code>。</p>
 
 <p class="pros"></p>
   <ul>
     <li>Nonstandard extensions may provide useful features that do not exist
       in standard C++.</li>
+    <li>非标准扩展可能提供标准 C++ 中不存在的有用特性。</li>
     <li>Important performance guidance to the compiler can only be specified
       using extensions.</li>
+    <li>某些对编译器的重要性能提示只能通过扩展来表达。</li>
   </ul>
 
 <p class="cons"></p>
   <ul>
     <li>Nonstandard extensions do not work in all compilers. Use of nonstandard
       extensions reduces portability of code.</li>
+    <li>非标准扩展并非在所有编译器中都可用。使用非标准扩展会降低代码的可移植性。</li>
     <li>Even if they are supported in all targeted compilers, the extensions
       are often not well-specified, and there may be subtle behavior differences
       between compilers.</li>
+    <li>即使目标编译器都支持，这些扩展往往也缺乏良好规范，不同编译器之间可能存在细微的行为差异。</li>
     <li>Nonstandard extensions add features to the language that a reader must
       know to understand the code.</li>
+    <li>非标准扩展为语言引入了额外特性，读者必须了解这些特性才能读懂代码。</li>
     <li>Nonstandard extensions require additional work to port across architectures.</li>
+    <li>非标准扩展会增加跨架构移植的工作量。</li>
   </ul>
 
 <p class="decision"></p>
@@ -4705,13 +4947,16 @@ and conversion costs.</p>
 
   are provided by a designated project-wide portability
     header.</p>
+<p>不要使用非标准扩展。你可以使用基于非标准扩展实现的可移植性封装（wrapper），前提是这些封装由项目指定的、全项目通用的可移植性头文件提供。</p>
 
-<h3 id="Aliases">Aliases</h3>
+<h3 id="Aliases">Aliases 别名</h3>
 
 <p>Public aliases are for the benefit of an API's user, and should be clearly documented.</p>
+<p>公共别名是为了方便 API 用户使用，且应当清晰地文档化。</p>
 
 <p class="definition"></p>
 <p>There are several ways to create names that are aliases of other entities:</p>
+<p>创建作为其他实体别名的名称有多种方式：</p>
 <pre class="neutralcode">using Bar = Foo;
 typedef Foo Bar;  // But prefer `using` in C++ code.
 using ::other_namespace::Foo;
@@ -4721,49 +4966,63 @@ using enum MyEnumType;  // Creates aliases for all enumerators in MyEnumType.
   <p>In new code, <code>using</code> is preferable to <code>typedef</code>,
   because it provides a more consistent syntax with the rest of C++ and works
   with templates.</p>
+  <p>在新代码中，<code>using</code> 优于 <code>typedef</code>，因为它与 C++ 其他部分的语法更一致，并且能够与模板配合使用。</p>
 
   <p>Like other declarations, aliases declared in a header file are part of that
   header's public API unless they're in a function definition, in the private portion of a class,
   or in an explicitly-marked internal namespace. Aliases in such areas or in <code>.cc</code> files
   are implementation details (because client code can't refer to them), and are not restricted by
   this rule.</p>
+  <p>与其他声明一样，在头文件中声明的别名属于该头文件的公共 API，除非它们位于函数定义中、类的 <code>private</code> 区域中、或明确标记的内部命名空间中。处于这些位置或位于 <code>.cc</code> 文件中的别名是实现细节（因为客户端代码无法引用它们），因此不受本规则限制。</p>
 
 <p class="pros"></p>
   <ul>
     <li>Aliases can improve readability by simplifying a long or complicated name.</li>
+    <li>别名可以通过简化又长又复杂的名称来提升可读性。</li>
     <li>Aliases can reduce duplication by naming in one place a type used repeatedly in an API,
       which <em>might</em> make it easier to change the type later.
     </li>
+    <li>别名可以通过在一处命名 API 中反复使用的类型来减少重复，这<em>可能</em>让未来修改该类型更容易。</li>
   </ul>
 
 <p class="cons"></p>
   <ul>
     <li>When placed in a header where client code can refer to them, aliases increase the
       number of entities in that header's API, increasing its complexity.</li>
+    <li>当别名放在客户端可引用的头文件中时，会增加该头文件 API 中实体的数量，从而增加其复杂度。</li>
     <li>Clients can easily rely on unintended details of public aliases, making
       changes difficult.</li>
+    <li>客户端很容易依赖公共别名中并非有意暴露的细节，从而使变更变得困难。</li>
     <li>It can be tempting to create a public alias that is only intended for use
       in the implementation, without considering its impact on the API, or on maintainability.</li>
+    <li>人们可能会忍不住创建一个本只打算在实现中使用的公共别名，却没有考虑它对 API 或可维护性的影响。</li>
     <li>Aliases can create risk of name collisions.</li>
+    <li>别名可能带来名称冲突风险。</li>
     <li>Aliases can reduce readability by giving a familiar construct an unfamiliar name.</li>
+    <li>别名可能通过给熟悉的构造起一个不熟悉的名字而降低可读性。</li>
     <li>Type aliases can create an unclear API contract:
       it is unclear whether the alias is guaranteed to be identical to the type it aliases,
       to have the same API, or only to be usable in specified narrow ways.</li>
+    <li>类型别名可能导致不清晰的 API 契约：不清楚该别名是否保证始终与其所别名的类型完全相同、是否拥有相同 API，或是否只允许以特定的狭窄方式使用。</li>
   </ul>
 
 <p class="decision"></p>
 <p>Don't put an alias in your public API just to save typing in the implementation;
   do so only if you intend it to be used by your clients.</p>
+<p>不要仅仅为了在实现中少打字就把别名放进公共 API；只有当你确实希望客户端使用它时才这样做。</p>
 <p>When defining a public alias, document the intent of
 the new name, including whether it is guaranteed to always be the same as the type
 it's currently aliased to, or whether a more limited compatibility is
 intended. This lets the user know whether they can treat the types as
 substitutable or whether more specific rules must be followed, and can help the
 implementation retain some degree of freedom to change the alias.</p>
+<p>在定义公共别名时，要文档化新名称的意图，包括：是否保证它始终与当前被别名的类型完全相同，还是只打算提供更有限的兼容性。这能让用户知道他们是否可以把两者视为可替换类型，或必须遵循更具体的规则；也有助于实现保留一定自由度来调整该别名。</p>
 <p>Don't put namespace aliases in your public API. (See also <a href="#Namespaces">Namespaces</a>.)
 </p>
+<p>不要把命名空间别名放进公共 API。（另见 <a href="#Namespaces">Namespaces</a>。）</p>
 
 <p>For example, these aliases document how they are intended to be used in client code:</p>
+<p>例如，下面这些别名清楚地文档化了它们在客户端代码中的预期用法：</p>
 <pre class="goodcode">namespace mynamespace {
 // Used to store field measurements. DataPoint may change from Bar* to some internal type.
 // Client code should treat it as an opaque pointer.
@@ -4775,6 +5034,7 @@ using TimeSeries = std::unordered_set&lt;DataPoint, std::hash&lt;DataPoint&gt;, 
 </pre>
 
 <p>These aliases don't document intended use, and half of them aren't meant for client use:</p>
+<p>下面这些别名没有文档化预期用法，并且其中一半其实并不打算给客户端使用：</p>
 
 <pre class="badcode">namespace mynamespace {
 // Bad: none of these say how they should be used.
@@ -4787,19 +5047,22 @@ typedef unordered_set&lt;DataPoint, hash&lt;DataPoint&gt;, DataPointComparator&g
 
 <p>However, local convenience aliases are fine in function definitions, <code>private</code>
   sections of classes, explicitly-marked internal namespaces, and in <code>.cc</code> files:</p>
+<p>不过，为了局部便利而定义的别名在函数定义中、类的 <code>private</code> 区域、明确标记的内部命名空间以及 <code>.cc</code> 文件中是可以的：</p>
 
 <pre class="goodcode">// In a .cc file
 using ::foo::Bar;
 </pre>
 
-<h3 id="Switch_Statements">Switch Statements</h3>
+<h3 id="Switch_Statements">Switch Statements switch 语句</h3>
 
 <p>If not conditional on an enumerated value, switch statements should always
 have a <code>default</code> case (in the case of an enumerated value, the
 compiler will warn you if any values are not handled). If the default case
 should never execute, treat this as an error. For example:
 
-</p><pre class="goodcode">switch (var) {
+</p><p>如果 <code>switch</code> 不是基于枚举值进行分支，则应当始终包含一个 <code>default</code> 分支（若基于枚举值，编译器会在有枚举值未被处理时发出警告）。如果 <code>default</code> 分支按设计永远不应执行，应将其视为错误。例如：</p>
+
+<pre class="goodcode">switch (var) {
   case 0: {
     ...
     break;
@@ -4819,6 +5082,7 @@ should never execute, treat this as an error. For example:
 be placed at a point of execution where a fall-through to the next case label
 occurs. A common exception is consecutive case labels without intervening code,
 in which case no annotation is needed.</p>
+<p>从一个 <code>case</code> 标签“贯穿”（fall-through）到另一个 <code>case</code> 标签必须使用 <code>[[fallthrough]];</code> 属性进行标注。<code>[[fallthrough]];</code> 应放在实际发生贯穿到下一个 <code>case</code> 标签的执行点上。一个常见例外是连续的 <code>case</code> 标签之间没有任何代码，此时无需标注。</p>
 
 <pre class="goodcode">switch (x) {
   case 41:  // No annotation needed here.
@@ -4839,7 +5103,7 @@ in which case no annotation is needed.</p>
 }
 </pre>
 
-<h2 id="Inclusive_Language">Inclusive Language</h2>
+<h2 id="Inclusive_Language">Inclusive Language 包容性语言</h2>
 
 <p>In all code, including naming and comments, use inclusive language
 and avoid terms that other programmers might find disrespectful or offensive
@@ -4851,10 +5115,11 @@ use "they"/"them"/"their" for people of unspecified gender
 (<a href="https://apastyle.apa.org/style-grammar-guidelines/grammar/singular-they">even
 when singular</a>), and "it"/"its" for software, computers, and other
 things that aren't people.</p>
+<p>在所有代码中（包括命名与注释），使用包容性语言，避免使用其他程序员可能认为不尊重或冒犯的术语（例如 “master”/“slave”、“blacklist”/“whitelist” 或 “redline”），即使这些术语表面上也可能有中性的含义。同样，除非你在指代某个特定的人（并使用其代词），否则应使用性别中立语言。例如，对于性别不明确的人使用 “they”/“them”/“their”（<a href="https://apastyle.apa.org/style-grammar-guidelines/grammar/singular-they">即使在单数语境</a>），对于软件、计算机以及其他非人的事物使用 “it”/“its”。</p>
 
 
 
-<h2 id="Naming">Naming</h2>
+<h2 id="Naming">Naming 命名</h2>
 
 <p>The most important consistency rules are those that govern
 naming. The style of a name immediately informs us what sort of
@@ -4863,12 +5128,14 @@ constant, a macro, etc., without requiring us to search for the
 declaration of that entity. The pattern-matching engine in our
 brains relies a great deal on these naming rules.
 </p>
+<p>最重要的一致性规则是命名规则。一个名字的风格会立刻告诉我们它所命名的实体属于哪一类：类型、变量、函数、常量、宏等等，而不需要我们去查找该实体的声明。我们大脑中的模式匹配机制在很大程度上依赖这些命名规则。</p>
 
 <p>Style rules about naming are pretty arbitrary, but
  we feel that
 consistency is more important than individual preferences in this
 area, so regardless of whether you find them sensible or not,
 the rules are the rules.</p>
+<p>关于命名的风格规则相当武断，但我们认为在这一领域里一致性比个人偏好更重要。因此，无论你觉得这些规则是否合理，规则就是规则。</p>
 
 <p>For the purposes of the naming rules below, a "word" is anything that you
 would write in English without internal spaces. Either words are all lowercase,
@@ -4878,12 +5145,15 @@ are mixed case with the first letter of each word capitalized
 ("<a href="https://en.wikipedia.org/wiki/Camel_case">camelCase</a>" or
 "<a href="https://en.wiktionary.org/wiki/Pascal_case">PascalCase</a>").
 
-</p><h3 id="General_Naming_Rules">Choosing Names</h3>
+</p><p>在下述命名规则中，“word”（单词）指的是你在英文中书写且内部不含空格的任何词。单词要么全部小写并用下划线分隔（“<a href="https://en.wikipedia.org/wiki/Snake_case">snake_case</a>”），要么使用大小写混合、每个单词首字母大写（“<a href="https://en.wikipedia.org/wiki/Camel_case">camelCase</a>” 或 “<a href="https://en.wiktionary.org/wiki/Pascal_case">PascalCase</a>”）。</p>
+
+<h3 id="General_Naming_Rules">Choosing Names 选择名称</h3>
 
 <p>Give things names that make their purpose or intent understandable to a new
 reader, even someone on a different team than the owners. Do not worry about
 saving horizontal space as it is far more important to make your code
 immediately understandable by a new reader.</p>
+<p>给事物起能让新读者理解其目的或意图的名字，即使读者来自不同于所有者的团队。不要担心节省横向空间；让新读者能立刻读懂你的代码要重要得多。</p>
 
 <p>Consider the context in which the name will be used. A name should be
 descriptive even if it is used far from the code that makes it available for
@@ -4892,6 +5162,7 @@ that's present in the immediate context. Generally, this means that
 descriptiveness should be proportional to the name's scope of visibility. A free
 function declared in a header should probably mention the header's library,
 while a local variable probably shouldn't explain what function it's within.</p>
+<p>考虑名字将被使用的上下文。即使某个名字在远离其定义处的地方被使用，它也应具有描述性。然而，名字不应通过重复当前上下文中已存在的信息来分散读者注意力。一般来说，这意味着描述性应与名字的可见范围成比例：在头文件中声明的自由函数可能需要提及该头文件所属的库，而局部变量通常不必说明它位于哪个函数之中。</p>
 
 <p>Minimize the use of abbreviations that would likely be unknown to someone
 outside your project (especially acronyms and initialisms). Do not abbreviate by
@@ -4903,6 +5174,7 @@ if it's listed in
 Wikipedia. Note that certain universally-known abbreviations are OK, such as
 <code>i</code> for a loop index and <code>T</code> for a template
 parameter.</p>
+<p>尽量减少使用项目外的人可能不熟悉的缩写（尤其是首字母缩略词）。不要通过删除单词内部字母来构造缩写。使用缩写时，倾向把它当作一个“word”来首字母大写，例如使用 <code>StartRpc()</code> 而不是 <code>StartRPC()</code>。经验法则是：如果缩写能在 Wikipedia 上查到，它大概率是可以接受的。注意，一些众所周知的缩写也是可以的，例如用 <code>i</code> 表示循环索引、用 <code>T</code> 表示模板参数。</p>
 
 <p>The names you see most frequently are not like most names; a small number of
 "vocabulary" names are reused so widely that they are always in context. These
@@ -4917,6 +5189,7 @@ documenting its proper use. You probably won't define new vocabulary names very
 often, but if you do, get
 additional design review to make sure the chosen names work well when
 used widely.</p>
+<p>你最常见到的一些名字并不像大多数名字那样：少数“词汇”（vocabulary）名字被如此广泛地复用，以至于它们几乎总是在上下文中出现。这些名字通常很短、甚至是缩写；它们完整含义更多来自专门的长篇文档，而不是仅靠定义处的注释与名字中各个单词本身。例如，<code>absl::Status</code> 在开发指南中有一个专门的<a href="https://abseil.io/docs/cpp/guides/status">页面</a>来说明正确用法。你可能不会经常定义新的词汇名字，但如果你需要这么做，应当获得额外的设计评审，以确保所选名字在被广泛使用时仍能很好地工作。</p>
 
 <pre class="goodcode">class MyClass {
  public:
@@ -4959,7 +5232,7 @@ used widely.</p>
 };
 </pre>
 
-<h3 id="File_Names">File Names</h3>
+<h3 id="File_Names">File Names 文件名</h3>
 
 <p>Filenames should be all lowercase and can include
 underscores (<code>_</code>) or dashes (<code>-</code>).
@@ -4967,8 +5240,10 @@ Follow the convention that your
 
 project uses. If there is no consistent
 local pattern to follow, prefer "<code>_</code>".</p>
+<p>文件名应全部小写，并且可以包含下划线（<code>_</code>）或短横线（<code>-</code>）。遵循你项目使用的约定。如果没有一致的本地模式可遵循，优先使用 “<code>_</code>”。</p>
 
 <p>Examples of acceptable file names:</p>
+<p>可接受的文件名示例：</p>
 
 <ul>
   <li><code>my_useful_class.cc</code></li>
@@ -4981,9 +5256,11 @@ local pattern to follow, prefer "<code>_</code>".</p>
 should have a <code>.h</code> extension. Files that rely on being textually included at specific points
 should end in <code>.inc</code> (see also the section on
 <a href="#Self_contained_Headers">self-contained headers</a>).</p>
+<p>C++ 源文件应使用 <code>.cc</code> 扩展名，头文件应使用 <code>.h</code> 扩展名。依赖在特定位置被文本包含的文件应以 <code>.inc</code> 结尾（另见 <a href="#Self_contained_Headers">self-contained headers</a> 一节）。</p>
 
 <p>Do not use filenames that already exist in
 <code>/usr/include</code>, such as <code>db.h</code>.</p>
+<p>不要使用在 <code>/usr/include</code> 中已存在的文件名，例如 <code>db.h</code>。</p>
 
 <p>In general, make your filenames very specific. For
 example, use <code>http_server_logs.h</code> rather than
@@ -4991,17 +5268,20 @@ example, use <code>http_server_logs.h</code> rather than
 of files called, e.g., <code>foo_bar.h</code> and
 <code>foo_bar.cc</code>, defining a class called
 <code>FooBar</code>.</p>
+<p>一般来说，文件名要尽量具体。例如，使用 <code>http_server_logs.h</code> 而不是 <code>logs.h</code>。一个非常常见的情况是：一对文件名为 <code>foo_bar.h</code> 与 <code>foo_bar.cc</code>，它们定义了一个名为 <code>FooBar</code> 的类。</p>
 
-<h3 id="Type_Names">Type Names</h3>
+<h3 id="Type_Names">Type Names 类型名</h3>
 
 <p>Type names start with a capital letter and have a capital
 letter for each new word, with no underscores:
 <code>MyExcitingClass</code>, <code>MyExcitingEnum</code>.</p>
+<p>类型名以大写字母开头，每个新单词的首字母也要大写，并且不使用下划线：例如 <code>MyExcitingClass</code>、<code>MyExcitingEnum</code>。</p>
 
 <p>The names of all types — classes, structs, type aliases,
 enums, and type template parameters — have the same naming convention.
 Type names should start with a capital letter and have a capital letter
 for each new word. No underscores. For example:</p>
+<p>所有类型（类、结构体、类型别名、枚举，以及类型模板参数）的命名约定相同。类型名应以大写字母开头，并且每个新单词的首字母大写；不使用下划线。例如：</p>
 
 <pre class="goodcode">// classes and structs
 class UrlTable { ...
@@ -5018,21 +5298,24 @@ using PropertiesMap = hash_map&lt;UrlTableProperties*, std::string&gt;;
 enum class UrlTableError { ...
 </pre>
 
-<h3 id="Concept_Names">Concept Names</h3>
+<h3 id="Concept_Names">Concept Names 概念名</h3>
 
-Concept names follow the same rules as <a href="#Type_Names">type names</a>.
+<p>Concept names follow the same rules as <a href="#Type_Names">type names</a>.</p>
+<p>概念名遵循与 <a href="#Type_Names">类型名</a> 相同的规则。</p>
 
-<h3 id="Variable_Names">Variable Names</h3>
+<h3 id="Variable_Names">Variable Names 变量名</h3>
 
 <p>The names of variables (including function parameters) and data members are
 <code>snake_case</code> (all lowercase, with underscores between words). Data members of classes
 (but not structs) additionally have trailing underscores. For instance:
 <code>a_local_variable</code>, <code>a_struct_data_member</code>,
 <code>a_class_data_member_</code>.</p>
+<p>变量名（包括函数参数）以及数据成员使用 <code>snake_case</code>（全部小写，单词间用下划线分隔）。类的数据成员（但不是结构体）还需要在末尾加下划线。例如：<code>a_local_variable</code>、<code>a_struct_data_member</code>、<code>a_class_data_member_</code>。</p>
 
-<h4>Common Variable names</h4>
+<h4>Common Variable names 常见变量名</h4>
 
 <p>For example:</p>
+<p>例如：</p>
 
 <pre class="goodcode">std::string table_name;  // OK - snake_case.
 </pre>
@@ -5040,13 +5323,14 @@ Concept names follow the same rules as <a href="#Type_Names">type names</a>.
 <pre class="badcode">std::string tableName;   // Bad - mixed case.
 </pre>
 
-<h4>Class Data Members</h4>
+<h4>Class Data Members 类数据成员</h4>
 
 <p>Data members of classes, both static and non-static, are
 named like ordinary nonmember variables, but with a
 trailing underscore. The exception to this is static constant
 class members, which should follow the rules for
 <a href="#Constant_Names">naming constants</a>.</p>
+<p>类的数据成员（无论静态还是非静态）像普通的非成员变量一样命名，但末尾需要加下划线。唯一例外是静态常量类成员，它们应遵循<a href="#Constant_Names">常量命名</a>规则。</p>
 
 <pre class="goodcode">class TableInfo {
  public:
@@ -5060,11 +5344,12 @@ class members, which should follow the rules for
 };
 </pre>
 
-<h4>Struct Data Members</h4>
+<h4>Struct Data Members 结构体数据成员</h4>
 
 <p>Data members of structs, both static and non-static,
 are named like ordinary nonmember variables. They do not have
 the trailing underscores that data members in classes have.</p>
+<p>结构体的数据成员（无论静态还是非静态）像普通的非成员变量一样命名。它们不需要像类数据成员那样在末尾加下划线。</p>
 
 <pre class="goodcode">struct UrlTableProperties {
   std::string name;
@@ -5077,13 +5362,15 @@ the trailing underscores that data members in classes have.</p>
 <p>See <a href="#Structs_vs._Classes">Structs vs.
 Classes</a> for a discussion of when to use a struct
 versus a class.</p>
+<p>关于何时使用结构体而非类，请参见 <a href="#Structs_vs._Classes">Structs vs. Classes</a> 一节。</p>
 
-<h3 id="Constant_Names">Constant Names</h3>
+<h3 id="Constant_Names">Constant Names 常量名</h3>
 
 <p>Variables declared <code>constexpr</code> or <code>const</code>, and whose value is fixed for
 the duration of the program, are named with a leading "k" followed
 by mixed case. Underscores can be used as separators in the rare cases
 where capitalization cannot be used for separation. For example:</p>
+<p>被声明为 <code>constexpr</code> 或 <code>const</code>，且其值在程序生命周期内固定不变的变量，使用前缀 “k” 加上驼峰（mixed case）命名。在少数无法用大小写来分隔的情况下，可以用下划线作为分隔符。例如：</p>
 
 <pre class="goodcode">const int kDaysInAWeek = 7;
 const int kAndroid8_0_0 = 24;  // Android 8.0.0
@@ -5095,6 +5382,7 @@ Storage Duration</a> for details) should be named this way, including those that
 class data members and those in templates where different instantiations of the template
 may have different values.  This convention is optional for variables of other storage classes,
 e.g., automatic variables; otherwise the usual variable naming rules apply. For example:</p>
+<p>所有具有静态存储期的此类变量（即静态变量与全局变量，详情参见 <a href="http://en.cppreference.com/w/cpp/language/storage_duration#Storage_duration">Storage Duration</a>）都应采用这种命名方式，包括静态常量类数据成员，以及模板中不同实例化可能拥有不同值的变量。对于其他存储类别的变量（例如自动变量），该约定是可选的；否则仍使用通常的变量命名规则。例如：</p>
 
 <pre class="goodcode">void ComputeFoo(absl::string_view suffix) {
   // Either of these is acceptable.
@@ -5111,10 +5399,11 @@ e.g., automatic variables; otherwise the usual variable naming rules apply. For 
 }
 </pre>
 
-<h3 id="Function_Names">Function Names</h3>
+<h3 id="Function_Names">Function Names 函数名</h3>
 
 <p>Ordinarily, functions follow <a href="https://en.wiktionary.org/wiki/Pascal_case">PascalCase</a>:
 start with a capital letter and have a capital letter for each new word.</p>
+<p>通常，函数名遵循 <a href="https://en.wiktionary.org/wiki/Pascal_case">PascalCase</a>：以大写字母开头，并且每个新单词的首字母大写。</p>
 
 <pre class="goodcode">AddTableEntry()
 DeleteUrl()
@@ -5125,37 +5414,44 @@ OpenFileOrDie()
 constants that are exposed as part of an API and that are intended to look
 like functions, because the fact that they're objects rather than functions
 is an unimportant implementation detail.</p>
+<p>同样的命名规则也适用于那些作为 API 的一部分对外暴露、并且意图看起来像函数的类作用域或命名空间作用域常量；因为它们是对象而非函数这一点只是无关紧要的实现细节。</p>
 
 <p>Accessors and mutators (get and set functions) may be named like variables,
 in <code>snake_case</code>. These often correspond to actual member variables,
 but this is not required. For example, <code>int count()</code> and
 <code>void set_count(int count)</code>.</p>
+<p>访问器和修改器（getter/setter）可以像变量一样用 <code>snake_case</code> 命名。它们通常对应实际的成员变量，但并非必须如此。例如：<code>int count()</code> 与 <code>void set_count(int count)</code>。</p>
 
-<h3 id="Namespace_Names">Namespace Names</h3>
+<h3 id="Namespace_Names">Namespace Names 命名空间名</h3>
 
 <p>Namespace names are <code>snake_case</code> (all lowercase, with underscores
 between words).</p>
+<p>命名空间名使用 <code>snake_case</code>（全部小写，单词间用下划线分隔）。</p>
 
 <p>When <a href="#General_Naming_Rules">choosing names</a> for namespaces, note
 that names must be fully qualified when used in a header outside the namespace,
 because <a href="#Aliases">unqualified Aliases are generally banned</a>.</p>
+<p>在为命名空间<a href="#General_Naming_Rules">选择名称</a>时，请注意：当在该命名空间之外的头文件中使用这些名称时，必须写全限定名，因为<a href="#Aliases">不带限定的别名通常是被禁止的</a>。</p>
 
 <p>Top-level namespaces must be globally unique and recognizable, so each one
 should be owned by a single project or team, with a name based on the name of
 that project or team. Usually, all code in the namespace should be under one or
 more directories with the same name as the namespace.</p>
+<p>顶层命名空间必须全局唯一且易于识别，因此每个顶层命名空间应由单个项目或团队拥有，其名称应基于该项目或团队的名称。通常，命名空间中的所有代码应位于一个或多个与该命名空间同名的目录下。</p>
 
 <p>Nested namespaces should avoid the names of well-known top-level namespaces,
 especially <code>std</code> and <code>absl</code>, because in C++, nested
 namespaces do not protect from collisions with names in other namespaces
 (see <a href="https://abseil.io/tips/130">TotW #130</a>).</p>
+<p>嵌套命名空间应避免使用知名顶层命名空间的名字，尤其是 <code>std</code> 和 <code>absl</code>，因为在 C++ 中，嵌套命名空间并不能防止与其他命名空间中的名字发生冲突（参见 <a href="https://abseil.io/tips/130">TotW #130</a>）。</p>
 
-<h3 id="Enumerator_Names">Enumerator Names</h3>
+<h3 id="Enumerator_Names">Enumerator Names 枚举项名称</h3>
 
 <p>Enumerators (for both scoped and unscoped enums) should be named like
 <a href="#Constant_Names">constants</a>, not like
 <a href="#Macro_Names">macros</a>. That is, use <code>kEnumName</code> not
 <code>ENUM_NAME</code>.</p>
+<p>枚举项（无论是限定作用域还是非限定作用域的枚举）应像<a href="#Constant_Names">常量</a>那样命名，而不是像<a href="#Macro_Names">宏</a>那样命名。也就是说，使用 <code>kEnumName</code>，而不是 <code>ENUM_NAME</code>。</p>
 
 
 
@@ -5178,10 +5474,11 @@ problems with name collisions between enum values and
 macros. Hence, the change to prefer constant-style naming
 was put in place. New code should use constant-style
 naming.</p>
+<p>在 2009 年 1 月之前，风格是把枚举值像<a href="#Macro_Names">宏</a>一样命名。这导致枚举值与宏之间发生名称冲突的问题。因此，后来改为偏好常量风格的命名。新代码应使用常量风格命名。</p>
 
 
 
-<h3 id="Template_Parameter_Names">Template Parameter Names</h3>
+<h3 id="Template_Parameter_Names">Template Parameter Names 模板参数名称</h3>
 
 <p>Template parameters should follow the naming style for their
 category: type template parameters should follow the rules for naming
@@ -5189,77 +5486,95 @@ category: type template parameters should follow the rules for naming
 parameters should follow the rules for naming <a href="#Variable_Names">
 variables</a> or <a href="#Constant_Names">constants</a>.
 
-</p><h3 id="Macro_Names">Macro Names</h3>
+</p>
+<p>模板参数应遵循其类别对应的命名风格：类型模板参数应遵循<a href="#Type_Names">类型</a>的命名规则；非类型模板参数应遵循<a href="#Variable_Names">变量</a>或<a href="#Constant_Names">常量</a>的命名规则。</p>
+
+<h3 id="Macro_Names">Macro Names 宏名称</h3>
 
 <p>You're not really going to <a href="#Preprocessor_Macros">
 define a macro</a>, are you? If you do, they're like this:
 <code>MY_MACRO_THAT_SCARES_SMALL_CHILDREN_AND_ADULTS_ALIKE</code>.
 </p>
+<p>你不会真的要<a href="#Preprocessor_Macros">定义宏</a>吧？如果你非要这么做，它们应该长这样：
+<code>MY_MACRO_THAT_SCARES_SMALL_CHILDREN_AND_ADULTS_ALIKE</code>。</p>
 
 <p>Please see the <a href="#Preprocessor_Macros">description
 of macros</a>; in general macros should <em>not</em> be used.
 However, if they are absolutely needed, then they should be
 named with all capitals and underscores, and with a project-specific prefix.</p>
+<p>请参阅<a href="#Preprocessor_Macros">关于宏的说明</a>；一般而言，宏<em>不</em>应被使用。但如果确实绝对需要，那么它们应使用全大写与下划线命名，并带有项目特定的前缀。</p>
 
 <pre class="neutralcode">#define MYPROJECT_ROUND(x) ...
 </pre>
 
-<h3 id="Naming_Aliases">Aliases</h3>
+<h3 id="Naming_Aliases">Aliases 别名</h3>
 
 <p>The name for an <a href="#Aliases">alias</a> follows the same principles as
 any other new name, applied in the context where the alias is defined rather
 than where the original name appears.</p>
+<p><a href="#Aliases">别名</a>的命名遵循与其他新名称相同的原则：应在别名被定义的上下文中应用这些原则，而不是在原始名称出现的上下文中。</p>
 
-<h3 id="Exceptions_to_Naming_Rules">Exceptions to Naming Rules</h3>
+<h3 id="Exceptions_to_Naming_Rules">Exceptions to Naming Rules 命名规则的例外</h3>
 
 <p>If you are naming something that is analogous to an existing C or C++
 entity (or a Rust entity via interop), then you can follow the existing
 naming convention scheme.</p>
+<p>如果你要命名的东西与现有的 C 或 C++ 实体（或通过互操作的 Rust 实体）类似，那么你可以遵循该现有实体的命名约定。</p>
 
 <dl>
   <dt><code>bigopen()</code></dt>
   <dd>function name, follows form of <code>open()</code></dd>
+  <dd>函数名，遵循 <code>open()</code> 的形式</dd>
 
   <dt><code>uint</code></dt>
   <dd><code>typedef</code></dd>
+  <dd><code>typedef</code>（类型别名）</dd>
 
   <dt><code>bigpos</code></dt>
   <dd><code>struct</code> or <code>class</code>, follows
   form of <code>pos</code></dd>
+  <dd><code>struct</code> 或 <code>class</code>，遵循 <code>pos</code> 的形式</dd>
 
   <dt><code>sparse_hash_map</code></dt>
   <dd>STL-like entity; follows STL naming conventions</dd>
+  <dd>类 STL 实体；遵循 STL 命名约定</dd>
 
   <dt><code>LONGLONG_MAX</code></dt>
   <dd>a constant, as in <code>INT_MAX</code></dd>
+  <dd>常量，如 <code>INT_MAX</code></dd>
 </dl>
 
-<h2 id="Comments">Comments</h2>
+<h2 id="Comments">Comments 注释</h2>
 
 <p>Comments are absolutely vital to keeping our code readable. The following rules describe what you
 should comment and where. But remember: while comments are very important, the best code is
 self-documenting. Giving sensible names to types and variables is much better than using obscure
 names that you must then explain through comments.</p>
+<p>注释对于保持代码可读性至关重要。下面的规则说明你应该注释什么以及在哪里注释。但请记住：尽管注释很重要，最好的代码仍是自解释的。给类型和变量起合理的名字，远胜于使用晦涩名字然后不得不靠注释来解释。</p>
 
 <p>When writing your comments, write for your audience: the
 next
 contributor who will need to
 understand your code. Be generous — the next
 one may be you!</p>
+<p>写注释时要面向你的受众：下一个需要理解你代码的贡献者。尽量写得慷慨一些——下一个人也可能就是你自己！</p>
 
-<h3 id="Comment_Style">Comment Style</h3>
+<h3 id="Comment_Style">Comment Style 注释风格</h3>
 
 <p>Use either the <code>//</code> or <code>/* */</code>
 syntax, as long as you are consistent.</p>
+<p>只要保持一致，你可以使用 <code>//</code> 或 <code>/* */</code> 语法。</p>
 
 <p>While either syntax is acceptable, <code>//</code> is
 <em>much</em> more common. Be consistent with how you
 comment and what style you use where.</p>
+<p>两种语法都可以，但 <code>//</code> 更为常见（<em>多得多</em>）。要在注释方式以及在何处使用何种风格上保持一致。</p>
 
-<h3 id="File_Comments">File Comments</h3>
+<h3 id="File_Comments">File Comments 文件注释</h3>
 
 <div>
 <p>Start each file with license boilerplate.</p>
+<p>每个文件都应以许可证样板（license boilerplate）开头。</p>
 </div>
 
 <p>If a source file (such as a <code>.h</code> file) declares multiple user-facing abstractions
@@ -5267,6 +5582,7 @@ comment and what style you use where.</p>
 abstractions. Include enough detail for future authors to know what does not fit there. However,
 the detailed documentation about individual abstractions belongs with those abstractions, not at the
 file level.</p>
+<p>如果一个源文件（例如 <code>.h</code> 文件）声明了多个面向用户的抽象（常用函数、相关类等），应添加注释来描述这些抽象的集合。要包含足够细节，使未来作者知道哪些内容不应该放在这里。不过，关于单个抽象的详细文档应与该抽象放在一起，而不是放在文件级别。</p>
 
 <p>For instance, if you write a file comment for <code>frobber.h</code>, you do not need
 to include a file comment in <code>frobber.cc</code> or
@@ -5274,7 +5590,10 @@ to include a file comment in <code>frobber.cc</code> or
 <code>registered_objects.cc</code> that has no associated header file, you must include a file
 comment in <code>registered_objects.cc</code>.
 
-</p><h4>Legal Notice and Author Line</h4>
+</p>
+<p>例如，如果你为 <code>frobber.h</code> 写了文件注释，那么你不需要在 <code>frobber.cc</code> 或 <code>frobber_test.cc</code> 中再写一份文件注释。另一方面，如果你在 <code>registered_objects.cc</code> 中写了一组类而没有对应的头文件，那么你必须在 <code>registered_objects.cc</code> 中包含文件注释。</p>
+
+<h4>Legal Notice and Author Line 法律声明与作者行</h4>
 
 
 
@@ -5283,18 +5602,21 @@ comment in <code>registered_objects.cc</code>.
 boilerplate. Choose the appropriate boilerplate for the
 license used by the project (for example, Apache 2.0,
 BSD, LGPL, GPL).</p>
+<p>每个文件都应包含许可证样板。根据项目所使用的许可证选择合适的样板（例如 Apache 2.0、BSD、LGPL、GPL）。</p>
 </div>
 
 <p>If you make significant changes to a file with an
 author line, consider deleting the author line.
 New files should usually not contain copyright notice or
 author line.</p>
+<p>如果你对带有作者行的文件做了重大修改，考虑删除作者行。新文件通常不应包含版权声明或作者行。</p>
 
-<h3 id="Class_Comments">Struct and Class Comments</h3>
+<h3 id="Class_Comments">Struct and Class Comments 结构体与类注释</h3>
 
 <p>Every non-obvious class or struct declaration should have an
 accompanying comment that describes what it is for and how it should
 be used.</p>
+<p>每个不那么显而易见的类或结构体声明都应配有注释，说明它的用途以及应如何使用。</p>
 
 <pre class="goodcode">// Iterates over the contents of a GargantuanTable.
 // Example:
@@ -5307,7 +5629,7 @@ class GargantuanTableIterator {
 };
 </pre>
 
-<h4 id="Class_Comments_Details">Class Comments</h4>
+<h4 id="Class_Comments_Details">Class Comments 类注释</h4>
 
 <p>The class comment should provide the reader with enough information to know
 how and when to use the class, as well as any additional considerations
@@ -5315,22 +5637,26 @@ necessary to correctly use the class. Document the synchronization assumptions
 the class makes, if any. If an instance of the class can be accessed by
 multiple threads, take extra care to document the rules and invariants
 surrounding multithreaded use.</p>
+<p>类注释应为读者提供足够信息，使其了解如何以及何时使用该类，并包含正确使用该类所需的任何额外注意事项。如果该类有同步方面的假设，应将其记录下来。如果该类的实例可能被多个线程访问，应格外谨慎地记录与多线程使用相关的规则与不变量。</p>
 
 <p>The class comment is often a good place for a small example code snippet
 demonstrating a simple and focused usage of the class.</p>
+<p>类注释通常也是放置一小段示例代码的好地方，用于演示该类简单且聚焦的用法。</p>
 
 <p>When sufficiently separated (e.g., <code>.h</code> and <code>.cc</code>
 files), comments describing the use of the class should go together with its
 interface definition; comments about the class operation and implementation
 should accompany the implementation of the class's methods.</p>
+<p>当接口与实现充分分离时（例如分别位于 <code>.h</code> 与 <code>.cc</code> 文件中），描述类如何使用的注释应与其接口定义放在一起；而关于类的运行方式与实现细节的注释应伴随该类方法的实现。</p>
 
-<h3 id="Function_Comments">Function Comments</h3>
+<h3 id="Function_Comments">Function Comments 函数注释</h3>
 
 <p>Declaration comments describe use of the function (when it is
 non-obvious); comments at the definition of a function describe
 operation.</p>
+<p>函数声明处的注释用于描述函数的用法（当用法并不明显时）；函数定义处的注释用于描述其运行方式（operation）。</p>
 
-<h4>Function Declarations</h4>
+<h4>Function Declarations 函数声明</h4>
 
 <p>Almost every function declaration should have comments immediately
 preceding it that describe what the function does and how to use
@@ -5342,31 +5668,39 @@ Function comments should be written with an implied subject of
 "Opens the file", rather than "Open the file". In general, these comments do not
 describe how the function performs its task. Instead, that should be
 left to comments in the function definition.</p>
+<p>几乎每个函数声明之前都应紧跟注释，说明该函数做什么以及如何使用。只有当函数简单且显而易见时（例如用于类中显而易见属性的简单访问器）才可以省略这些注释。<code>.cc</code> 文件中声明的私有方法和函数也不例外。函数注释应以隐含主语 <i>This function</i> 来撰写，并以动词短语开头；例如写 “Opens the file”，而不是 “Open the file”。一般而言，这些注释不应描述函数如何完成任务；那应留给函数定义处的注释来说明。</p>
 
 <p>Types of things to mention in comments at the function
 declaration:</p>
+<p>在函数声明的注释中可以提及的内容类型：</p>
 
 <ul>
   <li>What the inputs and outputs are. If function argument names
       are provided in `backticks`, then code-indexing
       tools may be able to present the documentation better.</li>
+  <li>输入与输出是什么。如果函数参数名用 `backticks` 标出，代码索引工具可能能更好地呈现文档。</li>
 
   <li>For class member functions: whether the object remembers
   reference or pointer arguments beyond the duration of the method
   call. This is quite common for pointer/reference arguments to
   constructors.</li>
+  <li>对于类成员函数：对象是否会在方法调用结束后仍“记住”引用或指针参数。这在构造函数的指针/引用参数中很常见。</li>
 
   <li>For each pointer argument, whether it is allowed to be null and what happens
   if it is.</li>
+  <li>对于每个指针参数：是否允许为空，以及为空时会发生什么。</li>
 
   <li>For each output or input/output argument, what happens to any state that argument
-    is in (e.g., is the state appended to or overwritten?).
+    is in (e.g., is the state appended to or overwritten?).</li>
+  <li>对于每个输出或输入/输出参数：该参数当前所处的状态会如何变化（例如：状态是被追加还是被覆盖？）。</li>
 
-  </li><li>If there are any performance implications of how a
+  <li>If there are any performance implications of how a
   function is used.</li>
+  <li>函数的使用方式是否会带来任何性能影响。</li>
 </ul>
 
 <p>Here is an example:</p>
+<p>下面是一个例子：</p>
 
 <pre class="goodcode">// Returns an iterator for this table, positioned at the first entry
 // lexically greater than or equal to `start_word`. If there is no
@@ -5382,12 +5716,14 @@ std::unique_ptr&lt;Iterator&gt; GetIterator(absl::string_view start_word) const;
 
 <p>However, do not be unnecessarily verbose or state the
 completely obvious.</p>
+<p>不过，不要写得不必要地冗长，也不要陈述完全显而易见的内容。</p>
 
 <p>When documenting function overrides, focus on the
 specifics of the override itself, rather than repeating
 the comment from the overridden function.  In many of these
 cases, the override needs no additional documentation and
 thus no comment is required.</p>
+<p>在为函数重写（override）撰写文档时，应聚焦于该重写本身的特性，而不是重复被重写函数的注释。在很多情况下，重写并不需要额外文档，因此也不需要注释。</p>
 
 <p>When commenting constructors and destructors, remember
 that the person reading your code knows what constructors
@@ -5398,8 +5734,9 @@ example, if they take ownership of pointers), and what
 cleanup the destructor does. If this is trivial, just
 skip the comment. It is quite common for destructors not
 to have a header comment.</p>
+<p>在注释构造函数与析构函数时，请记住阅读你代码的人知道它们的用途，因此仅仅写类似“销毁这个对象”之类的话并没有帮助。应记录构造函数如何处理其参数（例如是否接管指针的所有权），以及析构函数会做哪些清理工作。如果这些内容很琐碎，就直接省略注释。析构函数没有头部注释也是相当常见的。</p>
 
-<h4>Function Definitions</h4>
+<h4>Function Definitions 函数定义</h4>
 
 <p>If there is anything tricky about how a function does
 its job, the function definition should have an
@@ -5411,20 +5748,23 @@ did rather than using a viable alternative. For instance,
 you might mention why it must acquire a lock for the
 first half of the function but why it is not needed for
 the second half.</p>
+<p>如果函数如何完成工作存在任何棘手之处，那么函数定义处应有解释性注释。例如，你可以在定义处的注释里描述所用的编码技巧、概述执行步骤，或解释你为何选择这种实现方式而不是某个可行替代方案。比如，你可以说明为什么函数前半段必须获取锁，以及为什么后半段不需要。</p>
 
 <p>Note you should <em>not</em> just repeat the comments
 given with the function declaration, in the
 <code>.h</code> file or wherever. It's okay to
 recapitulate briefly what the function does, but the
 focus of the comments should be on how it does it.</p>
+<p>注意，你<em>不</em>应只是重复 <code>.h</code> 文件或其他位置的函数声明注释。简要回顾函数做什么是可以的，但注释重点应放在它如何做到。</p>
 
-<h3 id="Variable_Comments">Variable Comments</h3>
+<h3 id="Variable_Comments">Variable Comments 变量注释</h3>
 
 <p>In general the actual name of the variable should be
 descriptive enough to give a good idea of what the variable
 is used for. In certain cases, more comments are required.</p>
+<p>一般来说，变量名本身就应足够具有描述性，让人对该变量的用途有一个良好的认识。在某些情况下，还需要更多注释。</p>
 
-<h4>Class Data Members</h4>
+<h4>Class Data Members 类数据成员</h4>
 
 <p>The purpose of each class data member (also called an instance
 variable or member variable) must be clear. If there are any
@@ -5432,10 +5772,12 @@ invariants (special values, relationships between members, lifetime
 requirements) not clearly expressed by the type and name, they must be
 commented. However, if the type and name suffice (<code>int
 num_events_;</code>), no comment is needed.</p>
+<p>每个类数据成员（也称实例变量或成员变量）的用途必须清晰。如果存在任何无法从类型与名称清楚表达的不变量（特殊值、成员间关系、生命周期要求），就必须加以注释。反之，如果类型与名称已经足够（例如 <code>int num_events_;</code>），则不需要注释。</p>
 
 <p>In particular, add comments to describe the existence and meaning
 of sentinel values, such as nullptr or -1, when they are not
 obvious. For example:</p>
+<p>尤其是，当哨兵值（例如 nullptr 或 -1）的存在及其含义并不明显时，应添加注释加以说明。例如：</p>
 
 <pre class="goodcode">private:
  // Used to bounds-check table accesses. -1 means
@@ -5443,40 +5785,46 @@ obvious. For example:</p>
  int num_total_entries_;
 </pre>
 
-<h4>Global Variables</h4>
+<h4>Global Variables 全局变量</h4>
 
 <p>All global variables should have a comment describing what they
 are, what they are used for, and (if unclear) why they need to be
 global. For example:</p>
+<p>所有全局变量都应有注释，说明它们是什么、用来做什么，以及（如果不清楚的话）为什么它们需要是全局的。例如：</p>
 
 <pre class="goodcode">// The total number of test cases that we run through in this regression test.
 const int kNumTestCases = 6;
 </pre>
 
-<h3 id="Implementation_Comments">Implementation Comments</h3>
+<h3 id="Implementation_Comments">Implementation Comments 实现注释</h3>
 
 <p>In your implementation you should have comments in tricky,
 non-obvious, interesting, or important parts of your code.</p>
+<p>在实现中，你应在棘手、非显而易见、有趣或重要的代码部分添加注释。</p>
 
-<h4>Explanatory Comments</h4>
+<h4>Explanatory Comments 解释性注释</h4>
 
 <p>Tricky or complicated code blocks should have comments
 before them.</p>
+<p>棘手或复杂的代码块应在其前面添加注释。</p>
 
-<h4 class="stylepoint_subsection" id="Function_Argument_Comments">Function Argument Comments</h4>
+<h4 class="stylepoint_subsection" id="Function_Argument_Comments">Function Argument Comments 函数参数注释</h4>
 
 <p>When the meaning of a function argument is nonobvious, consider
 one of the following remedies:</p>
+<p>当函数参数的含义并不明显时，可以考虑以下补救措施之一：</p>
 
 <ul>
   <li>If the argument is a literal constant, and the same constant is
   used in multiple function calls in a way that tacitly assumes they're
   the same, you should use a named constant to make that constraint
   explicit, and to guarantee that it holds.</li>
+  <li>如果参数是字面量常量，并且同一个常量在多个函数调用中使用且暗含“它们应当相同”的假设，你应使用命名常量把该约束显式化，并保证其成立。</li>
 
   <li>Consider changing the function signature to replace a <code>bool</code>
   argument with an <code>enum</code> argument. This will make the argument
   values self-describing.</li>
+  <li>考虑修改函数签名：用 <code>enum</code> 参数替代 <code>bool</code> 参数，使参数值具备自描述性。</li>
 
   <li>For functions that have several configuration options, consider
   defining a single class or struct to hold all the options
@@ -5488,20 +5836,25 @@ one of the following remedies:</p>
   write. As an added benefit, you don't have to change call sites when
   you add another option.
   </li>
+  <li>对于有多个配置选项的函数，考虑定义一个类或结构体来承载所有选项，并传入其实例。这种方式有多项优势：调用处可以按名称引用选项，从而澄清含义；也能减少函数参数数量，让调用更易读、更易写；并且新增选项时无需修改既有调用点。</li>
 
   <li>Replace large or complex nested expressions with named variables.</li>
+  <li>用命名变量替换又大又复杂的嵌套表达式。</li>
 
   <li>As a last resort, use comments to clarify argument meanings at the
   call site. </li>
+  <li>最后的手段：在调用点使用注释来澄清参数含义。</li>
 </ul>
 
-Consider the following example:
+<p>Consider the following example:</p>
+<p>考虑下面的例子：</p>
 
 <pre class="badcode">// What are these arguments?
 const DecimalNumber product = CalculateProduct(values, 7, false, nullptr);
 </pre>
 
 <p>versus:</p>
+<p>对比：</p>
 
 <pre class="goodcode">ProductOptions options;
 options.set_precision_decimals(7);
@@ -5684,6 +6037,7 @@ can easily show longer lines.</p>
   <li>a comment line which is not feasible to split without harming
   readability, ease of cut and paste or auto-linking -- e.g., if a line
   contains an example command or a literal URL longer than 80 characters.</li>
+  <li>无法在不损害可读性、剪贴便利性或自动链接能力的前提下拆分的注释行——例如某行包含示例命令或一个超过 80 字符的原样 URL。</li>
 
   <li>a string literal that cannot easily be wrapped at 80 columns.
   This may be because it contains URIs or other semantically-critical pieces,
@@ -5699,18 +6053,26 @@ can easily show longer lines.</p>
   (We must balance between usability/searchability of such literals and the
   readability of the code around them.)
   </li>
+  <li>无法在 80 列处轻易换行的字符串字面量。这可能是因为它包含 URI 或其他语义关键内容，或因为字面量内嵌了另一种语言，或因为它是一个多行字面量且换行本身有意义（例如帮助信息）。在这些情况下，把字面量拆开会降低可读性、可搜索性、链接可点击性等。除测试代码外，这类字面量应放在文件顶部附近的命名空间作用域。如果像 Clang-Format 这样的工具无法识别这种不可拆分内容，请按需在该内容周围<a href="https://clang.llvm.org/docs/ClangFormatStyleOptions.html#disabling-formatting-on-a-piece-of-code">禁用该工具</a>。
+  <br><br>
+  （我们必须在这类字面量的可用性/可搜索性与其周围代码的可读性之间做平衡。）
+  </li>
 
   <li>an include statement.</li>
+  <li><code>#include</code> 语句。</li>
 
   <li>a <a href="#The__define_Guard">header guard.</a></li>
+  <li><a href="#The__define_Guard">头文件保护（header guard）。</a></li>
 
   <li>a using-declaration.</li>
+  <li><code>using</code> 声明。</li>
 </ul>
 
-<h3 id="Non-ASCII_Characters">Non-ASCII Characters</h3>
+<h3 id="Non-ASCII_Characters">Non-ASCII Characters 非 ASCII 字符</h3>
 
 <p>Non-ASCII characters should be rare, and must use UTF-8
 formatting.</p>
+<p>非 ASCII 字符应当很少出现，并且必须使用 UTF-8 编码。</p>
 
 <p>You shouldn't hard-code user-facing text in source,
 even English, so use of non-ASCII characters should be
@@ -5724,6 +6086,7 @@ contain non-ASCII strings. In such cases, you should use
 UTF-8, since that is  an encoding
 understood by most tools able to handle more than just
 ASCII.</p>
+<p>你不应该在源码中硬编码面向用户的文本（即使是英文），因此非 ASCII 字符的使用也应当很少。不过，在某些情况下，在代码中包含这类词语是合适的。例如，如果你的代码要解析来自国外来源的数据文件，那么将这些数据文件中使用的非 ASCII 字符串硬编码为分隔符可能是合适的。更常见的是，单元测试代码（不需要本地化）可能包含非 ASCII 字符串。在这些情况下，你应使用 UTF-8，因为大多数能处理 ASCII 之外内容的工具都能理解这种编码。</p>
 
 <p>Hex encoding is also OK, and encouraged where it
 enhances readability — for example,
@@ -5731,6 +6094,7 @@ enhances readability — for example,
 <code>"\uFEFF"</code>,  is the Unicode zero-width
 no-break space character, which would be invisible
 if included in the source as straight UTF-8.</p>
+<p>十六进制转义编码也是可以的，并且在有助于提升可读性时鼓励使用——例如 <code>"\xEF\xBB\xBF"</code>，或者更简单地写成 <code>"\uFEFF"</code>，它表示 Unicode 的“零宽不换行空格”字符；如果直接以 UTF-8 形式包含在源码中，该字符将不可见。</p>
 
 <p>When possible, avoid the <code>u8</code> prefix.
 It has significantly different semantics starting in C++20
@@ -5744,23 +6108,29 @@ non-UTF-8 text. For similar reasons you also shouldn't
 use <code>wchar_t</code> (unless you're writing code that
 interacts with the Windows API, which uses
 <code>wchar_t</code> extensively).</p>
+<p>尽可能避免使用 <code>u8</code> 前缀。它从 C++20 开始与 C++17 的语义有显著不同：它会生成 <code>char8_t</code> 数组而不是 <code>char</code> 数组，并且在 C++23 中还会再次变化。</p>
+<p>你不应该使用 <code>char16_t</code> 和 <code>char32_t</code> 字符类型，因为它们用于非 UTF-8 文本。出于类似原因，你也不应该使用 <code>wchar_t</code>（除非你在编写与 Windows API 交互的代码，因为 Windows API 会大量使用 <code>wchar_t</code>）。</p>
 
-<h3 id="Spaces_vs._Tabs">Spaces vs. Tabs</h3>
+<h3 id="Spaces_vs._Tabs">Spaces vs. Tabs 空格与制表符</h3>
 
 <p>Use only spaces, and indent 2 spaces at a time.</p>
+<p>只使用空格，并每次缩进 2 个空格。</p>
 
 <p>We use spaces for indentation. Do not use tabs in your
 code. You should set your editor to emit spaces when you
 hit the tab key.</p>
+<p>我们使用空格进行缩进。不要在代码中使用制表符（tab）。你应该将编辑器设置为在按下 tab 键时输出空格。</p>
 
-<h3 id="Function_Declarations_and_Definitions">Function Declarations and Definitions</h3>
+<h3 id="Function_Declarations_and_Definitions">Function Declarations and Definitions 函数声明与定义</h3>
 
 <p>Return type on the same line as function name, parameters
 on the same line if they fit. Wrap parameter lists which do
 not fit on a single line as you would wrap arguments in a
 <a href="#Function_Calls">function call</a>.</p>
+<p>返回类型与函数名放在同一行；如果参数能放下，也放在同一行。若参数列表无法放在一行内，应像<a href="#Function_Calls">函数调用</a>中的实参那样换行。</p>
 
 <p>Functions look like this:</p>
+<p>函数应写成如下形式：</p>
 
 
 <pre class="goodcode">ReturnType ClassName::FunctionName(Type par_name1, Type par_name2) {
@@ -5770,6 +6140,7 @@ not fit on a single line as you would wrap arguments in a
 </pre>
 
 <p>If you have too much text to fit on one line:</p>
+<p>如果一行放不下太多内容：</p>
 
 <pre class="goodcode">ReturnType ClassName::ReallyLongFunctionName(Type par_name1, Type par_name2,
                                              Type par_name3) {
@@ -5779,6 +6150,7 @@ not fit on a single line as you would wrap arguments in a
 </pre>
 
 <p>or if you cannot fit even the first parameter:</p>
+<p>或者连第一个参数都放不下：</p>
 
 <pre class="goodcode">ReturnType LongClassName::ReallyReallyReallyLongFunctionName(
     Type par_name1,  // 4 space indent
@@ -5790,45 +6162,60 @@ not fit on a single line as you would wrap arguments in a
 </pre>
 
 <p>Some points to note:</p>
+<p>注意事项：</p>
 
 <ul>
   <li>Choose good parameter names.</li>
+  <li>选择好的参数名。</li>
 
   <li>A parameter name may be omitted only if the parameter is not used in the
   function's definition.</li>
+  <li>只有当参数在函数定义中未被使用时，才可以省略参数名。</li>
 
   <li>If you cannot fit the return type and the function
   name on a single line, break between them.</li>
+  <li>如果返回类型和函数名无法放在同一行，在它们之间换行。</li>
 
   <li>If you break after the return type of a function
   declaration or definition, do not indent.</li>
+  <li>如果在函数声明或定义的返回类型之后换行，不要增加缩进。</li>
 
   <li>The open parenthesis is always on the same line as
   the function name.</li>
+  <li>左括号总是与函数名在同一行。</li>
 
   <li>There is never a space between the function name
   and the open parenthesis.</li>
+  <li>函数名与左括号之间绝不加空格。</li>
 
   <li>There is never a space between the parentheses and
   the parameters.</li>
+  <li>括号与参数之间绝不加空格。</li>
 
   <li>The open curly brace is always on the end of the last line of the function
   declaration, not the start of the next line.</li>
+  <li>左花括号总是位于函数声明最后一行的末尾，而不是下一行的开头。</li>
 
   <li>The close curly brace is either on the last line by
   itself or on the same line as the open curly brace.</li>
+  <li>右花括号要么单独位于最后一行，要么与左花括号位于同一行。</li>
 
   <li>There should be a space between the close
   parenthesis and the open curly brace.</li>
+  <li>右括号与左花括号之间应有一个空格。</li>
 
   <li>All parameters should be aligned if possible.</li>
+  <li>如果可能，所有参数应对齐。</li>
 
   <li>Default indentation is 2 spaces.</li>
+  <li>默认缩进为 2 个空格。</li>
 
   <li>Wrapped parameters have a 4 space indent.</li>
+  <li>换行后的参数使用 4 个空格缩进。</li>
 </ul>
 
 <p>Unused parameters that are obvious from context may omit the name:</p>
+<p>从上下文中显而易见的未使用参数可以省略参数名：</p>
 
 <pre class="goodcode">class Foo {
  public:
@@ -5839,6 +6226,7 @@ not fit on a single line as you would wrap arguments in a
 
 <p>Unused parameters that might not be obvious should comment out the variable
 name in the function definition:</p>
+<p>对于不那么显而易见的未使用参数，应在函数定义中将变量名注释掉：</p>
 
 <pre class="goodcode">class Shape {
  public:
@@ -5861,21 +6249,25 @@ void Circle::Rotate(double) {}
 <p>Attributes, and macros that expand to attributes, appear at the very
 beginning of the function declaration or definition, before the
 return type:</p>
+<p>属性（attributes）以及展开为属性的宏，应放在函数声明或定义的最前面，即返回类型之前：</p>
 <pre class="goodcode">  ABSL_ATTRIBUTE_NOINLINE void ExpensiveFunction();
   [[nodiscard]] bool IsOk();
 </pre>
 
-<h3 id="Formatting_Lambda_Expressions">Lambda Expressions</h3>
+<h3 id="Formatting_Lambda_Expressions">Lambda Expressions Lambda 表达式</h3>
 
 <p>Format parameters and bodies as for any other function, and capture
 lists like other comma-separated lists.</p>
+<p>参数与函数体的格式应与其他函数一致；捕获列表应像其他逗号分隔列表一样格式化。</p>
 
 <p>For by-reference captures, do not leave a space between the
 ampersand (<code>&amp;</code>) and the variable name.</p>
+<p>对于按引用捕获，不要在与号（<code>&amp;</code>）和变量名之间留空格。</p>
 <pre class="goodcode">int x = 0;
 auto x_plus_n = [&amp;x](int n) -&gt; int { return x + n; }
 </pre>
 <p>Short lambdas may be written inline as function arguments.</p>
+<p>短 lambda 可以作为函数实参以内联形式书写。</p>
 <pre class="goodcode">absl::flat_hash_set&lt;int&gt; to_remove = {7, 8, 9};
 std::vector&lt;int&gt; digits = {3, 9, 1, 8, 4, 7, 1};
 digits.erase(std::remove_if(digits.begin(), digits.end(), [&amp;to_remove](int i) {
@@ -5884,7 +6276,7 @@ digits.erase(std::remove_if(digits.begin(), digits.end(), [&amp;to_remove](int i
              digits.end());
 </pre>
 
-<h3 id="Floating_Literals">Floating-point Literals</h3>
+<h3 id="Floating_Literals">Floating-point Literals 浮点字面量</h3>
 
 <p>Floating-point literals should always have a radix point, with digits on both
 sides, even if they use exponential notation. Readability is improved if all
@@ -5895,6 +6287,7 @@ hexadecimal digit. It is fine to initialize a floating-point variable with an
 integer literal (assuming the variable type can exactly represent that integer),
 but note that a number in exponential notation is never an integer literal.
 </p>
+<p>浮点字面量应始终包含小数点，并且小数点两侧都要有数字，即使使用科学计数法也是如此。如果所有浮点字面量都采用这种熟悉的形式，可读性会更好：它有助于避免把它们误认为整数，也能避免把科学计数法中的 <code>E</code>/<code>e</code> 误认为十六进制数字。用整数来初始化浮点变量是可以的（前提是变量类型能精确表示该整数），但请注意，科学计数法形式的数字永远不是整数字面量。</p>
 
 <pre class="badcode">float f = 1.f;
 long double ld = -.5L;
@@ -5909,7 +6302,7 @@ double d = 1248.0e6;
 </pre>
 
 
-<h3 id="Function_Calls">Function Calls</h3>
+<h3 id="Function_Calls">Function Calls 函数调用</h3>
 
 <p>Either write the call all on a single line, wrap the
 arguments at the parenthesis, or start the arguments on a new
@@ -5917,8 +6310,10 @@ line indented by four spaces and continue at that 4 space
 indent. In the absence of other considerations, use the
 minimum number of lines, including placing multiple arguments
 on each line where appropriate.</p>
+<p>函数调用要么全部写在一行内，要么在括号处换行，或将参数从新的一行开始（缩进 4 个空格）并在该 4 空格缩进处继续书写。在没有其他考虑时，应使用尽可能少的行数，包括在合适时将多个参数放在同一行。</p>
 
 <p>Function calls have the following format:</p>
+<p>函数调用格式如下：</p>
 <pre class="goodcode">bool result = DoSomething(argument1, argument2, argument3);
 </pre>
 
@@ -5927,12 +6322,14 @@ should be broken up onto multiple lines, with each
 subsequent line aligned with the first argument. Do not
 add spaces after the open paren or before the close
 paren:</p>
+<p>如果参数无法全部放在一行内，应拆成多行，并使后续各行与第一个参数对齐。不要在左括号后或右括号前添加空格：</p>
 <pre class="goodcode">bool result = DoSomething(averyveryveryverylongargument1,
                           argument2, argument3);
 </pre>
 
 <p>Arguments may optionally all be placed on subsequent
 lines with a four space indent:</p>
+<p>参数也可以选择全部放到后续行，并使用 4 个空格缩进：</p>
 <pre class="goodcode">if (...) {
   ...
   ...
@@ -5952,17 +6349,20 @@ more readable and simplifies editing of the arguments.
 However, we prioritize for the reader over the ease of
 editing arguments, and most readability problems are
 better addressed with the following techniques.</p>
+<p>除非存在特定的可读性问题，否则应把多个参数放在同一行，以减少函数调用所需的行数。有些人认为严格做到每行一个参数更易读，也更便于编辑参数。但我们优先考虑读者体验而不是编辑便利性；而大多数可读性问题更适合用下述技巧来解决。</p>
 
 <p>If having multiple arguments in a single line decreases
 readability due to the complexity or confusing nature of the
 expressions that make up some arguments, try creating
 variables that capture those arguments in a descriptive name:</p>
+<p>如果把多个参数放在同一行会因为某些参数表达式过于复杂或令人困惑而降低可读性，可以尝试创建变量，用具有描述性的名称承载这些参数：</p>
 <pre class="goodcode">int my_heuristic = scores[x] * y + bases[x];
 bool result = DoSomething(my_heuristic, x, y, z);
 </pre>
 
 <p>Or put the confusing argument on its own line with
 an explanatory comment:</p>
+<p>或者把令人困惑的参数单独放在一行，并加上解释性注释：</p>
 <pre class="goodcode">bool result = DoSomething(scores[x] * y + bases[x],  // Score heuristic.
                           x, y, z);
 </pre>
@@ -5971,25 +6371,29 @@ an explanatory comment:</p>
 significantly more readable on its own line, then put it on
 its own line. The decision should be specific to the argument
 which is made more readable rather than a general policy.</p>
+<p>如果仍有某个参数在独立成行时可读性显著更好，那么就让它独占一行。这个决定应针对“哪个参数因此更易读”这一具体情况，而不是作为一项通用政策。</p>
 
 <p>Sometimes arguments form a structure that is important
 for readability. In those cases, feel free to format the
 arguments according to that structure:</p>
+<p>有时参数本身形成了对可读性很重要的结构。在这种情况下，可以按该结构来格式化参数：</p>
 <pre class="goodcode">// Transform the widget by a 3x3 matrix.
 my_widget.Transform(x1, x2, x3,
                     y1, y2, y3,
                     z1, z2, z3);
 </pre>
 
-<h3 id="Braced_Initializer_List_Format">Braced Initializer List Format</h3>
+<h3 id="Braced_Initializer_List_Format">Braced Initializer List Format 花括号初始化列表格式</h3>
 
 <p>Format a braced initializer list exactly like you would format a function
 call in its place.</p>
+<p>花括号初始化列表的格式应与把它当作函数调用时的格式完全一致。</p>
 
 <p>If the braced list follows a name (e.g., a type or
 variable name), format as if the <code>{}</code> were the
 parentheses of a function call with that name. If there
 is no name, assume a zero-length name.</p>
+<p>如果花括号列表跟在一个名字之后（例如类型名或变量名），就把 <code>{}</code> 当作该名字所对应函数调用的括号来格式化。如果没有名字，则假定名字长度为零。</p>
 
 <pre class="goodcode">// Examples of braced init list on a single line.
 return {foo, bar};
@@ -6019,32 +6423,43 @@ MyType m = {  // Here, you could also break before {.
 </pre>
 
 <a id="Conditionals"></a>
-<h3 id="Formatting_Looping_Branching">Looping and branching statements</h3>
+<h3 id="Formatting_Looping_Branching">Looping and branching statements 循环与分支语句</h3>
 
 <p>At a high level, looping or branching statements consist of the following
 <strong>components</strong>:
-</p><ul>
+</p>
+<p>从高层来看，循环或分支语句由以下<strong>组成部分</strong>构成：</p>
+<ul>
   <li>One or more <strong>statement keywords</strong> (e.g., <code>if</code>,
   <code>else</code>, <code>switch</code>, <code>while</code>, <code>do</code>,
   or <code>for</code>).</li>
+  <li>一个或多个<strong>语句关键字</strong>（例如 <code>if</code>、<code>else</code>、<code>switch</code>、<code>while</code>、<code>do</code> 或 <code>for</code>）。</li>
   <li>One <strong>condition or iteration specifier</strong>, inside
   parentheses.</li>
+  <li>一个位于括号内的<strong>条件或迭代说明</strong>。</li>
   <li>One or more <strong>controlled statements</strong>, or blocks of
   controlled statements.</li>
+  <li>一个或多个<strong>受控语句</strong>，或受控语句块。</li>
 </ul>
-For these statements:
+<p>For these statements:</p>
+<p>对于这些语句：</p>
 
 <ul>
   <li>The components of the statement should be separated by single spaces (not
   line breaks).</li>
+  <li>语句的各个组成部分之间应使用单个空格分隔（而不是换行）。</li>
   <li>Inside the condition or iteration specifier, put one space (or a line
   break) between each semicolon and the next token, except if the token is a
   closing parenthesis or another semicolon.</li>
+  <li>在条件或迭代说明中，除非下一个标记是右括号或另一个分号，否则每个分号与其后的下一个标记之间应有一个空格（或换行）。</li>
   <li>Inside the condition or iteration specifier, do not put a space after the
   opening parenthesis or before the closing parenthesis.</li>
+  <li>在条件或迭代说明中，左括号后与右括号前都不要加空格。</li>
   <li>Put any controlled statements inside blocks (i.e., use curly braces).</li>
+  <li>将所有受控语句放入语句块中（即使用花括号）。</li>
   <li>Inside the controlled blocks, put one line break immediately after the
   opening brace, and one line break immediately before the closing brace.</li>
+  <li>在受控语句块内，左花括号后应立即换行，右花括号前也应立即换行。</li>
 </ul>
 
 <pre class="goodcode">if (condition) {                   // Good - no spaces inside parentheses, space before brace.
@@ -6103,6 +6518,7 @@ may be omitted if as a result the entire statement appears on either a single
 line (in which case there is a space between the closing parenthesis and the
 controlled statement) or on two lines (in which case there is a line break
 after the closing parenthesis and there are no braces).</p>
+<p>出于历史原因，我们允许上述规则有一个例外：如果因此可以让整条语句要么出现在单行上（此时右括号与受控语句之间有一个空格），要么出现在两行上（此时右括号后换行且不使用花括号），那么可以省略受控语句的花括号，或省略花括号内的换行。</p>
 
 <pre class="neutralcode">// OK - fits on one line.
 if (x == kFoo) { return new Foo(); }
@@ -6160,13 +6576,15 @@ while (condition) continue;  // Good - `continue` indicates no logic.
 <pre class="badcode">while (condition);  // Bad - looks like part of `do-while` loop.
 </pre>
 
-<h3 id="Pointer_and_Reference_Expressions">Pointer and Reference Expressions and Types</h3>
+<h3 id="Pointer_and_Reference_Expressions">Pointer and Reference Expressions and Types 指针与引用表达式及类型</h3>
 
 <p>No spaces around period or arrow. Pointer operators do not
 have trailing spaces.</p>
+<p>句点（<code>.</code>）或箭头（<code>-&gt;</code>）两侧不加空格。指针运算符后也不应有空格。</p>
 
 <p>The following are examples of correctly-formatted
 pointer and reference expressions:</p>
+<p>下面是格式正确的指针与引用表达式示例：</p>
 
 <pre class="goodcode">x = *p;
 p = &amp;x;
@@ -6175,18 +6593,22 @@ x = r-&gt;y;
 </pre>
 
 <p>Note that:</p>
+<p>请注意：</p>
 
 <ul>
   <li>There are no spaces around the period or arrow when
   accessing a member.</li>
+  <li>访问成员时，句点或箭头两侧不加空格。</li>
 
    <li>Pointer operators have no space after the
    <code>*</code> or <code>&amp;</code>.</li>
+   <li>指针运算符在 <code>*</code> 或 <code>&amp;</code> 之后不加空格。</li>
 </ul>
 
 <p>When referring to a pointer or reference (variable declarations or definitions, arguments, return
 types, template parameters, etc.), you must not place a space before the asterisk/ampersand. Use a
 space to separate the type from the declared name (if present).</p>
+<p>当书写指针或引用（变量声明/定义、参数、返回类型、模板参数等）时，星号/与号之前不得加空格。应使用一个空格将类型与所声明的名称（如果有）分隔开。</p>
 
 <pre class="goodcode">// These are fine.
 char* c;
@@ -6198,6 +6620,7 @@ std::vector&lt;char*&gt;  // Note no space between '*' and '&gt;'
 <p>It is allowed (if unusual) to declare multiple variables in the same
 declaration, but it is disallowed if any of those have pointer or
 reference decorations. Such declarations are easily misread.</p>
+<p>在同一个声明中声明多个变量是允许的（尽管不常见），但如果其中任何一个带有指针或引用修饰，则禁止这样写。这类声明很容易被误读。</p>
 <pre class="neutralcode">// Fine if helpful for readability.
 int x, y;
 </pre>
@@ -6208,14 +6631,16 @@ char * c;  // Bad - spaces on both sides of *
 const std::string &amp; str;  // Bad - spaces on both sides of &amp;
 </pre>
 
-<h3 id="Boolean_Expressions">Boolean Expressions</h3>
+<h3 id="Boolean_Expressions">Boolean Expressions 布尔表达式</h3>
 
 <p>When you have a boolean expression that is longer than the
 <a href="#Line_Length">standard line length</a>, be
 consistent in how you break up the lines.</p>
+<p>当布尔表达式长度超过<a href="#Line_Length">标准行宽</a>时，应保持换行方式一致。</p>
 
 <p>In this example, the logical AND operator is always at
 the end of the lines:</p>
+<p>在这个例子中，逻辑与运算符总是位于行尾：</p>
 
 <pre class="goodcode">if (this_one_thing &gt; this_other_thing &amp;&amp;
     a_third_thing == a_fourth_thing &amp;&amp;
@@ -6236,14 +6661,17 @@ should always use the punctuation operators, such as
 <code>&amp;&amp;</code> and <code>~</code>, rather than
 the word operators, such as <code>and</code> and
 <code>compl</code>.</p>
+<p>请注意：在该示例中发生换行时，两个 <code>&amp;&amp;</code> 都位于行尾。这在 Google 代码中更常见，但把所有运算符放在行首换行也是允许的。可以酌情添加额外括号；恰当地使用它们有助于提高可读性，但要避免过度使用。还要注意：应始终使用标点形式的运算符（例如 <code>&amp;&amp;</code>、<code>~</code>），而不是单词形式的运算符（例如 <code>and</code>、<code>compl</code>）。</p>
 
-<h3 id="Return_Values">Return Values</h3>
+<h3 id="Return_Values">Return Values 返回值</h3>
 
 <p>Do not needlessly surround the <code>return</code>
 expression with parentheses.</p>
+<p>不要无谓地用括号包裹 <code>return</code> 表达式。</p>
 
 <p>Use parentheses in <code>return expr;</code> only
 where you would use them in <code>x = expr;</code>.</p>
+<p>在 <code>return expr;</code> 中，仅在你也会在 <code>x = expr;</code> 里使用括号的情况下才使用括号。</p>
 
 <pre class="goodcode">return result;                  // No parentheses in the simple case.
 // Parentheses OK to make a complex expression more readable.
@@ -6257,11 +6685,12 @@ return(result);                // return is not a function!
 
 
 
-<h3 id="Variable_and_Array_Initialization">Variable and Array Initialization</h3>
+<h3 id="Variable_and_Array_Initialization">Variable and Array Initialization 变量与数组初始化</h3>
 
 <p>You may choose between <code>=</code>,
 <code>()</code>, and <code>{}</code>; the following are
 all correct:</p>
+<p>你可以在 <code>=</code>、<code>()</code> 与 <code>{}</code> 之间选择；以下写法都正确：</p>
 
 <pre class="goodcode">int x = 3;
 int x(3);
@@ -6279,6 +6708,7 @@ possible. Note that empty braces <code>{}</code> are special, and
 will call a default constructor if available. To force the
 non-<code>std::initializer_list</code> constructor, use parentheses
 instead of braces.</p>
+<p>当对具有 <code>std::initializer_list</code> 构造函数的类型使用花括号初始化列表 <code>{...}</code> 时要小心。只要可能，非空的 <i>braced-init-list</i> 会优先选择 <code>std::initializer_list</code> 构造函数。注意空花括号 <code>{}</code> 是特殊情况：如果可用，会调用默认构造函数。若要强制选择非 <code>std::initializer_list</code> 构造函数，请用圆括号而不是花括号。</p>
 
 <pre class="goodcode">std::vector&lt;int&gt; v(100, 1);  // A vector containing 100 items: All 1s.
 std::vector&lt;int&gt; v{100, 1};  // A vector containing 2 items: 100 and 1.
@@ -6287,19 +6717,22 @@ std::vector&lt;int&gt; v{100, 1};  // A vector containing 2 items: 100 and 1.
 <p>Also, the brace form prevents narrowing of integral
 types. This can prevent some types of programming
 errors.</p>
+<p>此外，花括号形式会阻止整数类型的窄化转换，这可以避免某些类型的编程错误。</p>
 
 <pre class="goodcode">int pi(3.14);  // OK -- pi == 3.
 int pi{3.14};  // Compile error: narrowing conversion.
 </pre>
 
-<h3 id="Preprocessor_Directives">Preprocessor Directives</h3>
+<h3 id="Preprocessor_Directives">Preprocessor Directives 预处理指令</h3>
 
 <p>The hash mark that starts a preprocessor directive should
 always be at the beginning of the line.</p>
+<p>以 <code>#</code> 开头的预处理指令应始终从行首开始。</p>
 
 <p>Even when preprocessor directives are within the body
 of indented code, the directives should start at the
 beginning of the line.</p>
+<p>即使预处理指令位于缩进代码块内部，指令也应从行首开始。</p>
 
 <pre class="goodcode">// Good - directives at beginning of line
   if (lopsided_score) {
@@ -6322,15 +6755,17 @@ beginning of the line.</p>
   }
 </pre>
 
-<h3 id="Class_Format">Class Format</h3>
+<h3 id="Class_Format">Class Format 类格式</h3>
 
 <p>Sections in <code>public</code>, <code>protected</code>, and
 <code>private</code> order, each indented one space.</p>
+<p>按 <code>public</code>、<code>protected</code>、<code>private</code> 的顺序分区，每个区块关键字缩进 1 个空格。</p>
 
 <p>The basic format for a class definition (lacking the
 comments, see <a href="#Class_Comments">Class
 Comments</a> for a discussion of what comments are
 needed) is:</p>
+<p>类定义的基本格式如下（不含注释；关于需要哪些注释的讨论，参见 <a href="#Class_Comments">Class Comments</a>）：</p>
 
 <pre class="goodcode">class MyClass : public OtherClass {
  public:      // Note the 1 space indent!
@@ -6354,37 +6789,46 @@ needed) is:</p>
 </pre>
 
 <p>Things to note:</p>
+<p>注意事项：</p>
 
 <ul>
   <li>Any base class name should be on the same line as
   the subclass name, subject to the 80-column limit.</li>
+  <li>任何基类名都应与派生类名在同一行（受 80 列限制约束）。</li>
 
   <li>The <code>public:</code>, <code>protected:</code>,
   and <code>private:</code> keywords should be indented
   one space.</li>
+  <li><code>public:</code>、<code>protected:</code>、<code>private:</code> 关键字应缩进 1 个空格。</li>
 
   <li>Except for the first instance, these keywords
   should be preceded by a blank line. This rule is
   optional in small classes.</li>
+  <li>除第一次出现外，这些关键字之前应有一个空行。对于小类，该规则可选。</li>
 
   <li>Do not leave a blank line after these
   keywords.</li>
+  <li>这些关键字之后不要留空行。</li>
 
   <li>The <code>public</code> section should be first,
   followed by the <code>protected</code> and finally the
   <code>private</code> section.</li>
+  <li><code>public</code> 区块应放在最前，其后是 <code>protected</code>，最后是 <code>private</code>。</li>
 
   <li>See <a href="#Declaration_Order">Declaration
   Order</a> for rules on ordering declarations within
   each of these sections.</li>
+  <li>关于在各区块内声明的排序规则，参见 <a href="#Declaration_Order">Declaration Order</a>。</li>
 </ul>
 
-<h3 id="Constructor_Initializer_Lists">Constructor Initializer Lists</h3>
+<h3 id="Constructor_Initializer_Lists">Constructor Initializer Lists 构造函数初始化列表</h3>
 
 <p>Constructor initializer lists can be all on one line or
 with subsequent lines indented four spaces.</p>
+<p>构造函数初始化列表可以全部写在一行内，也可以将后续行缩进 4 个空格。</p>
 
 <p>The acceptable formats for initializer lists are:</p>
+<p>初始化列表的可接受格式如下：</p>
 
 <pre class="goodcode">// When everything fits on one line:
 MyClass::MyClass(int var) : some_var_(var) {
@@ -6412,12 +6856,14 @@ MyClass::MyClass(int var)
     : some_var_(var) {}
 </pre>
 
-<h3 id="Namespace_Formatting">Namespace Formatting</h3>
+<h3 id="Namespace_Formatting">Namespace Formatting 命名空间格式</h3>
 
 <p>The contents of namespaces are not indented.</p>
+<p>命名空间内的内容不缩进。</p>
 
 <p><a href="#Namespaces">Namespaces</a> do not add an
 extra level of indentation. For example, use:</p>
+<p><a href="#Namespaces">Namespaces</a> 不会增加额外的缩进层级。例如，应写成：</p>
 
 <pre class="goodcode">namespace {
 
@@ -6429,6 +6875,7 @@ void foo() {  // Correct.  No extra indentation within namespace.
 </pre>
 
 <p>Do not indent within a namespace:</p>
+<p>不要在命名空间内部缩进：</p>
 
 <pre class="badcode">namespace {
 
@@ -6440,12 +6887,13 @@ void foo() {  // Correct.  No extra indentation within namespace.
 }  // namespace
 </pre>
 
-<h3 id="Horizontal_Whitespace">Horizontal Whitespace</h3>
+<h3 id="Horizontal_Whitespace">Horizontal Whitespace 水平空白</h3>
 
 <p>Use of horizontal whitespace depends on location. Never put
 trailing whitespace at the end of a line.</p>
+<p>水平空白的使用取决于所处位置。绝不要在行尾留下尾随空白。</p>
 
-<h4>General</h4>
+<h4>General 一般</h4>
 
 <pre class="goodcode">int i = 0;  // Two spaces before end-of-line comments.
 
@@ -6475,8 +6923,9 @@ already changing that line, or do it in a separate
 clean-up
 operation (preferably when no one
 else is working on the file).</p>
+<p>添加尾随空白会让其他编辑同一文件的人在合并时产生额外工作；移除现有的尾随空白也可能造成同样的问题。因此，不要引入尾随空白。如果你本来就要改那一行，可以顺便移除它；否则请在单独的清理操作中处理（最好在没有其他人同时编辑该文件时）。</p>
 
-<h4>Loops and Conditionals</h4>
+<h4>Loops and Conditionals 循环与条件语句</h4>
 
 <pre class="goodcode">if (b) {          // Space after the keyword in conditions and loops.
 } else {          // Spaces around else.
@@ -6504,7 +6953,7 @@ switch (i) {
   case 2: break;  // Use a space after a colon if there's code after it.
 </pre>
 
-<h4>Operators</h4>
+<h4>Operators 运算符</h4>
 
 <pre class="goodcode">// Assignment operators always have spaces around them.
 x = 0;
@@ -6523,7 +6972,7 @@ if (x &amp;&amp; !y)
   ...
 </pre>
 
-<h4>Templates and Casts</h4>
+<h4>Templates and Casts 模板与类型转换</h4>
 
 <pre class="goodcode">// No spaces inside the angle brackets (&lt; and &gt;), before
 // &lt;, or between &gt;( in a cast
@@ -6534,11 +6983,12 @@ y = static_cast&lt;char*&gt;(x);
 std::vector&lt;char*&gt; x;
 </pre>
 
-<h3 id="Vertical_Whitespace">Vertical Whitespace</h3>
+<h3 id="Vertical_Whitespace">Vertical Whitespace 垂直空白</h3>
 
 <p>Use vertical whitespace sparingly; unnecessary blank lines make it harder to
 see overall code structure. Use blank lines only where they aid the reader in
 understanding the structure.</p>
+<p>谨慎使用垂直空白（空行）；不必要的空行会使整体代码结构更难把握。只在空行有助于读者理解结构时才使用。</p>
 
 <p>Do not add blank lines where indentation already provides clear delineation,
 such as at the start or end of a code block. Do use blank lines to separate code
@@ -6546,20 +6996,23 @@ into closely related chunks, analogous to paragraph breaks in prose. Within a
 statement or declaration, usually only insert line breaks to stay within
 the <a href="#Line_Length">line length limit</a>, or to attach a comment to only
 part of the contents.</p>
+<p>在缩进已经提供清晰分隔的地方不要添加空行，例如代码块的开头或结尾。应当使用空行将代码分成紧密相关的块，类似于散文中的段落分隔。在语句或声明内部，通常只为满足<a href="#Line_Length">行宽限制</a>或为内容的一部分附加注释而插入换行。</p>
 
-<h2 id="Exceptions_to_the_Rules">Exceptions to the Rules</h2>
+<h2 id="Exceptions_to_the_Rules">Exceptions to the Rules 规则的例外</h2>
 
 <p>The coding conventions described above are mandatory.
 However, like all good rules, these sometimes have exceptions,
 which we discuss here.</p>
+<p>上述编码规范是强制的。然而，如同所有好的规则一样，它们有时也会有例外，我们在此讨论这些例外。</p>
 
 
 
 <div>
-<h3 id="Existing_Non-conformant_Code" class="no-toc">Existing Non-conformant Code</h3>
+<h3 id="Existing_Non-conformant_Code" class="no-toc">Existing Non-conformant Code 现有不符合规范的代码</h3>
 
 <p>You may diverge from the rules when dealing with code that
 does not conform to this style guide.</p>
+<p>当处理不符合本风格指南的代码时，你可以偏离这些规则。</p>
 
 <p>If you find yourself modifying code that was written
 to specifications other than those presented by this
@@ -6569,12 +7022,13 @@ code. If you are in doubt about how to do this, ask the
 original author or the person currently responsible for
 the code. Remember that <em>consistency</em> includes
 local consistency, too.</p>
+<p>如果你正在修改按本指南之外的规范编写的代码，为了与该代码的本地约定保持一致，你可能不得不偏离这些规则。如果你不确定该怎么做，请咨询原作者或当前负责该代码的人。请记住，<em>一致性</em>也包括本地一致性。</p>
 
 </div>
 
 
 
-<h3 id="Windows_Code">Windows Code</h3>
+<h3 id="Windows_Code">Windows Code Windows 代码</h3>
 
 <p> Windows
 programmers have developed their own set of coding
@@ -6582,16 +7036,19 @@ conventions, mainly derived from the conventions in Windows
 headers and other Microsoft code. We want to make it easy
 for anyone to understand your code, so we have a single set
 of guidelines for everyone writing C++ on any platform.</p>
+<p>Windows 程序员发展出了一套自己的编码约定，主要源自 Windows 头文件以及其他 Microsoft 代码中的约定。我们希望让任何人都能更容易理解你的代码，因此我们为任何平台上的 C++ 代码提供一套统一的指南。</p>
 
 <p>It is worth reiterating a few of the guidelines that
 you might forget if you are used to the prevalent Windows
 style:</p>
+<p>如果你习惯了常见的 Windows 风格，下面这些你可能会忘记的指南值得再强调一遍：</p>
 
 <ul>
   <li>Do not use Hungarian notation (for example, naming
   an integer <code>iNum</code>). Use the Google naming
   conventions, including the <code>.cc</code> extension
   for source files.</li>
+  <li>不要使用匈牙利命名法（例如把一个整数命名为 <code>iNum</code>）。使用 Google 的命名约定，包括源文件使用 <code>.cc</code> 扩展名。</li>
 
   <li>Windows defines many of its own synonyms for
   primitive types, such as <code>DWORD</code>,
@@ -6601,15 +7058,18 @@ style:</p>
   can to the underlying C++ types. For example, use
   <code>const TCHAR*</code> instead of
   <code>LPCTSTR</code>.</li>
+  <li>Windows 为基础类型定义了许多自己的同义类型，例如 <code>DWORD</code>、<code>HANDLE</code> 等。在调用 Windows API 函数时使用这些类型完全可以，并且鼓励这样做。即便如此，也要尽量贴近底层的 C++ 类型。例如，使用 <code>const TCHAR*</code> 而不是 <code>LPCTSTR</code>。</li>
 
   <li>When compiling with Microsoft Visual C++, set the
   compiler to warning level 3 or higher, and treat all
   warnings as errors.</li>
+  <li>使用 Microsoft Visual C++ 编译时，把编译器警告级别设为 3 或更高，并将所有警告视为错误。</li>
 
   <li>Do not use <code>#pragma once</code>; instead use
   the standard Google include guards. The path in the
   include guards should be relative to the top of your
   project tree.</li>
+  <li>不要使用 <code>#pragma once</code>；改用标准的 Google include guards。include guards 中的路径应相对你的项目根目录。</li>
 
   <li>In fact, do not use any nonstandard extensions,
   like <code>#pragma</code> and <code>__declspec</code>,
@@ -6620,10 +7080,12 @@ style:</p>
   <code>DLLIMPORT</code> and <code>DLLEXPORT</code>, so
   that someone can easily disable the extensions if they
   share the code.</li>
+  <li>事实上，除非你确实必须，否则不要使用任何非标准扩展，例如 <code>#pragma</code> 和 <code>__declspec</code>。允许使用 <code>__declspec(dllimport)</code> 和 <code>__declspec(dllexport)</code>；但你必须通过诸如 <code>DLLIMPORT</code> 与 <code>DLLEXPORT</code> 之类的宏来使用它们，以便他人在共享代码时可以轻松禁用这些扩展。</li>
 </ul>
 
 <p>However, there are just a few rules that we
 occasionally need to break on Windows:</p>
+<p>不过，在 Windows 上我们偶尔确实需要违反少数规则：</p>
 
 <ul>
   <li>Normally we <a href="#Multiple_Inheritance">strongly discourage
@@ -6632,6 +7094,7 @@ occasionally need to break on Windows:</p>
   classes. You may use multiple implementation
   inheritance to implement COM or ATL/WTL classes and
   interfaces.</li>
+  <li>通常我们<a href="#Multiple_Inheritance">强烈不鼓励使用多重实现继承</a>；但在使用 COM 以及某些 ATL/WTL 类时这是必须的。你可以使用多重实现继承来实现 COM 或 ATL/WTL 的类与接口。</li>
 
   <li>Although you should not use exceptions in your own
   code, they are used extensively in the ATL and some
@@ -6643,6 +7106,7 @@ occasionally need to break on Windows:</p>
   exceptions in the compiler. (Note that this is only to
   get the STL to compile. You should still not write
   exception handling code yourself.)</li>
+  <li>尽管你不应在自己的代码中使用异常，但 ATL 以及某些 STL（包括 Visual C++ 自带的 STL）会大量使用异常。使用 ATL 时，你应定义 <code>_ATL_NO_EXCEPTIONS</code> 来禁用异常。你也应调查你的 STL 是否可以禁用异常；如果不行，在编译器中开启异常也是可以的。（注意：这只是为了让 STL 能编译通过。你仍然不应自己编写异常处理代码。）</li>
 
   <li>The usual way of working with precompiled headers
   is to include a header file at the top of each source
@@ -6652,10 +7116,12 @@ occasionally need to break on Windows:</p>
   explicitly (except in <code>precompile.cc</code>), and
   use the <code>/FI</code> compiler option to include the
   file automatically.</li>
+  <li>使用预编译头的常见方式是在每个源文件顶部包含一个头文件，通常名为 <code>StdAfx.h</code> 或 <code>precompile.h</code>。为了让你的代码更易于与其他项目共享，避免显式包含该文件（<code>precompile.cc</code> 除外），并使用编译器选项 <code>/FI</code> 来自动包含该文件。</li>
 
   <li>Resource headers, which are usually named
   <code>resource.h</code> and contain only macros, do not
   need to conform to these style guidelines.</li>
+  <li>资源头文件（通常名为 <code>resource.h</code> 且只包含宏）不需要遵循这些风格指南。</li>
 </ul>
 </div>
 </body>
